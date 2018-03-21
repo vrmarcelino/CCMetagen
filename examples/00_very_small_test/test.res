@@ -1,0 +1,6 @@
+#Template	Score	Expected	Template length	Coverage	Depth	q_value	p_value
+Phylloporia_ribis|KU198362|SH494623.07FU|reps_singleton|k__Fungi;p__Basidiomycota;c__Agaricomycetes;o__Hymenochaetales;f__Hymenochaetaceae;g__Phylloporia;s__Phylloporia_ribis	    4362	     528	     561	   29.95	    8.43	 3004.32	1.0e-26
+Penicillium_bialowiezense|EU587315|SH199400.07FU|refs|k__Fungi;p__Ascomycota;c__Eurotiomycetes;o__Eurotiales;f__Aspergillaceae;g__Penicillium;s__Penicillium_bialowiezense	    4362	     528	     561	   29.95	    8.43	 3004.32	1.0e-26
+Penicillium_bialowiezense|EU587315|SH199400.07FU|refs|k__Fungi;p__Ascomycota;c__Eurotiomycetes;o__Eurotiales;f__Aspergillaceae;g__Penicillium;s__Penicillium_bialowiezense	    4362	     528	     561	   29.95	    8.43	 3004.32	1.0e-26
+Tremellomycetes_sp|AM902000|SH019577.07FU|reps_singleton|k__Fungi;p__Basidiomycota;c__Tremellomycetes;o__unidentified;f__unidentified;g__unidentified;s__Tremellomycetes_sp	    4362	     528	     561	   29.95	    8.43	 3004.32	1.0e-26
+Phylloporia_ribis|KU198362|SH494623.07FU|reps_singleton|k__Fungi;p__Basidiomycota;c__Agaricomycetes;o__Hymenochaetales;f__Hymenochaetaceae;g__Phylloporia;s__Phylloporia_ribis	    4362	     528	     561	   29.95	    8.43	 3004.32	1.0e-26

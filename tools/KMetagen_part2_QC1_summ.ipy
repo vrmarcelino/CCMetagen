@@ -1,0 +1,52 @@
+#!/usr/bin/env ipython
+# -*- coding: utf-8 -*-
+"""
+FunMetagenomics - Step 2 - QC KMA results and produce a merged table.
+
+@ V.R.Marcelino
+Created on Wed Feb  7 11:50:24 2018
+
+"""
+import sys
+import csv
+import pandas as pd
+from argparse import ArgumentParser
+
+
+# minimum coverage of the ref seq to accept the hit 
+#min_cov = 20
+
+
+in_kma_folder_fp = "18_ITS_KMA"
+
+in_kma_res = !ls {in_kma_folder_fp}/*.res
+
+
+# Filter low-quality hits, keeping only genes with coverage >= 20%, p-values < 0.01 
+# Include in the future depth > 2?
+for f in in_kma_res:
+    !awk 'NR == 1 || $$5 >= 20 && $$8 <= 0.01' {f} > {f}.filtered.txt
+
+
+# Input filtered KMA matches:
+kma_res_filteed = !ls {in_kma_folder_fp}/*.filtered.txt
+
+
+### Merge results:
+# create new dataframe:
+all_samples = pd.DataFrame()
+
+for f in kma_res_filteed:
+    
+    file_name_p1 = f.split('/')[1]
+    file_name = file_name_p1.split('_kma_its.res.filtered.txt')[0]
+    
+    df = pd.read_csv(f, sep='\t', index_col=0)
+    depth = df['Depth']
+    all_samples = pd.concat([all_samples, depth.rename(file_name)], axis=1)
+
+# Fill NaN with zeros:
+all_samples = all_samples.fillna(0)
+
+# Save
+pd.DataFrame.to_csv(all_samples, "merged_samples_depth.csv")
