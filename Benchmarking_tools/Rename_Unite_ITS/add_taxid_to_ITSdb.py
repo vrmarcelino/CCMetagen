@@ -12,9 +12,9 @@ from Bio.Seq import Seq
 import re
 import mmap
 
-input_seqs="ITS-unite_test.fasta"
+input_seqs="ITS-unite.fasta"
 map_fp="accession_taxid_nucl.map"
-output_fp="renamed_ITS.fasta"
+output_fp="ITS-unite-renamed.fasta"
 
 
 # function to get taxids from accession numbers
@@ -43,7 +43,7 @@ def get_tax_id (accession, map_fp):
         return taxid
     
 
- # function that get accession number from 1 seq record and include taxids
+# function that get accession number from 1 seq record and include taxids
 def rename(seq_record):
     get_ass = re.split("\|", seq_record.id)
     accession = get_ass[1]
@@ -57,6 +57,7 @@ def rename(seq_record):
     
     seq = str(seq_record.seq)
     new_record = SeqRecord(Seq(seq), id=new_seq_name, description='')
+    print(new_seq_name)
     return new_record
     
 
