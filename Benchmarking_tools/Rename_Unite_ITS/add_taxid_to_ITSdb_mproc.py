@@ -3,7 +3,7 @@
 """
 Rename ITS sequences from the Unit datatase so they include a TaxId
 @ V.R.Marcelino
-Created on Fri Jul  6 15:51:37 2018
+Created on 9 - Jul - 2018
 """
 
 from Bio import SeqIO
@@ -17,7 +17,7 @@ from multiprocessing import Pool
 input_seqs="ITS-unite.fasta"
 map_fp="accession_taxid_nucl.map"
 output_fp="ITS-unite-renamed_test_mproc.fasta"
-th=16
+# th=16 used about 15 cores for the ITS database
 
 # function to get taxids from accession numbers
 def get_tax_id (accession, map_fp):
@@ -115,7 +115,7 @@ for i in range(count_groups):
 
 p_i.join()
 
-
+# then join the .renamed files
 
 
 print ("")
