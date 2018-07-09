@@ -1,0 +1,45 @@
+-- Job Summary -------------------------------------------------------
+Job Id: 2352351.pbsserver for user vros8020 in queue alloc-eh
+Job Name: z_rename_ITS.sh
+Project: RDS-SMS-FGEN-RW
+Exit Status: 0
+Job run as chunks (hpc098:ncpus=2:mem=104857600kb)
+Walltime requested:   48:00:00 :      Walltime used:   16:39:04
+                               :   walltime percent:      34.7%
+-- Nodes Summary -----------------------------------------------------
+-- node hpc098 summary
+    Cpus requested:          2 :          Cpus Used:       0.99
+          Cpu Time:   16:33:46 :        Cpu percent:      49.7%
+     Mem requested:    100.0GB :           Mem used:     89.9MB
+                               :        Mem percent:       0.1%
+
+-- WARNINGS ----------------------------------------------------------
+
+** Low Walltime utilisation.  While this may be normal, it may help to check the
+** following:
+**   Did the job parameters specify more walltime than necessary? Requesting
+**   lower walltime could help your job to start sooner.
+**   Did your analysis complete as expected or did it crash before completing?
+**   Did the application run more quickly than it should have? Is this analysis
+**   the one you intended to run?
+** 
+** Low CPU utilisation on hpc098.  While this may be normal, it may help to check
+** the following:
+**   Did the job parameters specify too many cores?  Requesting fewer cores
+**   could help your job to start sooner.
+**   Did you use MPI and was the work distributed correctly? Correcting this
+**   could make your job to run faster without needing any more cores.
+**   Did the application use fewer cores than it should have? Is this analysis
+**   the one you intended to run?
+**
+** Low Memory utilisation on hpc098. While this may be normal, it may help to check
+** the following:
+**   Did the job parameters specify too much memory? Requesting less RAM could
+**   help your job to start sooner.
+**   Did you use MPI and was the work distributed correctly? Correcting this
+**   could allow your job to run using less RAM in each chunk.
+**   Did your analysis complete as expected or did it crash before completing?
+**   Did the application use less RAM than it should have? Is this analysis the
+**   one you intended to run?
+**
+-- End of Job Summary ------------------------------------------------
