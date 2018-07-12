@@ -13,6 +13,8 @@ from argparse import ArgumentParser
 import sqlite3
 from ete3 import NCBITaxa
 ncbi = NCBITaxa()
+import cTaxInfo # script that define classes used here
+import fNCBItax # script with function to get lineage from taxid
 
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_kma_result', help='The path to the .res or .spa file', required=True)
@@ -43,88 +45,10 @@ query = "CREATE TABLE IF NOT EXISTS KMA (TaxID integer, Lineage text, Sample tex
 cursor.execute(query)
 connection.commit()
 
-############# 
+#############
 
-### class that stores taxid and other info # script 1
-class tax_info_from_match(): 
-    
-    def __init__(self, TaxId=None, Lineage=None, Sample=None, RefDatabase=None, 
-                 Abundance=None):
-        
-        # info from matches
-        self.TaxId = TaxId
-        self.Lineage = Lineage
-        self.Sample = Sample
-        self.RefDatabase = RefDatabase
-        self.Abundance = Abundance
-
-
-
-### class that stores lineage in ranks using NCBI taxa # script 1
-class tax_info_from_ncbi(): 
-    
-    def __init__(self, Kingdom=None, Kingdom_TaxId=None, Phylum=None, 
-                 Phylum_TaxId=None, Class=None, Class_TaxId=None,
-                 Order=None, Order_TaxId=None, Family=None, Family_TaxId=None,
-                 Genus=None, Genus_TaxId=None, Species=None, Species_TaxId=None):
-
-        # info from NCBI
-        self.Kingdom = Kingdom
-        self.Kingdom_TaxId = Kingdom_TaxId
-        self.Phylum = Phylum
-        self.Phylum_TaxId = Phylum_TaxId
-        self.Class = Class
-        self.Class_TaxId = Class_TaxId
-        self.Order = Order
-        self.Order_TaxId = Order_TaxId
-        self.Genus = Genus
-        self.Genus_TaxId = Genus_TaxId
-        self.Species = Species
-        self.Species_TaxId = Species_TaxId
-
-
-
-### function that takes taxid and returns all the lineage info # script 2
-def lineage_extractor(query_taxid):
-    list_of_taxa_ranks = ['kingdom', 'phylum', 'class', 'order', 'family','genus', 'species']
-    lineage = ncbi.get_lineage(query_taxid)
-    ranks = ncbi.get_rank(lineage)
-    names = ncbi.get_taxid_translator(lineage)
-
-    tax_info = tax_info_from_ncbi()
-
-    for key, val in ranks.items():
-        if val == list_of_taxa_ranks[0]:
-            tax_info.Kingdom = names[key]
-            tax_info.Kingdom_TaxId = key
-            
-        elif val == list_of_taxa_ranks[1]:
-            tax_info.Phylum = names[key]
-            tax_info.Phylum_TaxId = key
-            
-        elif val == list_of_taxa_ranks[2]:
-            tax_info.Class = names[key]
-            tax_info.Class_TaxId = key
-            
-        elif val == list_of_taxa_ranks[3]:
-            tax_info.Order = names[key]
-            tax_info.Order_TaxId = key
-        
-        elif val == list_of_taxa_ranks[4]:
-            tax_info.Class = names[key]
-            tax_info.Class_TaxId = key
-            
-        elif val == list_of_taxa_ranks[5]:
-            tax_info.Genus = names[key]
-            tax_info.Genus_TaxId = key
-            
-        elif val == list_of_taxa_ranks[6]:
-            tax_info.Species = names[key]
-            tax_info.Species_TaxId = key
-    return tax_info
-
-
-#x = lineage_extractor(125858)
+### add this function to the script below and then export it to file.
+x = fNCBItax.lineage_extractor(125858)
 
 
 # Read and store taxids in list of classes
@@ -138,7 +62,7 @@ with open(in_res_file) as res:
     for line in csv.reader(res, delimiter='\t'):      
         split_match = re.split (r'(\|| )', line[0])
 
-        match_info = tax_info_from_match()
+        match_info = cTaxInfo.tax_info_from_match()
         
         if ref_database == "ITS":
             
