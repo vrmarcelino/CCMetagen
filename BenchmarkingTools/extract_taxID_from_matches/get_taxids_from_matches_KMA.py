@@ -11,6 +11,8 @@ import csv
 import re
 from argparse import ArgumentParser
 import sqlite3
+from ete3 import NCBITaxa
+ncbi = NCBITaxa()
 
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_kma_result', help='The path to the .res or .spa file', required=True)
@@ -43,14 +45,71 @@ connection.commit()
 
 ############# 
 
-# class that stores taxid and other info
-class tax_info_storage(): 
-    def __init__(self, TaxId=None, Lineage=None, Sample=None, RefDatabase=None, Abundance=None):
+### class that stores taxid and other info # could be a diffferent script?
+class tax_info_from_match(): 
+    
+    def __init__(self, TaxId=None, Lineage=None, Sample=None, RefDatabase=None, 
+                 Abundance=None):
+        
+        # info from matches
         self.TaxId = TaxId
         self.Lineage = Lineage
         self.Sample = Sample
         self.RefDatabase = RefDatabase
         self.Abundance = Abundance
+
+
+
+### class that stores lineage in ranks using NCBI taxa
+class tax_info_from_ncbi(): 
+    
+    def __init__(self, Kingdom=None, Phylum=None, Class=None,
+                 Order=None, Family=None, Genus=None, Species=None):
+
+        # info from NCBI
+        self.Kingdom = Kingdom
+        self.Phylum = Phylum
+        self.Class = Class
+        self.Order = Order
+        self.Genus = Genus
+        self.Species = Species
+
+
+
+### function that takes taxid and returns all the lineage info
+def lineage_extractor(query_taxid):
+    list_of_taxa_ranks = ['kingdom', 'phylum', 'class', 'order', 'family','genus', 'species']
+    lineage = ncbi.get_lineage(query_taxid)
+    ranks = ncbi.get_rank(lineage)
+    names = ncbi.get_taxid_translator(lineage)
+
+    tax_info = tax_info_from_ncbi()
+
+    for key, val in ranks.items():
+        if val == list_of_taxa_ranks[0]:
+            tax_info.Kingdom = names[key]
+    
+        elif val == list_of_taxa_ranks[1]:
+            tax_info.Phylum = names[key]
+    
+        elif val == list_of_taxa_ranks[2]:
+            tax_info.Phylum = names[key]
+
+        elif val == list_of_taxa_ranks[3]:
+            tax_info.Class = names[key]
+        
+        elif val == list_of_taxa_ranks[4]:
+            tax_info.Order = names[key]
+        
+        elif val == list_of_taxa_ranks[5]:
+            tax_info.Genus = names[key]
+
+        elif val == list_of_taxa_ranks[6]:
+            tax_info.Species = names[key]
+        
+    return tax_info
+
+
 
 # Read and store taxids in list of classes
 store_lineage_info = []
@@ -63,7 +122,8 @@ with open(in_res_file) as res:
     for line in csv.reader(res):      
         split_match = re.split (r'(\|| )', line[0])
 
-        match_info = tax_info_storage()
+        match_info = tax_info_from_match()
+        
         if ref_database == "ITS":
             match_info.TaxId = split_match[4]
             match_info.Lineage = split_match[12]
