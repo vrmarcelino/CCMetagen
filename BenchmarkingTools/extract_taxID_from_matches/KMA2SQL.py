@@ -2,7 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 Parse the results of 1 KMA res file and store them in the SQLite3 'bench.db'
-Works for ITS, RefSeq and UniProt, get their taxids and lineages (as identified in the Ref Database)
+Works for ITS, RefSeq and UniProt, get their taxids and lineages (as identified in the Ref Databases)
+
+USAGE ex: python KMA2SQL.py -i 2_mtg_ITS.res -n mtg -r ITS -sql benchm.db
+
+### ONLY ITS and RefSeq Working at the moment!!!
+
+
 @ V.R.Marcelino
 Created on Tue Jul 10 17:12:08 2018
 """
@@ -30,23 +36,29 @@ sample_name = args.input_sample_name
 
 
 # Tests and torubleshooting
-ref_database = "ITS" # options are ITS, RefSeq or UniProt
-in_res_file = "2_mtg_ITS.res"
+#ref_database = "ITS" # options are ITS, RefSeq or UniProt
+#in_res_file = "2_mtg_ITS.res"
 #in_res_file_RefSeq = "2_mtg_refSeq_bf.spa"
-sql_fp="benchm.db"
-sample_name="mtg"
+#sql_fp="benchm.db"
+#sample_name="mtg"
 
 ############# 
 connection = sqlite3.connect(sql_fp)
 cursor = connection.cursor()
 
 # Create a table if it does not exist:
-query = "CREATE TABLE IF NOT EXISTS KMA (TaxID integer, Lineage text, Sample text, RefDatabase text, Abundance text);"
+# Note that Order is written with two 'O's, as Order is a sql command
+query = """CREATE TABLE IF NOT EXISTS KMA (TaxID integer, Lineage text, 
+Sample text, RefDatabase text, Abundance real, Kingdom text,Kingdom_TaxId integer,
+Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
+Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
+Genus_TaxId integer, Species text, Species_TaxId integer);"""
+
+
 cursor.execute(query)
 connection.commit()
 
 #############
-
 
 
 # Read and store taxids in list of classes
@@ -122,42 +134,44 @@ with open(in_res_file) as res:
 
         
         Abund = line[-3].split(' ')[-1] # Raw 'Depth' value
-        match_info.Abundance = Abund
+        match_info.Abundance = float(Abund)
         match_info.Sample = sample_name
         match_info.RefDatabase = ref_database
         store_lineage_info.append(match_info)
 
 
 # output as a SQLite3:
-query = "INSERT INTO KMA VALUES (?,?,?,?,?);"
+query = "INSERT INTO KMA VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 for i in store_lineage_info:
-    cursor.execute(query,(i.TaxId, i.Lineage, i.Sample, i.RefDatabase, i.Abundance))
-    
-# Save db    
+    cursor.execute(query,(i.TaxId,i.Lineage,i.Sample,i.RefDatabase,i.Abundance,
+                          i.Kingdom,i.Kingdom_TaxId,i.Phylum,i.Phylum_TaxId,
+                          i.Class,i.Class_TaxId,i.Order,i.Order_TaxId,i.Family,
+                          i.Family_TaxId,i.Genus,i.Genus_TaxId,i.Species,
+                          i.Species_TaxId))
+        
+
+# Save db
 connection.commit()
 connection.close()
 
+print ("")
+print ("Done!")
+print ("Table KMA saved in %s sqlite3 database" %(sql_fp))
+print ("")
+
 #################
 #check it is all right
-for i in store_lineage_info:
-    print (i.TaxId)
-    print (i.Lineage)
-    print (i.Sample)
-    print (i.RefDatabase)
-    print (i.Abundance)
-    print (i.Family)
+#for i in store_lineage_info:
+#    print (i.TaxId)
+#    print (i.Lineage)
+#    print (i.Sample)
+#    print (i.RefDatabase)
+#    print (i.Abundance)
+#    print (i.Family)
 
-for i in store_lineage_info:
-    if i.TaxId == 'unk_taxid':
-        print (i.TaxId)
-        print (i.Lineage)
+#for i in store_lineage_info:
+#    if i.TaxId == 'unk_taxid':
+#        print (i.TaxId)
+#        print (i.Lineage)
         
-        
-
-cursor.execute("SELECT * FROM KMA;")
-cursor.fetchall()
-
-
-
-
 
