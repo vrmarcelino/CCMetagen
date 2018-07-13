@@ -47,8 +47,6 @@ connection.commit()
 
 #############
 
-### add this function to the script below and then export it to file.
-x = fNCBItax.lineage_extractor(125858)
 
 
 # Read and store taxids in list of classes
@@ -62,14 +60,16 @@ with open(in_res_file) as res:
     for line in csv.reader(res, delimiter='\t'):      
         split_match = re.split (r'(\|| )', line[0])
 
-        match_info = cTaxInfo.tax_info_from_match()
+        match_info = cTaxInfo.TaxInfo()
         
         if ref_database == "ITS":
+            match_info.Lineage = split_match[12]
             
             if split_match[4] != 'unk_taxid':
-                match_info.TaxId = split_match[4]
-                match_info.Lineage = split_match[12]
-            
+                
+                match_info.TaxId = int(split_match[4])
+                match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+                
             # Handle unknown taxids: 
             else:
                 full_lin = split_match[12]
@@ -80,21 +80,36 @@ with open(in_res_file) as res:
                 # get taxid from species name
                 retrieved_taxid = ncbi.get_name_translator([species_name])
                 
+                # if found, add to class object
+                if len(retrieved_taxid) != 0:
+                    match_info.TaxId = retrieved_taxid[species_name][0]
+                    match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
+        
                 # if unkwnon, try with genus only:
-                if len(retrieved_taxid) == 0:
+                else:
                     retrieved_taxid = ncbi.get_name_translator([species_full_name[0]])
+                    
+                    # if found, add to class object
+                    if len(retrieved_taxid) != 0:
+                        match_info.TaxId = retrieved_taxid[species_full_name[0]][0]
+                        match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
                 
                     # if still not found, print warning
-                    if len(retrieved_taxid) == 0:
+                    else:
                         print ("")
                         print ("WARNING: no taxid found for %s" %(full_lin))
-                        print ("this match will not be included in the comparisons")
+                        print ("this match will not get the NCBItax lineage information")
+                        print ("and will not be included in the analyses")
                         print ("")
+                        match_info.TaxId = split_match[4] # 'unk_taxid'
+                        match_info.Lineage = split_match[12] # lineage from ITS - Unite db only.
 
         elif ref_database == "RefSeq":
             match_info.TaxId = split_match[4]
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species
+            # include info from NCBI:
+            match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
         
         elif ref_database == "UniProt":
             print("write something to search after TaxID=")
@@ -130,7 +145,7 @@ for i in store_lineage_info:
     print (i.Sample)
     print (i.RefDatabase)
     print (i.Abundance)
-
+    print (i.Family)
 
 for i in store_lineage_info:
     if i.TaxId == 'unk_taxid':
@@ -141,7 +156,6 @@ for i in store_lineage_info:
 
 cursor.execute("SELECT * FROM KMA;")
 cursor.fetchall()
-
 
 
 
