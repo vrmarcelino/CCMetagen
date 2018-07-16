@@ -78,15 +78,72 @@ cursor.fetchall()
 
 
 ## test with variables
-var_inputs=('KMA', 'KMA', 'KMA', 'KMA', 'KMA')
+var_inputs=('KMA', 'KMA', 'KMA', 'KMA', '2_mtg', 'KMA')
 
 query = """SELECT DISTINCT {}.Species_TaxID
 FROM {}
 LEFT JOIN FUNGI ON {}.Species_TaxID = Fungi.Species_TaxID
 WHERE Fungi.Species_TaxID IS NULL
-AND {}.Sample='2_mtg'
+AND {}.Sample='{}'
 AND {}.Species_TaxID IS NOT NULL;
 """.format(*var_inputs)
+cursor.execute(query)
+len(cursor.fetchall())
+
+
+
+##### Function to produce query that gets False Positives
+# Ignore where Species_Taxid is null
+def query4falses(approach,sample,taxLevel):
+    
+    variables=(approach,taxLevel,approach,approach,taxLevel,taxLevel,
+               taxLevel,approach,sample,approach,taxLevel)
+    
+    query = """SELECT DISTINCT {}.{}_TaxID
+    FROM {}
+    LEFT JOIN FUNGI ON {}.{}_TaxID = Fungi.{}_TaxID
+    WHERE Fungi.{}_TaxID IS NULL
+    AND {}.Sample='{}'
+    AND {}.{}_TaxID IS NOT NULL;""".format(*variables)
+    
+    print (query)
+    
+    return query
+
+
+##### Function to produce query that gets True Positives
+# Ignore where Species_Taxid is null
+def query4trues(approach,sample,taxLevel):
+        
+    variables=(approach,taxLevel,approach,approach,taxLevel,taxLevel,
+               sample,approach,sample,approach,taxLevel)
+    
+    query = """
+    SELECT DISTINCT {}.{}_TaxID
+    FROM {}
+    INNER JOIN FUNGI ON {}.{}_TaxID = Fungi.{}_TaxID
+    WHERE Fungi.SAMPLE='{}' AND {}.Sample='{}'
+    AND {}.{}_TaxID IS NOT NULL;""".format(*variables)
+    
+    print (query)
+    
+    return query
+
+
+
+
+
+query = query4falses('KMA','2_mtg','Species')
+cursor.execute(query)
+n_false_pos = len(cursor.fetchall())
+n_false_pos
+
+query = query4trues('KMA','2_mtg','Species')
+cursor.execute(query)
+n_true_pos = len(cursor.fetchall())
+n_true_pos
+
+
 
 
 
