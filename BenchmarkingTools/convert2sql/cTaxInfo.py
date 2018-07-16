@@ -18,7 +18,8 @@ class TaxInfo():
                  Abundance=None, Kingdom=None, Kingdom_TaxId=None, Phylum=None, 
                  Phylum_TaxId=None, Class=None, Class_TaxId=None,
                  Order=None, Order_TaxId=None, Family=None, Family_TaxId=None,
-                 Genus=None, Genus_TaxId=None, Species=None, Species_TaxId=None):
+                 Genus=None, Genus_TaxId=None, Species=None, Species_TaxId=None,
+                 Coverage=None):
         
         # info from matches
         self.TaxId = TaxId
@@ -42,5 +43,8 @@ class TaxInfo():
         self.Genus_TaxId = Genus_TaxId
         self.Species = Species
         self.Species_TaxId = Species_TaxId
+
+        # info from Fungi Table only
+        self.Coverage = Coverage
 
 
