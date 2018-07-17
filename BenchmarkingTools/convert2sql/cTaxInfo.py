@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Classes that store taxonomic info from KMA matches and NCBI lineage
+Classes that store taxonomic info from matches and NCBI lineage
 
-Required to parse the results of KMA and store them in the SQLite3 'bench.db'
+Required to parse the results of matches and store them in the SQLite3 'bench.db'
 
 @ V.R.Marcelino
 Created on 12 Jul 2018
