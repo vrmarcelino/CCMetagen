@@ -4,9 +4,9 @@
 Parse the results of 1 BLAST tabular result and store it in the SQLite3 'bench.db'
 Only used for ITS database
 
-USAGE ex: python BLAST2SQL.py -i 2_mtg_ITS.txt -n 2_mtg -sql benchm.db
+USAGE ex: python BLAST2SQL.py -i 2_mtg_ITS.txt -n 2_mtg -sql benchm.db -r ITS
 
-### ONLY ITS and RefSeq Working at the moment!!!
+### ONLY ITS working at the moment!!!
 
 
 @ V.R.Marcelino
@@ -25,20 +25,23 @@ import pandas as pd
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_blastn_result', help='The path to the .txt file in tabular format', required=True)
 parser.add_argument('-n', '--input_sample_name', help='Tthe name of the sample', required=True)
+parser.add_argument('-r', '--reference_database', help='Reference database used, options are ITS, RefSeq_f_partial, RefSeq_bf and nt', required=True)
 parser.add_argument('-sql', '--SQL_db', help='SQL database where it should store the data', required=True)
 
 args = parser.parse_args()
 in_res_file = args.input_blastn_result
-ref_database = "ITS"
+ref_database = args.reference_database
 sql_fp = args.SQL_db
 sample_name = args.input_sample_name
 
 
 # Tests and torubleshooting
+#in_res_file = "test_mtg_blast.txt"
 #in_res_file = "2_mtg_ITS.txt"
-#in_res_file_RefSeq = "2_mtg_refSeq_bf.spa"
 #sql_fp="benchm.db"
 #sample_name="mtg"
+#ref_database = "RefSeq_bf"
+#ref_database = "ITS"
 
 ############# 
 connection = sqlite3.connect(sql_fp)
@@ -63,12 +66,14 @@ connection.commit()
 result_all_reads = pd.read_csv(in_res_file, sep='\t', header=None)
 
 # count read names in every tax matched
+print ("calculating matches... takes a while for large files")
 one_line_per_match = result_all_reads.groupby([result_all_reads.iloc[:,1]]).count()
 
 
 #############
 
 # Read and store taxids in list of classes
+print ("getting taxonomic information")
 store_lineage_info = []
 
 
@@ -76,49 +81,61 @@ for line in one_line_per_match.iterrows():
     split_match = re.split (r'(\|| )', line[0])
 
     match_info = cTaxInfo.TaxInfo()
+    
+    if ref_database == "ITS":
         
-    match_info.Lineage = split_match[12]
+        match_info.Lineage = split_match[12]
 
-    if split_match[4] != 'unk_taxid':
+        if split_match[4] != 'unk_taxid':
                 
-        match_info.TaxId = int(split_match[4])
-        match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+            match_info.TaxId = int(split_match[4])
+            match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
                 
-    # Handle unknown taxids: 
-    else:
-        full_lin = split_match[12]
-        species_full_name = full_lin.split('_')[-2:]
-        species_name_part2 = species_full_name[1].replace('sp', 'sp.')
-        species_name = species_full_name[0] + " " + species_name_part2
-                
-        # get taxid from species name
-        retrieved_taxid = ncbi.get_name_translator([species_name])
-                
-        # if found, add to class object
-        if len(retrieved_taxid) != 0:
-            match_info.TaxId = retrieved_taxid[species_name][0]
-            match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
-        
-        # if unkwnon, try with genus only:
+        # Handle unknown taxids: 
         else:
-            retrieved_taxid = ncbi.get_name_translator([species_full_name[0]])
-                    
+            full_lin = split_match[12]
+            species_full_name = full_lin.split('_')[-2:]
+            species_name_part2 = species_full_name[1].replace('sp', 'sp.')
+            species_name = species_full_name[0] + " " + species_name_part2
+                
+            # get taxid from species name
+            retrieved_taxid = ncbi.get_name_translator([species_name])
+                
             # if found, add to class object
             if len(retrieved_taxid) != 0:
-                match_info.TaxId = retrieved_taxid[species_full_name[0]][0]
+                match_info.TaxId = retrieved_taxid[species_name][0]
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
-                
-            # if still not found, print warning
+        
+            # if unkwnon, try with genus only:
             else:
-                print ("")
-                print ("WARNING: no taxid found for %s" %(full_lin))
-                print ("this match will not get the NCBItax lineage information")
-                print ("and will not be included in the analyses")
-                print ("")
-                match_info.TaxId = split_match[4] # 'unk_taxid'
-                match_info.Lineage = split_match[12] # lineage from ITS - Unite db only.
+                retrieved_taxid = ncbi.get_name_translator([species_full_name[0]])
+                    
+                # if found, add to class object
+                if len(retrieved_taxid) != 0:
+                    match_info.TaxId = retrieved_taxid[species_full_name[0]][0]
+                    match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
+                
+                # if still not found, print warning
+                else:
+                    print ("")
+                    print ("WARNING: no taxid found for %s" %(full_lin))
+                    print ("this match will not get the NCBItax lineage information")
+                    print ("and will not be included in the analyses")
+                    print ("")
+                    match_info.TaxId = split_match[4] # 'unk_taxid'
+                    match_info.Lineage = split_match[12] # lineage from ITS - Unite db only.
 
-
+    elif ref_database == "RefSeq_f_partial" or "RefSeq_bf":
+        match_info.TaxId = split_match[4]
+        match_info.Lineage = split_match[0] # the accession id of the match
+        match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
+    
+    elif ref_database == "nt":
+        print("write something to search for taxid based on species name")
+            
+    else:
+        print ("ref_database must be ITS, RefSeq_f_part, RefSeq_bf or nt")
+    
     Abund = line[1][0] # How many reads for that match
     match_info.Abundance = float(Abund)
     match_info.Sample = sample_name
