@@ -64,7 +64,7 @@ connection.commit()
 # Read and store taxids in list of classes
 store_lineage_info = []
 
-# function with the following inputs
+# loop with the following inputs
 # in_res_file, sample, database,
 
 with open(in_res_file) as res:

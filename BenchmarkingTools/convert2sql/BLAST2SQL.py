@@ -2,11 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 Parse the results of 1 BLAST tabular result and store it in the SQLite3 'bench.db'
-Only used for ITS database
 
 USAGE ex: python BLAST2SQL.py -i 2_mtg_ITS.txt -n 2_mtg -sql benchm.db -r ITS
-
-### ONLY ITS working at the moment!!!
 
 
 @ V.R.Marcelino
@@ -54,7 +51,6 @@ Sample text, RefDatabase text, Abundance real, Kingdom text,Kingdom_TaxId intege
 Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
 Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
 Genus_TaxId integer, Species text, Species_TaxId integer);"""
-
 
 cursor.execute(query)
 connection.commit()
