@@ -30,7 +30,7 @@ sql_fp = args.SQL_db
 sample_name = args.input_sample_name
 
 # Tests and torubleshooting
-in_res_file = "mtg_nt_report.tsv"
+#in_res_file = "mtg_nt_report.tsv"
 #in_res_file = "2_mtg_ITS.txt"
 #sql_fp="benchm.db"
 #sample_name="2_mtg"
