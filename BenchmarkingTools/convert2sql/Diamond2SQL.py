@@ -31,7 +31,7 @@ sample_name = args.input_sample_name
 
 
 # Tests and torubleshooting
-#in_res_file = "nanop_uniref90.txt"
+#in_res_file = "test_diamond.txt"
 #sql_fp="benchm.db"
 #sample_name="4_nanopg"
 #ref_database = "UniProt"
@@ -85,14 +85,17 @@ for key, value in taxids_dict.items():
     match_info = cTaxInfo.TaxInfo()
 
     match_info.TaxId = key
-    match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
     
-    match_info.Abundance = value    
-
+    try:
+        match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+    
+    except ValueError:
+        print("Ooops! %i is not a valid taxid and will not be considered in the analysis" %(match_info.TaxId))
+        
+    match_info.Abundance = value
     match_info.Sample = sample_name
     match_info.RefDatabase = ref_database
     store_lineage_info.append(match_info)
-
 
 
 #############

@@ -25,7 +25,7 @@ import fNCBItax # script with function to get lineage from taxid
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_kma_result', help='The path to the .res or .spa file', required=True)
 parser.add_argument('-n', '--input_sample_name', help='Tthe name of the sample', required=True)
-parser.add_argument('-r', '--reference_database', help='Reference database used, options are ITS, RefSeq, UniProt and nt', required=True)
+parser.add_argument('-r', '--reference_database', help='Reference database used, options are ITS, RefSeq_f_partial, RefSeq_bf, UniProt and nt', required=True)
 parser.add_argument('-sql', '--SQL_db', help='SQL database where it should store the data', required=True)
 
 args = parser.parse_args()
@@ -116,21 +116,18 @@ with open(in_res_file) as res:
                         match_info.TaxId = split_match[4] # 'unk_taxid'
                         match_info.Lineage = split_match[12] # lineage from ITS - Unite db only.
 
-        elif ref_database == "RefSeq":
+        elif ref_database == "RefSeq_f_partial" or ref_database == "RefSeq_bf":
             match_info.TaxId = split_match[4]
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species
             # include info from NCBI:
             match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
-        
-        elif ref_database == "UniProt":
-            print("write something to search after TaxID=")
-            
+                   
         elif ref_database == "nt":
             print("write something to search for taxid based on species name")
             
         else:
-            print ("ref_database must be ITS, RefSeq, UniProt or nt")
+            print ("ref_database must be ITS, RefSeq_f_partial, RefSeq_bf or nt")
 
         
         Abund = line[-3].split(' ')[-1] # Raw 'Depth' value

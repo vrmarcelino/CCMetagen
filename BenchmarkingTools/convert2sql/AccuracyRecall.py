@@ -26,7 +26,7 @@ sql_fp = args.SQL_db
 TaxRank = args.TaxRank
 sql2csv = args.output_csv
 
-approaches = ['KMA', 'BLASTn'] # approaches ot be analysed
+approaches = ['KMA', 'BLASTn','Centrifuge', 'Diamond', 'KrakenHLL'] # approaches ot be analysed
 
 #sql_fp="benchm.db"
 #TaxRank="Species"
@@ -94,7 +94,6 @@ for apr in approaches:
     
     
 ### Create new Results database
-# Note that Order is written with two 'O's, as Order is a sql command
 query = """CREATE TABLE IF NOT EXISTS Results{} (Approach text, 
 Sample text, RefDatabase text, TruePos integer, FalsePos integer, 
 Recall float, Accuracy float);""".format(TaxRank)
