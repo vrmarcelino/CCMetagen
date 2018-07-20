@@ -25,16 +25,17 @@ class results_info():
          self.Accuracy = Accuracy
 
 
-def query4trues(approach,sample,taxLevel):
+def query4trues(approach,sample,taxLevel,RefDb):
         
     variables=(approach,taxLevel,approach,approach,taxLevel,taxLevel,
-               sample,approach,sample,approach,taxLevel)
+               sample,approach,sample,approach,RefDb,approach,taxLevel)
     
     query = """
     SELECT DISTINCT {}.{}_TaxID
     FROM {}
     INNER JOIN FUNGI ON {}.{}_TaxID = Fungi.{}_TaxID
     WHERE Fungi.SAMPLE='{}' AND {}.Sample='{}'
+    AND {}.RefDatabase='{}'
     AND {}.{}_TaxID IS NOT NULL;""".format(*variables)
     
     print (query)
@@ -44,10 +45,10 @@ def query4trues(approach,sample,taxLevel):
 
 ### Function to produce query that gets False Positives # script
 # Ignore where Species_Taxid is null
-def query4falses(approach,sample,taxLevel,query4trues):
+def query4falses(approach,sample,taxLevel,query4trues,RefDb):
         
     variables=(approach,taxLevel,approach,approach,taxLevel,query4trues,
-               approach,sample,approach,taxLevel)
+               approach,sample,approach,RefDb,approach,taxLevel)
    
     query = """
     SELECT DISTINCT {}.{}_TaxID
@@ -55,6 +56,7 @@ def query4falses(approach,sample,taxLevel,query4trues):
     WHERE {}.{}_TaxID NOT IN 
     ({})
     AND {}.Sample='{}'
+    AND {}.RefDatabase='{}'
     AND {}.{}_TaxID IS NOT NULL;""".format(*variables)
     
     print (query)
@@ -66,10 +68,11 @@ def query4falses(approach,sample,taxLevel,query4trues):
 # ad tax. level
 def query4total(approach,sample,taxLevel):
     
-    variables = (taxLevel,approach,sample,taxLevel)
+    variables = (taxLevel,approach,sample,approach,RefDb,taxLevel)
     query = """SELECT count(DISTINCT {}_taxID) 
     FROM {} 
     WHERE Sample='{}'
+    AND {}.RefDatabase='{}'
     AND {}_taxID IS NOT NULL;""".format(*variables)
     print (query)
     print("")
