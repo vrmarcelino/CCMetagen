@@ -65,8 +65,8 @@ def query4falses(approach,sample,taxLevel,query4trues,RefDb):
 
 
 ### Function that calculates the total number of matches for a given sample
-# ad tax. level
-def query4total(approach,sample,taxLevel):
+# and tax. level
+def query4total(approach,sample,taxLevel,RefDb):
     
     variables = (taxLevel,approach,sample,approach,RefDb,taxLevel)
     query = """SELECT count(DISTINCT {}_taxID) 

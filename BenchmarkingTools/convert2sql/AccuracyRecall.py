@@ -59,18 +59,18 @@ for apr in approaches:
         row.RefDatabase = i[1]
         
         # Get true positives:
-        queryT = fQueries.query4trues(row.Approach,row.Sample,TaxRank)
+        queryT = fQueries.query4trues(row.Approach,row.Sample,TaxRank,row.RefDatabase)
         cursor.execute(queryT)
         row.TruePos = len(cursor.fetchall())
         
         # Get false positives:
         queryT = queryT.replace(";","")
-        queryF = fQueries.query4falses(row.Approach,row.Sample,TaxRank,queryT)
+        queryF = fQueries.query4falses(row.Approach,row.Sample,TaxRank,queryT,row.RefDatabase)
         cursor.execute(queryF)
         row.FalsePos = len(cursor.fetchall())
         
         # check if TruePos + FalsePos match the total:
-        queryT = fQueries.query4total(row.Approach,row.Sample,TaxRank)
+        queryT = fQueries.query4total(row.Approach,row.Sample,TaxRank,row.RefDatabase)
         cursor.execute(queryT)
         total_matches = cursor.fetchall()[0][0]
         
