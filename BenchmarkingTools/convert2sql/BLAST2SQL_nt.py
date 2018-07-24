@@ -131,9 +131,9 @@ print("Added {} entries in total in the temporary sql table BLASTn_raw_results "
 #stmt = """SELECT COUNT(*) FROM BLASTn_raw_results"""
 
 stmt = """SELECT DISTINCT sseqid FROM BLASTn_raw_results"""
-for i in cursor.execute(stmt):
-	print(i)
-connection.commit()
+#for i in cursor.execute(stmt):
+#	print(i)
+#connection.commit()
 
 accession_queries = {}
 for i in accessions['hits']:
@@ -152,19 +152,20 @@ rowbuffer= []
 rowcount = 0
 for i in accession_queries:
 	rowcount += 1
-	if rowcount % 500 == 0:
+	if rowcount % 1000000 == 0:
 		cursor.executemany(stmt_insert_accessions, rowbuffer)
 		rowbuffer = []
 	rowbuffer.append((i, accession_queries[i]))
 cursor.executemany(stmt_insert_accessions, rowbuffer)
 
-for i in cursor.execute("""SELECT * FROM accessions"""):
-	print(i)
+#for i in cursor.execute("""SELECT * FROM accessions"""):
+#	print(i)
 
-fh_sql = open('memdump.sql', 'w')
-for i in connection.iterdump():
-	fh_sql.write(i+'\n')
-fh_sql.close()
+# can this be deleted?
+#fh_sql = open('memdump.sql', 'w')
+#for i in connection.iterdump():
+#	fh_sql.write(i+'\n')
+#fh_sql.close()
 
 
 ############# 
@@ -195,7 +196,7 @@ ta.fetch_lineages([x for x in taxids])
 
 rowbuffer = []
 rowcount = 0
-threshold = 1000
+threshold = 1000000
 query = """INSERT INTO BLASTn (TaxID, Lineage, Sample, RefDatabase, 
 Abundance, Kingdom ,Kingdom_TaxId, Phylum, Phylum_TaxId, Class, Class_TaxId,
 OOrder, Order_TaxId, Family, Family_TaxId, Genus, Genus_TaxId, Species,
