@@ -4,13 +4,13 @@
 Parse the results of large BLAST tabular results with the nt ref database
 and store it in the SQLite3 'bench.db'
 
-Requires Jan's code: https://gitlab.com/janpb/blib
+Requires Jan's scripts: https://gitlab.com/janpb/blib
 
 USAGE ex: python BLAST2SQL_nt.py -i 2_mtg_nt.txt -n 2_mtg -sql benchm.db
 
 Authors:
 Jan P Buchmann 
-V.R.Marcelino
+V.R.Marcelino 
 
 Created on 20 Jul 2018
 Last update: 24 Jul 2018
@@ -39,11 +39,11 @@ ref_database = "nt"
 sql_fp = args.SQL_db
 sample = args.input_sample_name
 
-
-#blast_raw_res = "../work/4_nanop_nt.txt"
+#blast_raw_res = "../work/0_mtt_nt_test.txt"
 #sql_fp = "../work/benchm.db"
-#sample = "4_nanop"
+#sample = "0_mtt_test_JansWay"
 #ref_database = "nt"
+
 
 class NcbiDocsumAnalyzer(edirect.edbase.edanalyzer.EdAnalyzer):
 
@@ -204,7 +204,6 @@ Species_TaxId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"""
 
 for i in taxids:
     if i != None:
-        print (i)
         rowcount += 1
         
         # if multiple of 500, dump into sql
@@ -216,21 +215,39 @@ for i in taxids:
         lin = t.assemble_lineage_from_taxid(i)
         norm = t.get_normalized_clade_lineage(clade, lin)
         
-        #### output as a SQLite3:
-        variables_in_one_line = (0, "No Lineage for nt", sample, ref_database, 
-            0, norm[1].name, norm[1].taxid, norm[2].name, norm[2].taxid,
-            norm[4].name, norm[4].taxid, norm[6].name, norm[6].taxid, 
-            norm[11].name, norm[11].taxid,norm[13].name, norm[13].taxid,
-            norm[15].name, norm[15].taxid)
+        # check if it has all the fields:
+        if len(norm) == 17:
         
-        rowbuffer.append(variables_in_one_line)
+        # output as a SQLite3:
+            variables_in_one_line = (i, "No Lineage for nt", sample, ref_database, 
+                0, norm[1].name, norm[1].taxid, norm[2].name, norm[2].taxid,
+                norm[4].name, norm[4].taxid, norm[6].name, norm[6].taxid, 
+                norm[11].name, norm[11].taxid,norm[13].name, norm[13].taxid,
+                norm[15].name, norm[15].taxid)
+        
+            rowbuffer.append(variables_in_one_line)
+        
+        else:
+            print ("not enought information for taxid %i" %(i))
+            print ("will continue without this hit")
+            print ("")
 
     else:
         print ("taxid = None")
 
+
 cursor.executemany(query, rowbuffer)
 connection.commit()
 
+print ("")
+print ("Done!")
+print ("Table BLASTn saved in %s sqlite3 database" %(sql_fp))
+print ("")
+
+
+# tests
+#for i in norm:
+#    print (i.name, i.rank, i.taxid)
 
 
 

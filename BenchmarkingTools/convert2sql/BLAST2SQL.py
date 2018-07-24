@@ -4,6 +4,7 @@
 Parse the results of 1 BLAST tabular result and store it in the SQLite3 'bench.db'
 
 USAGE ex: python BLAST2SQL.py -i 2_mtg_ITS.txt -n 2_mtg -sql benchm.db -r ITS
+Note: for nt refdatabase (very large stuff) the recommended script is BLAST2SQL_nt.py
 
 @ V.R.Marcelino
 Created on 13 Jul 2018
@@ -134,6 +135,9 @@ for line in one_line_per_match.iterrows():
         match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
     
     elif ref_database == "nt":
+        print ("this script is not recommended for nt refdatabase, it is very slow and some weird taxids will crash")
+        print ("use Jan's BLAST2SQL_nt.py instead")
+        print ("trying it anyway ... ")
         acc2taxid_map_fp = args.acc2taxmap
         match_info.Lineage = split_match[0] # the accession number
         print ("processing accession %s" %(match_info.Lineage))
