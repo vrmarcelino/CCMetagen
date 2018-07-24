@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Parse the results of large BLAST tabular results with the nt ref database
-and store it in the SQLite3 'bench.db'
+and store it in the SQLite3 'benchm.db'
 
 Requires Jan's scripts: https://gitlab.com/janpb/blib
 
