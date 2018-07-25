@@ -39,10 +39,10 @@ ref_database = "nt"
 sql_fp = args.SQL_db
 sample = args.input_sample_name
 
-#blast_raw_res = "../work/0_mtt_nt_test.txt"
-#sql_fp = "../work/benchm.db"
-#sample = "0_mtt_test_JansWay"
-#ref_database = "nt"
+blast_raw_res = "0_mtt_nt_test.txt"
+sql_fp = "benchm.db"
+sample = "0_mtt_test_JansWay"
+ref_database = "nt"
 
 
 class NcbiDocsumAnalyzer(edirect.edbase.edanalyzer.EdAnalyzer):
@@ -135,11 +135,13 @@ stmt = """SELECT DISTINCT sseqid FROM BLASTn_raw_results"""
 #	print(i)
 #connection.commit()
 
+# init dictionary 
 accession_queries = {}
 for i in accessions['hits']:
 	accession_queries[i] = None
 
-# get taxids for accessions:
+# get taxids for accessions and insert in dictionary:
+## Getting too many "Nones"
 nda = NcbiDocsumAnalyzer()
 nda.fetch_sequence_info(accession_queries)
 
