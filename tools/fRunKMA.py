@@ -16,16 +16,17 @@ import subprocess
 
 # variables (to be taken from function)
 
-th = 3
+th = '3'
 out_fp = "06_TaxAssign/KMetagen"
 db_its="../large_databases/KMA/Unite_ITS/ITS_unite"
 
-
+inR1="test_mtt_R1.fasta"
+inR2="test_mtt_R2.fasta"
 
 
 # function to run KMA with the desired flags
 
-def kma_runner(in_type, in_fp, ref, out_fp, th = 1, 
+def kma_runner(in_type, in_fp, ref, out_fp, th = '1', 
                pairing_method = 'p', one2one = True, sparse = False, 
                mem_mode = False):
     
@@ -37,10 +38,22 @@ def kma_runner(in_type, in_fp, ref, out_fp, th = 1,
     if len(in_fp) != 0:
         print (len(in_fp))
     
-    shell_command = "kma "+in_type+" "+ in_fp+" -o "+out_fp+" -t_db "
-    +ref+" -t "+th
+    shell_command = "kma "+in_type+" "+ in_fp+" -o "+out_fp+" -t_db "+ref+" -t "+th
     
     print (shell_command)
 
 
-kma_runner('-i', 'test')
+
+
+
+kma_runner('-i', inR1, db_its,out_fp)
+
+
+
+
+
+
+
+
+
+
