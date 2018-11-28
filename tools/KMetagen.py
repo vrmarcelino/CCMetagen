@@ -30,6 +30,7 @@ if len(sys.argv) == 1:
     print (" KMetagen - Metagenomic analyses")
     print ("")
     print ("Usage: KMetagen.py <options> ")
+    print ("Ex: KMetagen.py -m parse_kma -i KMA_reads/2_mtg_ITS.res -o parse_result_2mtg")
     print ("")
     print ("")
     sys.exit()
@@ -39,7 +40,9 @@ parser = ArgumentParser()
 
 # change this to Requires = True!
 parser.add_argument('-m', '--mode', help="""what do you want KMetagen to do? 
-                    Valid options at the moment are: parse_kma""", required=False)
+                    Valid options at the moment are: 
+                        1: parses kma, filters based on quality and output a text file with taxonomic information
+                        2: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation""", required=True)
 
 parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=False)
 parser.add_argument('-o', '--output_fp', default = 'KMetagen_out', 
@@ -50,18 +53,18 @@ parser.add_argument('-r', '--reference_database', default = 'ITS',
 
 # what to do:
 args = parser.parse_args()
-#mode = args.mode
+mode = args.mode
 
 
 # debugging:
-#out_fp = "06_TaxAssign/KMetagen"
-#in_kma_folder_fp = "KMA_long_ctgs"
+#out_fp = "KMetagen_results"
+#in_kma_folder_fp = "KMA_reads"
 #ref_database = "ITS"
+#mode = 'parse_kma'
 
-mode = 'parse_kma'
 
-##### Take as input individual files and output a file with tax info
-if mode == 'parse_kma':
+##### Take as input individual .res files and output a file with tax info
+if mode == 1:
     args = parser.parse_args()
     f = args.res_fp
     ref_database = args.reference_database
@@ -71,7 +74,7 @@ if mode == 'parse_kma':
     # Rename headers:
     df.index.name = "Closest_match"
  
-    # first quality filter:
+    # first quality filter (coverage, query identity, Depth and p-value)
     df = fParseKMA.res_filter(df, 20, 50, 0.2, 0.05)
     
     # add tax info
