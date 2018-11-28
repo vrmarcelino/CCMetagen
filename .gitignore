@@ -106,3 +106,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Data that should not be uploaded
+tools/KMA_long_ctgs
+tools/KMA_reads
+
+
