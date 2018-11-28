@@ -24,11 +24,13 @@ import fParseKMA
 # help
 if len(sys.argv) == 1:
     print ("")
-    print (" KMetagen - Metagenomic analyses")
+    print ("KMetagen - Identify species in metagenome datasets")
     print ("version: 0.1")
+    print ("To be used with KMA")
     print ("")
     print ("Usage: KMetagen.py <options> ")
     print ("Ex: KMetagen.py -m 1 -i KMA_out/2_mtg_ITS.res -r UNITE -o parse_result_2mtg")
+    print ("")
     print ("")
     print ("""When running KMetagen for multiple files in a folder:
 input_dir=KMA_out
@@ -39,29 +41,44 @@ for f in $input_dir/*.res; do
     python KMetagen.py -m 1 -i $f -r UNITE -o $out
 done""")
     print ("")
+    print ("For help and options, type: KMetagen.py -h")
+    print ("")
     print ("")
     sys.exit()
 
 
 parser = ArgumentParser()
 
-# change this to Requires = True!
 parser.add_argument('-m', '--mode', help="""what do you want KMetagen to do? 
-                    Valid options at the moment are: 
+                    Valid options at the moment are:
                         1: parses kma, filters based on quality and output a text file with taxonomic information
                         2: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation""", required=True)
 
-parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=False)
+parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=True)
 parser.add_argument('-o', '--output_fp', default = 'KMetagen_out', 
                     help='Path to the output file. Default = KMetagen_out', required=False)
 parser.add_argument('-r', '--reference_database', default = 'ITS', 
                     help='Which reference database was used. Default = UNITE', required=False)
 
+parser.add_argument('-c', '--coverage', default = 20, 
+                    help='Minimum coverage. Default = 20',type=int, required=False)
+parser.add_argument('-q', '--query_identity', default = 50, 
+                    help='Minimum query identity (Phyllum level). Default = 50', type=int, required=False)
+parser.add_argument('-d', '--depth', default = 0.2,
+                    help='Minimum sequencing depth. Default = 0.2.',type=int, required=False)
+parser.add_argument('-p', '--pvalue', default = 0.05, 
+                    help='Minimum p-value. Default = 0.05.',type=int, required=False)
+
 
 # what to do:
 args = parser.parse_args()
 mode = args.mode
-
+f = args.res_fp
+ref_database = args.reference_database
+c = args.coverage
+q = args.query_identity
+d = args.depth
+p = args.pvalue
 
 # debugging:
 #out_fp = "KMetagen_results"
@@ -72,9 +89,6 @@ mode = args.mode
 
 ##### Take as input individual .res files and output a file with tax info
 if mode == '1':
-    args = parser.parse_args()
-    f = args.res_fp
-    ref_database = args.reference_database
     
     print ("")
     print ("Reading file %s" %(f))
@@ -86,7 +100,7 @@ if mode == '1':
     df.index.name = "Closest_match"
  
     # first quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, 20, 50, 0.2, 0.05)
+    df = fParseKMA.res_filter(df, c, q, d, p)
     
     # add tax info
     df = fParseKMA.populate_w_tax(df, ref_database)
@@ -98,10 +112,7 @@ if mode == '1':
     
 ##### Take as input individual .res files and output a Krona file 
 if mode == '2':
-    args = parser.parse_args()
-    f = args.res_fp
-    ref_database = args.reference_database
-    
+
     print ("")
     print ("Reading file %s" %(f))
     print ("")
@@ -112,7 +123,7 @@ if mode == '2':
     df.index.name = "Match"
  
     # first quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, 20, 50, 0.2, 0.05)
+    df = fParseKMA.res_filter(df, c, q, d, p)
     
     # add tax info
     df = fParseKMA.populate_w_tax(df, ref_database)
