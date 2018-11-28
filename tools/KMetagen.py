@@ -12,12 +12,13 @@ Created on Wed Jul 25 17:13:10 2018
 
 # imports
 import sys
-import csv
+#import csv
 import pandas as pd
 from argparse import ArgumentParser
-import os
-from os import listdir
-import re
+#import os
+#from os import listdir
+#import re
+import subprocess
 
 # local imports
 #import cTaxInfo
@@ -30,7 +31,7 @@ if len(sys.argv) == 1:
     print (" KMetagen - Metagenomic analyses")
     print ("")
     print ("Usage: KMetagen.py <options> ")
-    print ("Ex: KMetagen.py -m parse_kma -i KMA_reads/2_mtg_ITS.res -o parse_result_2mtg")
+    print ("Ex: KMetagen.py -m 1 -i KMA_reads/2_mtg_ITS.res -r UNITE -o parse_result_2mtg")
     print ("")
     print ("")
     sys.exit()
@@ -48,7 +49,7 @@ parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)',
 parser.add_argument('-o', '--output_fp', default = 'KMetagen_out', 
                     help='Path to the output file. Default = KMetagen_out', required=False)
 parser.add_argument('-r', '--reference_database', default = 'ITS', 
-                    help='Which reference datbase was used. Default = ITS', required=False)
+                    help='Which reference database was used. Default = UNITE', required=False)
 
 
 # what to do:
@@ -58,13 +59,13 @@ mode = args.mode
 
 # debugging:
 #out_fp = "KMetagen_results"
-#in_kma_folder_fp = "KMA_reads"
-#ref_database = "ITS"
-#mode = 'parse_kma'
+#in_kma_folder_fp = "KMA_reads/2_mtg_ITS.res"
+#ref_database = "UNITE"
+#mode = '2'
 
 
 ##### Take as input individual .res files and output a file with tax info
-if mode == 1:
+if mode == '1':
     args = parser.parse_args()
     f = args.res_fp
     ref_database = args.reference_database
@@ -84,34 +85,39 @@ if mode == 1:
     out = args.output_fp + ".csv"
     pd.DataFrame.to_csv(df, out)
     
-
-
-#### To do:
-### Make output usable by KRONA!
     
+##### Take as input individual .res files and output a Krona file 
+if mode == '2':
+    args = parser.parse_args()
+    f = args.res_fp
+    ref_database = args.reference_database
+    
+    df = pd.read_csv(f, sep='\t', index_col=0)
+
+    # Rename headers:
+    df.index.name = "Match"
+ 
+    # first quality filter (coverage, query identity, Depth and p-value)
+    df = fParseKMA.res_filter(df, 20, 50, 0.2, 0.05)
+    
+    # add tax info
+    df = fParseKMA.populate_w_tax(df, ref_database)
 
 
+    krona_info = df[['Depth','Kingdom','Phylum','Class','Order','Genus','Species']]
 
+    # save dataframe to file
+    out1 = args.output_fp + ".tsv"
+    pd.DataFrame.to_csv(krona_info, out1, sep='\t', index=False)
+    
+    # save krona file
+    out2 = args.output_fp + ".html" 
+    
+    shell_command = "ktImportText " + out1 + " -o " + out2
+    subprocess.run(shell_command, shell=True)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# check if flags are compatible, otherwise return a error?
-# or does KMA will do that?
-
-
-
-# funcions
+    print ("krona file saved as %s" %(out2))
+    print ("")
 
 
 

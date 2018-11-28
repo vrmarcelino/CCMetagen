@@ -55,7 +55,7 @@ def populate_w_tax(in_df, ref_database):
         # define the tax. rank based on similarity:
         qiden = row['Query_Identity']
 
-        if ref_database == "ITS":
+        if ref_database == "UNITE":
             match_info.Lineage = split_match[12]
     
             # if taxid is knwon:
@@ -83,7 +83,7 @@ def populate_w_tax(in_df, ref_database):
 
         # Populate the df with lineage info:
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
-        in_df.at[index, 'Phylum '] = match_info.Phylum
+        in_df.at[index, 'Phylum'] = match_info.Phylum
 
         if qiden >= class_threshold:
             in_df.at[index, 'Class'] = match_info.Class
