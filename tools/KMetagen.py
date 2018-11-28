@@ -7,31 +7,37 @@ Version 0.1
 
 @ V.R.Marcelino
 Created on Wed Jul 25 17:13:10 2018
+Updated: 29 Nov 2019
+Version: 0.1
 
 """
 
 # imports
 import sys
-#import csv
 import pandas as pd
 from argparse import ArgumentParser
-#import os
-#from os import listdir
-#import re
 import subprocess
 
 # local imports
-#import cTaxInfo
-#import fNCBItax
 import fParseKMA
 
 # help
 if len(sys.argv) == 1:
     print ("")
     print (" KMetagen - Metagenomic analyses")
+    print ("version: 0.1")
     print ("")
     print ("Usage: KMetagen.py <options> ")
-    print ("Ex: KMetagen.py -m 1 -i KMA_reads/2_mtg_ITS.res -r UNITE -o parse_result_2mtg")
+    print ("Ex: KMetagen.py -m 1 -i KMA_out/2_mtg_ITS.res -r UNITE -o parse_result_2mtg")
+    print ("")
+    print ("""When running KMetagen for multiple files in a folder:
+input_dir=KMA_out
+output_dir=KMetagen_results
+mkdir $output_dir
+for f in $input_dir/*.res; do 
+    out=$output_dir/${f/$input_dir\/}
+    python KMetagen.py -m 1 -i $f -r UNITE -o $out
+done""")
     print ("")
     print ("")
     sys.exit()
@@ -70,6 +76,10 @@ if mode == '1':
     f = args.res_fp
     ref_database = args.reference_database
     
+    print ("")
+    print ("Reading file %s" %(f))
+    print ("")
+    
     df = pd.read_csv(f, sep='\t', index_col=0)
 
     # Rename headers:
@@ -91,6 +101,10 @@ if mode == '2':
     args = parser.parse_args()
     f = args.res_fp
     ref_database = args.reference_database
+    
+    print ("")
+    print ("Reading file %s" %(f))
+    print ("")
     
     df = pd.read_csv(f, sep='\t', index_col=0)
 
@@ -119,7 +133,4 @@ if mode == '2':
     print ("krona file saved as %s" %(out2))
     print ("")
 
-
-
-    
     
