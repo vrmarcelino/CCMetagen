@@ -18,12 +18,15 @@ import fNCBItax
 
 
 # function to filter a res file in pandas df format:
-def res_filter(df,cov,Iden,Depth,p):
+def res_filter(df,ref_database, cov,Iden,Depth,p):
     df = df.drop(df[df.Template_Coverage < cov].index)
-      
-    # filter based on identity
-    df = df.drop(df[df.Query_Identity < Iden].index)
-        
+
+    # filter based on identity      
+    if ref_database == "UNITE":
+        df = df.drop(df[df.Query_Identity < Iden].index)
+    else:
+        print ("Note that query identity is ignored when parsing KMA results in Sparse mode")
+    
     # filter based on depth
     df = df.drop(df[df.Depth < Depth].index)
 
@@ -53,9 +56,9 @@ def populate_w_tax(in_df, ref_database):
         match_info = cTaxInfo.TaxInfo()
 
         # define the tax. rank based on similarity:
-        qiden = row['Query_Identity']
-
+        
         if ref_database == "UNITE":
+            qiden = row['Query_Identity']
             match_info.Lineage = split_match[12]
     
             # if taxid is knwon:
@@ -74,6 +77,7 @@ def populate_w_tax(in_df, ref_database):
 
 
         elif ref_database == "RefSeq":
+            qiden = 100 # unknow query identity when running it in Sparse Mode
             match_info.TaxId = split_match[4]
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species

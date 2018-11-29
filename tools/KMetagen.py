@@ -20,6 +20,8 @@ import subprocess
 
 # local imports
 import fParseKMA
+import cTaxInfo # needed in fParseKMA
+import fNCBItax # needed in fParseKMA
 
 # help
 if len(sys.argv) == 1:
@@ -80,11 +82,15 @@ q = args.query_identity
 d = args.depth
 p = args.pvalue
 
-# debugging:
+# developing and debugging:
 #out_fp = "KMetagen_results"
-#in_kma_folder_fp = "KMA_reads/2_mtg_ITS.res"
+#f = "KMA_reads/2_mtg_ITS.res"
 #ref_database = "UNITE"
-#mode = '2'
+#mode = '1'
+#c = 20
+#q = 50
+#d = 0.2
+#p = 0.05
 
 
 ##### Take as input individual .res files and output a file with tax info
@@ -100,7 +106,7 @@ if mode == '1':
     df.index.name = "Closest_match"
  
     # first quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, c, q, d, p)
+    df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
     # add tax info
     df = fParseKMA.populate_w_tax(df, ref_database)
@@ -109,7 +115,9 @@ if mode == '1':
     out = args.output_fp + ".csv"
     pd.DataFrame.to_csv(df, out)
     
-    
+    print ("csv file saved as %s" %(out))
+    print ("")
+
 ##### Take as input individual .res files and output a Krona file 
 if mode == '2':
 
@@ -123,7 +131,7 @@ if mode == '2':
     df.index.name = "Match"
  
     # first quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, c, q, d, p)
+    df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
     # add tax info
     df = fParseKMA.populate_w_tax(df, ref_database)
