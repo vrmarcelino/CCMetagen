@@ -40,7 +40,7 @@ output_dir=KMetagen_results
 mkdir $output_dir
 for f in $input_dir/*.res; do 
     out=$output_dir/${f/$input_dir\/}
-    python KMetagen.py -m 1 -i $f -r UNITE -o $out
+    KMetagen.py -m 1 -i $f -r UNITE -o $out
 done""")
     print ("")
     print ("For help and options, type: KMetagen.py -h")

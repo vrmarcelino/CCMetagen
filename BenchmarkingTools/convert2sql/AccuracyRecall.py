@@ -3,10 +3,11 @@
 """
 Script to assess the accuracy and recall of the different programs
 
-USAGE: python AccuracyRecall.py -tr Species -sql benchm.db - o Res_species.csv
+USAGE: python AccuracyRecall.py -tr Species -sql benchm.db -o Res_species.csv
     
 @ V.R.Marcelino
 Created on Mon Jul 16 11:29:09 2018
+Modified - 30 Nov 2018
 """
 
 import sqlite3
@@ -26,10 +27,14 @@ sql_fp = args.SQL_db
 TaxRank = args.TaxRank
 sql2csv = args.output_csv
 
-approaches = ['KMA', 'BLASTn','Centrifuge', 'Diamond', 'KrakenHLL'] # approaches ot be analysed
-
+# editing and debugging
 #sql_fp="benchm.db"
 #TaxRank="Species"
+#sql2csv="Res_species.csv"
+
+#approaches = ['KMA', 'BLASTn','Centrifuge', 'Diamond', 'KrakenHLL'] # approaches ot be analysed
+approaches = ['KMetagen', 'KMA', 'Centrifuge', 'KrakenHLL'] # approaches ot be analysed
+
 
 print ("")
 print ("running ... ")

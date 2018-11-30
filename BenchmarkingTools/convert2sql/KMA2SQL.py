@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Parse the results of 1 KMA res file and store them in the SQLite3 'bench.db'
-Works for ITS, RefSeq and UniProt, get their taxids and lineages (as identified in the Ref Databases)
+Works for UNITE, RefSeq and UniProt, get their taxids and lineages (as identified in the Ref Databases)
 
 USAGE ex: python KMA2SQL.py -i 2_mtg_ITS.res -n mtg -r ITS -sql benchm.db
 
@@ -25,7 +25,7 @@ import fNCBItax # script with function to get lineage from taxid
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_kma_result', help='The path to the .res or .spa file', required=True)
 parser.add_argument('-n', '--input_sample_name', help='Tthe name of the sample', required=True)
-parser.add_argument('-r', '--reference_database', help='Reference database used, options are ITS, RefSeq_f_partial, RefSeq_bf, UniProt and nt', required=True)
+parser.add_argument('-r', '--reference_database', help='Reference database used, options are UNITE, RefSeq_f_partial, RefSeq_bf, UniProt and nt', required=True)
 parser.add_argument('-sql', '--SQL_db', help='SQL database where it should store the data', required=True)
 
 args = parser.parse_args()
@@ -36,7 +36,7 @@ sample_name = args.input_sample_name
 
 
 # Tests and torubleshooting
-#ref_database = "ITS" # options are ITS, RefSeq or UniProt
+#ref_database = "UNITE" # options are UNITE, RefSeq or UniProt
 #in_res_file = "2_mtg_ITS.res"
 #in_res_file_RefSeq = "2_mtg_refSeq_bf.spa"
 #sql_fp="benchm.db"
@@ -74,7 +74,7 @@ with open(in_res_file) as res:
 
         match_info = cTaxInfo.TaxInfo()
         
-        if ref_database == "ITS":
+        if ref_database == "UNITE":
             match_info.Lineage = split_match[12]
             
             if split_match[4] != 'unk_taxid':
@@ -127,7 +127,7 @@ with open(in_res_file) as res:
             print("write something to search for taxid based on species name")
             
         else:
-            print ("ref_database must be ITS, RefSeq_f_partial, RefSeq_bf or nt")
+            print ("ref_database must be UNITE, RefSeq_f_partial, RefSeq_bf or nt")
 
         
         Abund = line[-3].split(' ')[-1] # Raw 'Depth' value

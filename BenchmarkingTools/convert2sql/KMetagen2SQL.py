@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Parse the results of 1 KMetagen csv file and store them in the SQLite3 'bench.db'
-Works for ITS and RefSeq
+Works for ITS - UNITE and RefSeq
 
-USAGE ex: python KMetagen2SQL.py -i 2_mtg_ITS.res -n mtg -r ITS -sql benchm.db
+USAGE ex: python KMetagen2SQL.py -i 2_mtg_ITS.res -n mtg -r UNITE -sql benchm.db
 
-### ONLY ITS and RefSeq Working at the moment!!!
+### ONLY UNITE and RefSeq Working at the moment!!!
 
 
 @ V.R.Marcelino
@@ -23,24 +23,24 @@ import cTaxInfo # script that define classes used here
 import fNCBItax # script with function to get lineage from taxid
 
 parser = ArgumentParser()
-parser.add_argument('-i', '--input_kma_result', help='The path to the .res or .spa file', required=True)
+parser.add_argument('-i', '--input_KMetagen_result', help='The path to the .res or .spa file', required=True)
 parser.add_argument('-n', '--input_sample_name', help='Tthe name of the sample', required=True)
-parser.add_argument('-r', '--reference_database', help='Reference database used, options are UNITE and RefSeq', required=True)
+parser.add_argument('-r', '--reference_database', help='Reference database used, options are UNITE, RefSeq_f_partial and RefSeq_bf', required=True)
 parser.add_argument('-sql', '--SQL_db', help='SQL database where it should store the data', required=True)
 
 args = parser.parse_args()
-in_res_file = args.input_kma_result
+in_res_file = args.input_KMetagen_result
 ref_database = args.reference_database
 sql_fp = args.SQL_db
 sample_name = args.input_sample_name
 
 
 # Tests and torubleshooting
-ref_database = "RefSeq"
-in_res_file = "KMetagen_result_2mtg.csv"
-in_res_file = "KMetagen_result_2mtg_sparse.csv"
-sql_fp="benchm.db"
-sample_name="2_mtg"
+#ref_database = "RefSeq"
+#in_res_file = "KMetagen_result_2mtg.csv"
+#in_res_file = "KMetagen_result_2mtg_sparse.csv"
+#sql_fp="benchm.db"
+#sample_name="2_mtg"
 
 ############# 
 connection = sqlite3.connect(sql_fp)
@@ -119,7 +119,7 @@ with open(in_res_file) as res:
                         match_info.TaxId = split_match[4] # 'unk_taxid'
                         match_info.Lineage = split_match[12] # lineage from ITS - Unite db only.
 
-        elif ref_database == "RefSeq":
+        elif ref_database == "RefSeq_f_partial" or ref_database == "RefSeq_bf":
             match_info.TaxId = split_match[4]
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species
@@ -132,7 +132,7 @@ with open(in_res_file) as res:
             print("write something to search for taxid based on species name")
             
         else:
-            print ("ref_database must be UNITE, RefSeq_f_partial, RefSeq_bf or nt")
+            print ("ref_database must be UNITE, RefSeq_f_partial or RefSeq_bf")
 
         match_info.Sample = sample_name
         match_info.RefDatabase = ref_database
@@ -159,7 +159,7 @@ print ("")
 
 #################
 #check it is all right
-for i in store_lineage_info:
+#for i in store_lineage_info:
 #    print (i.TaxId)
 #    print (i.Lineage)
 #    print (i.Sample)
@@ -171,5 +171,3 @@ for i in store_lineage_info:
 #    if i.TaxId == 'unk_taxid':
 #        print (i.TaxId)
 #        print (i.Lineage)
-        
-
