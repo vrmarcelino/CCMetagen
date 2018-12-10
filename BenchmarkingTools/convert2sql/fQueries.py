@@ -14,7 +14,7 @@ Last update ---
 ### Class to store info that goes in the Results tables
 class results_info():
      def __init__(self, Approach=None,Sample=None,RefDatabase=None,
-                  TruePos=None,FalsePos=None,Recall=None,Accuracy=None):
+                  TruePos=None,FalsePos=None,Recall=None,Accuracy=None,TaxLevel=None):
          
          self.Approach = Approach
          self.Sample = Sample
@@ -23,7 +23,7 @@ class results_info():
          self.FalsePos = FalsePos
          self.Recall = Recall
          self.Accuracy = Accuracy
-
+         self.TaxLevel = TaxLevel
 
 def query4trues(approach,sample,taxLevel,RefDb):
         
