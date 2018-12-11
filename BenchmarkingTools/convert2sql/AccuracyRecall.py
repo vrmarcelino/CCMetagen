@@ -17,9 +17,9 @@ import fQueries # custom functions used here
 import csv
 
 parser = ArgumentParser()
-parser.add_argument('-sql', '--SQL_db', help='SQL database to nake comparisons', required=True)
+parser.add_argument('-sql', '--SQL_db', help='SQL database to make comparisons', required=True)
 parser.add_argument('-tr', '--TaxRank', help='TaxRank to perform the analyses', required=True)
-parser.add_argument('-o', '--output_csv', help='output to csv file?', required=False)
+parser.add_argument('-o', '--output_csv', help='output file path', required=False)
 
 
 args = parser.parse_args()
@@ -32,8 +32,7 @@ sql2csv = args.output_csv
 #TaxRank="Species"
 #sql2csv="Res_species.csv"
 
-#approaches = ['KMA', 'BLASTn','Centrifuge', 'Diamond', 'KrakenHLL'] # approaches ot be analysed
-approaches = ['KMetagen', 'KMA', 'Centrifuge', 'KrakenHLL'] # approaches ot be analysed
+approaches = ['KMetagen', 'KMA', 'Centrifuge', 'KrakenHLL','Kraken2'] # approaches ot be analysed
 
 
 print ("")

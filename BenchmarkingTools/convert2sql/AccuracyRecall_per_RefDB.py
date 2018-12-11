@@ -16,19 +16,20 @@ import cResInfo # custom classes used here
 import fQueries # custom functions used here
 import csv
 
-#parser = ArgumentParser()
-#parser.add_argument('-sql', '--SQL_db', help='SQL database to nake comparisons', required=True)
-#parser.add_argument('-tr', '--TaxRank', help='TaxRank to perform the analyses', required=True)
-#parser.add_argument('-o', '--output_csv', help='output to csv file?', required=False)
+parser = ArgumentParser()
+parser.add_argument('-sql', '--SQL_db', help='SQL database to make comparisons', required=True)
+parser.add_argument('-r', '--ref_db', help='reference database: UNITE, RefSeq_f_partial, RefSeq_bf or nt', required=True)
+parser.add_argument('-o', '--output_csv', help='output file path', required=False)
 
 
-#args = parser.parse_args()
-#sql_fp = args.SQL_db
-#TaxRank = args.TaxRank
-#sql2csv = args.output_csv
+args = parser.parse_args()
+sql_fp = args.SQL_db
+ref_db = args.ref_db
+out_file = args.output_csv
 
 # editing and debugging
-sql_fp="benchm.db"
+#sql_fp="benchm.db"
+#ref_db="RefSeq_f_partial"
 
 accuracy_results=['ResultsPhylum','ResultsClass','ResultsOrder','ResultsFamily','ResultsGenus','ResultsSpecies']
 
@@ -43,9 +44,9 @@ cursor = connection.cursor()
 store_results = []
 
 
-# Change the database name here for different Databases
+# Loop trough taxon levels and get the wanted results for each level
 for r in accuracy_results:
-    query="SELECT Approach, Sample, Accuracy, Recall FROM {} WHERE RefDatabase = 'RefSeq_f_partial';".format(r)
+    query="SELECT Approach, Sample, Accuracy, Recall FROM {} WHERE RefDatabase = '{}';".format(r,ref_db)
     cursor.execute(query)
     info_from_results = cursor.fetchall()
     
@@ -68,18 +69,14 @@ for r in accuracy_results:
         
       
   
-# Save  --  Change the database name here for different Databases
-
-with open("RefSeq_f_partial.csv", 'w') as csv_file:
+# Save 
+with open(out_file, 'w') as csv_file:
     wr = csv.writer(csv_file, delimiter=',')
     wr.writerow(["Aproach","Sample","Accuracy","Recall","TaxLevel"])
     for i in store_results:
         wr.writerow(list(i))
         
-        
 
 
-        
-        
-        
+print ("Done!")
         
