@@ -23,7 +23,7 @@ class TaxInfo():
         
         # info from matches
         self.TaxId = TaxId
-        self.Lineage = Lineage
+        self.Lineage = Lineage # the results o the match, not considering taxIDs
         self.Sample = Sample
         self.RefDatabase = RefDatabase
         self.Abundance = Abundance

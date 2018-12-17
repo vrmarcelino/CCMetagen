@@ -9,23 +9,23 @@ Working with UNITE - ITS at the moment.
 @ V.R.Marcelino
 Created on 1 Aug 2018
 
+Updated: 14 Dec 2018
+
 """
 import re
 
 # local imports
 import cTaxInfo
 import fNCBItax
-
+import fAcc2TaxId
+import subprocess
 
 # function to filter a res file in pandas df format:
 def res_filter(df,ref_database, cov,Iden,Depth,p):
     df = df.drop(df[df.Template_Coverage < cov].index)
 
     # filter based on identity      
-    if ref_database == "UNITE":
-        df = df.drop(df[df.Query_Identity < Iden].index)
-    else:
-        print ("Note that query identity is ignored when parsing KMA results in Sparse mode")
+    df = df.drop(df[df.Query_Identity < Iden].index)
     
     # filter based on depth
     df = df.drop(df[df.Depth < Depth].index)
@@ -39,7 +39,8 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
 
 # function that takes as input a pandas dataframe with KMA results 
 # and add tax information to results 
-def populate_w_tax(in_df, ref_database):
+# the last four variables are optional - only needed when dealing with nt database
+def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_file = None, rb = None):
 
     # similarity thresholds to accept the tax rank:
     species_threshold = 98.41 # Yeast - Vu et al 2016
@@ -52,15 +53,15 @@ def populate_w_tax(in_df, ref_database):
     # index == the #template (fungal match)
     for index, row in in_df.iterrows():
     
-        split_match = re.split (r'(\|| )', index)
         match_info = cTaxInfo.TaxInfo()
 
         # define the tax. rank based on similarity:
-        
         if ref_database == "UNITE":
+            split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
             match_info.Lineage = split_match[12]
-    
+
+
             # if taxid is knwon:
             if split_match[4] != 'unk_taxid':
                 
@@ -77,7 +78,8 @@ def populate_w_tax(in_df, ref_database):
 
 
         elif ref_database == "RefSeq":
-            qiden = 100 # unknow query identity when running it in Sparse Mode
+            split_match = re.split (r'(\|| )', index)
+            qiden = row['Query_Identity'] # !! check if this actually works!!
             match_info.TaxId = split_match[4]
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species
@@ -85,6 +87,21 @@ def populate_w_tax(in_df, ref_database):
             match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
 
 
+        elif ref_database == "nt":
+                                    
+            split_match = re.split (r'(\t)', index)
+            qiden = row['Query_Identity']
+            match_info.Lineage = split_match[0]
+            
+            #get taxid from accession number
+            accession = split_match[0].split()[0]
+
+            retrieved_taxid = fAcc2TaxId.get_tax_id_dic(accession,acc2tax_dic)
+            match_info.TaxId = retrieved_taxid
+
+            match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
+            
+            
         # Populate the df with lineage info:
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
         in_df.at[index, 'Phylum'] = match_info.Phylum
@@ -104,10 +121,8 @@ def populate_w_tax(in_df, ref_database):
         if qiden >= species_threshold:
             in_df.at[index, 'Species'] = match_info.Species
 
+    
     return in_df
-
-
-
 
 
 
