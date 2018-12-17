@@ -53,10 +53,12 @@ done""")
 
 parser = ArgumentParser()
 
-parser.add_argument('-m', '--mode', help="""what do you want KMetagen to do? 
+parser.add_argument('-m', '--mode', default = 'both', 
+                    help="""what do you want KMetagen to do? 
                     Valid options at the moment are:
                         text: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information
-                        visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation""", required=True)
+                        visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation
+                        both: outputs both text and visual file formats. Default = both""", required=False)
 
 parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=True)
 parser.add_argument('-o', '--output_fp', default = 'KMetagen_out', 
@@ -107,6 +109,7 @@ th = args.threads
 #th = 1 # number of threads/cores to run when using the whole nt database
 
 
+
 ### If the reference database is nt, check that accession_taxid_nucl.map is given 
 # and then produce the filtered accession to taxid mao:
 if ref_database == "nt":
@@ -136,26 +139,29 @@ else:
     rb = None
     acc2tax_dic = None
 
-##### Take as input individual .res files and output a file with tax info
 
-if mode == 'text':
-    
-    print ("")
-    print ("Reading file %s" %(f))
-    print ("")
-    
-    df = pd.read_csv(f, sep='\t', index_col=0)
 
-    # Rename headers:
-    df.index.name = "Closest_match"
+
+### Read input files and output a pandas dataframe
+print ("")
+print ("Reading file %s" %(f))
+print ("")
+    
+df = pd.read_csv(f, sep='\t', index_col=0)
+
+# Rename headers:
+df.index.name = "Closest_match"
  
-    # first quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
+# first quality filter (coverage, query identity, Depth and p-value)
+df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
-    # add tax info
-#    df = fParseKMA.populate_w_tax(df, ref_database, acc2tax_dic, th, f, rb)
-    df = fParseKMA.populate_w_tax(df, ref_database, acc2tax_dic = acc2tax_dic, threads = th, in_res_file = f, rb = rb)
-      
+# add tax info
+df = fParseKMA.populate_w_tax(df, ref_database, acc2tax_dic = acc2tax_dic, threads = th, in_res_file = f, rb = rb)
+
+
+##### Output a file with tax info
+if (mode == 'text') or (mode == 'both'):
+    
     # save to file
     out = args.output_fp + ".csv"
     pd.DataFrame.to_csv(df, out)
@@ -163,25 +169,8 @@ if mode == 'text':
     print ("csv file saved as %s" %(out))
     print ("")
 
-##### Take as input individual .res files and output a Krona file 
-if mode == 'visual':
-
-    print ("")
-    print ("Reading file %s" %(f))
-    print ("")
-    
-    df = pd.read_csv(f, sep='\t', index_col=0)
-
-    # Rename headers:
-    df.index.name = "Match"
- 
-    # first quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
-    
-    # add tax info
-    df = fParseKMA.populate_w_tax(df, ref_database, acc2tax_dic = acc2tax_dic,threads = th, in_res_file = f, rb = rb)
-
-
+##### Output a Krona file 
+if (mode == 'visual') or (mode == 'both'):
     krona_info = df[['Depth','Kingdom','Phylum','Class','Order','Genus','Species']]
 
     # save dataframe to file
@@ -204,8 +193,6 @@ if ref_database == "nt":
 
 # remove .pyc/.pyo ?
     
-    
 
-    
     
     
