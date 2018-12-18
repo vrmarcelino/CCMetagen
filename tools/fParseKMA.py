@@ -113,7 +113,7 @@ def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_
             in_df.at[index, 'Order'] = match_info.Order
 
         if qiden >= family_threshold:
-            in_df.at[index, 'Order'] = match_info.Family
+            in_df.at[index, 'Family'] = match_info.Family
     
         if qiden >= genus_threshold:
             in_df.at[index, 'Genus'] = match_info.Genus

@@ -33,7 +33,7 @@ if len(sys.argv) == 1:
     print ("To be used with KMA")
     print ("")
     print ("Usage: KMetagen.py <options> ")
-    print ("Ex: KMetagen.py -m 1 -i KMA_out/2_mtg_ITS.res -r UNITE -o parse_result_2mtg")
+    print ("Ex: KMetagen.py -i KMA_out/2_mtg_ITS.res -r UNITE -o parsed_result_2mtg")
     print ("")
     print ("")
     print ("""When running KMetagen for multiple files in a folder:
@@ -171,7 +171,7 @@ if (mode == 'text') or (mode == 'both'):
 
 ##### Output a Krona file 
 if (mode == 'visual') or (mode == 'both'):
-    krona_info = df[['Depth','Kingdom','Phylum','Class','Order','Genus','Species']]
+    krona_info = df[['Depth','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
 
     # save dataframe to file
     out1 = args.output_fp + ".tsv"
