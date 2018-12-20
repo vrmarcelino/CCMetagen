@@ -71,7 +71,7 @@ def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_
                 # Warning about unknown taxids: 
             else:
                 print ("")
-                print ("WARNING: based on accession #, no taxonomic information found in NCBI for %s" %(match_info.Lineage))
+                print ("WARNING: based on accession number, no taxonomic information was found in NCBI for %s" %(match_info.Lineage))
                 print ("This match will not get NCBItax taxonomic ranks")
                 print ("")
                 match_info.TaxId = split_match[4] # 'unk_taxid'
@@ -97,9 +97,17 @@ def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_
             accession = split_match[0].split()[0]
 
             retrieved_taxid = fAcc2TaxId.get_tax_id_dic(accession,acc2tax_dic)
-            match_info.TaxId = retrieved_taxid
-
-            match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
+            
+            if retrieved_taxid == None:
+                # Warning about unknown taxids: 
+                print ("")
+                print ("WARNING: based on accession number, no taxonomic information was found in NCBI for %s" %(match_info.Lineage))
+                print ("This match will not get NCBItax taxonomic ranks")
+                print ("")
+                
+            else:
+                match_info.TaxId = retrieved_taxid            
+                match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
             
             
         # Populate the df with lineage info:

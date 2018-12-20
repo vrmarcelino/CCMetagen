@@ -98,7 +98,7 @@ th = args.threads
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"
 #f = "2_mtg_ITS.res"
-#f = "6_mtg_test.res" 
+#f = "9_mtt_ctg_nt_db.res" 
 #ref_database = "nt"
 #mode = '1'
 #c = 20
@@ -131,6 +131,7 @@ if ref_database == "nt":
 
         # load it to memory (test)
         filtered_acc2_taxid_map = rb + "_acc2taxid_map_filtered.temp"
+        
         with open(filtered_acc2_taxid_map) as a:
             acc2tax_dic = dict(x.rstrip().split(None, 1) for x in a)
             
