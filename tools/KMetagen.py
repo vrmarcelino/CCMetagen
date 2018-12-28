@@ -7,7 +7,7 @@ Version 0.1
 
 @ V.R.Marcelino
 Created on Wed Jul 25 17:13:10 2018
-Updated: 17 Dec 2019
+Updated: 28 Dec 2019
 Version: 0.1
 
 """
@@ -22,8 +22,7 @@ import subprocess
 import fParseKMA
 import cTaxInfo # needed in fParseKMA
 import fNCBItax # needed in fParseKMA
-import fAcc2TaxId # needed in fParseKMA for nt database
-import random # for random base name (important if running KMetagen on multiple files)
+
 
 # help
 if len(sys.argv) == 1:
@@ -33,7 +32,7 @@ if len(sys.argv) == 1:
     print ("To be used with KMA")
     print ("")
     print ("Usage: KMetagen.py <options> ")
-    print ("Ex: KMetagen.py -i KMA_out/2_mtg_ITS.res -r UNITE -o parsed_result_2mtg")
+    print ("Ex: KMetagen.py -i KMA_out/2_mtg_ITS.res -r nt -o parsed_result_2mtg")
     print ("")
     print ("")
     print ("""When running KMetagen for multiple files in a folder:
@@ -63,8 +62,8 @@ parser.add_argument('-m', '--mode', default = 'both',
 parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=True)
 parser.add_argument('-o', '--output_fp', default = 'KMetagen_out', 
                     help='Path to the output file. Default = KMetagen_out', required=False)
-parser.add_argument('-r', '--reference_database', default = 'ITS', 
-                    help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = UNITE', required=False)
+parser.add_argument('-r', '--reference_database', default = 'nt', 
+                    help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
 parser.add_argument('-c', '--coverage', default = 20, 
                     help='Minimum coverage. Default = 20',type=int, required=False)
@@ -74,12 +73,6 @@ parser.add_argument('-d', '--depth', default = 0.2,
                     help='Minimum sequencing depth. Default = 0.2.',type=int, required=False)
 parser.add_argument('-p', '--pvalue', default = 0.05, 
                     help='Minimum p-value. Default = 0.05.',type=int, required=False)
-
-# nt specific arguments:
-parser.add_argument('-t', '--threads', default = 1, 
-                    help='Number of threads. Default = 1.',type=int, required=False)
-parser.add_argument('-a', '--acc_taxid_map', default = None, 
-                    help='Path to the accession_taxid_nucl.map file.',required=False)
 
 
 
@@ -92,8 +85,7 @@ c = args.coverage
 q = args.query_identity
 d = args.depth
 p = args.pvalue
-acc_taxid_map=args.acc_taxid_map
-th = args.threads
+
 
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"
@@ -105,41 +97,6 @@ th = args.threads
 #q = 50
 #d = 0.2
 #p = 0.05
-#acc_taxid_map="accession_taxid_test.map" 
-#th = 1 # number of threads/cores to run when using the whole nt database
-
-
-
-### If the reference database is nt, check that accession_taxid_nucl.map is given 
-# and then produce the filtered accession to taxid mao:
-if ref_database == "nt":
-    if acc_taxid_map == None:
-        print ("Error: You must specify the path to the accession_taxid_nucl.map file" )
-        sys.exit()
-        
-    else:
-            
-        # random base name
-        rb = str(random.randint(1000000,9999999))
-            
-        # extract accession numbers in one text file
-        command = "awk '{print $1}' " + f + " > " + rb + "_accessions.temp"
-        subprocess.run(command, shell=True) 
-        
-        # get a filtered accession 2 taxid map file
-        fAcc2TaxId.filter_acc2taxid_map(f, acc_taxid_map, th, rb)
-
-        # load it to memory (test)
-        filtered_acc2_taxid_map = rb + "_acc2taxid_map_filtered.temp"
-        
-        with open(filtered_acc2_taxid_map) as a:
-            acc2tax_dic = dict(x.rstrip().split(None, 1) for x in a)
-            
-# otherwse init non used variables
-else:
-    rb = None
-    acc2tax_dic = None
-
 
 
 
@@ -157,7 +114,7 @@ df.index.name = "Closest_match"
 df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
 # add tax info
-df = fParseKMA.populate_w_tax(df, ref_database, acc2tax_dic = acc2tax_dic, threads = th, in_res_file = f, rb = rb)
+df = fParseKMA.populate_w_tax(df, ref_database)
 
 
 ##### Output a file with tax info
@@ -188,11 +145,7 @@ if (mode == 'visual') or (mode == 'both'):
     print ("")
 
 
-##### Clean up temporary files:
-if ref_database == "nt":
-    fAcc2TaxId.cleanup(rb)
 
-# remove .pyc/.pyo ?
     
 
     

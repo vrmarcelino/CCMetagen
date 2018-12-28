@@ -9,7 +9,7 @@ Working with UNITE - ITS at the moment.
 @ V.R.Marcelino
 Created on 1 Aug 2018
 
-Updated: 14 Dec 2018
+Updated: 28 Dec 2018
 
 """
 import re
@@ -17,7 +17,6 @@ import re
 # local imports
 import cTaxInfo
 import fNCBItax
-import fAcc2TaxId
 import subprocess
 
 # function to filter a res file in pandas df format:
@@ -40,7 +39,7 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
 # function that takes as input a pandas dataframe with KMA results 
 # and add tax information to results 
 # the last four variables are optional - only needed when dealing with nt database
-def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_file = None, rb = None):
+def populate_w_tax(in_df, ref_database):
 
     # similarity thresholds to accept the tax rank:
     species_threshold = 98.41 # Yeast - Vu et al 2016
@@ -63,7 +62,7 @@ def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_
 
 
             # if taxid is knwon:
-            if split_match[4] != 'unk_taxid':
+            if split_match[4] != 'c':
                 
                 match_info.TaxId = int(split_match[4])
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
@@ -88,17 +87,14 @@ def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_
 
 
         elif ref_database == "nt":
-                                    
-            split_match = re.split (r'(\t)', index)
+            split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
-            match_info.Lineage = split_match[0]
+            match_info.Lineage = split_match[1]
             
             #get taxid from accession number
-            accession = split_match[0].split()[0]
+            taxid = split_match[0]
 
-            retrieved_taxid = fAcc2TaxId.get_tax_id_dic(accession,acc2tax_dic)
-            
-            if retrieved_taxid == None:
+            if taxid == 'unk_taxid':
                 # Warning about unknown taxids: 
                 print ("")
                 print ("WARNING: based on accession number, no taxonomic information was found in NCBI for %s" %(match_info.Lineage))
@@ -106,7 +102,7 @@ def populate_w_tax(in_df, ref_database, acc2tax_dic = None, threads = 1, in_res_
                 print ("")
                 
             else:
-                match_info.TaxId = retrieved_taxid            
+                match_info.TaxId = taxid            
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
             
             
