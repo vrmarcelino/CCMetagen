@@ -1,4 +1,0 @@
-res_filter.pl test.res test.frag
-sort -k 7,7 test.frag.filtered > test.frag.filtered.sorted
-taxonmatch_filter.pl test.frag.filtered.sorted
-write_fasta.pl test.frag.filtered.sorted.good
