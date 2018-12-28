@@ -38,7 +38,6 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
 
 # function that takes as input a pandas dataframe with KMA results 
 # and add tax information to results 
-# the last four variables are optional - only needed when dealing with nt database
 def populate_w_tax(in_df, ref_database):
 
     # similarity thresholds to accept the tax rank:
@@ -105,26 +104,34 @@ def populate_w_tax(in_df, ref_database):
                 match_info.TaxId = taxid            
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
             
+
             
-        # Populate the df with lineage info:
+        # Populate the df with lineage info and the LCA taxid:
+        in_df.at[index, 'LCA_TaxId'] = match_info.Phylum_TaxId
+        
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
         in_df.at[index, 'Phylum'] = match_info.Phylum
 
+
         if qiden >= class_threshold:
             in_df.at[index, 'Class'] = match_info.Class
+            in_df.at[index, 'LCA_TaxId'] = match_info.Class_TaxId
     
         if qiden >= order_threshold:
             in_df.at[index, 'Order'] = match_info.Order
+            in_df.at[index, 'LCA_TaxId'] = match_info.Order_TaxId
 
         if qiden >= family_threshold:
             in_df.at[index, 'Family'] = match_info.Family
+            in_df.at[index, 'LCA_TaxId'] = match_info.Family_TaxId
     
         if qiden >= genus_threshold:
             in_df.at[index, 'Genus'] = match_info.Genus
+            in_df.at[index, 'LCA_TaxId'] = match_info.Genus_TaxId
     
         if qiden >= species_threshold:
             in_df.at[index, 'Species'] = match_info.Species
-
+            in_df.at[index, 'LCA_TaxId'] = match_info.Species_TaxId
     
     return in_df
 

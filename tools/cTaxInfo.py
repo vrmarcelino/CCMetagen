@@ -19,11 +19,11 @@ class TaxInfo():
                  Phylum_TaxId=None, Class=None, Class_TaxId=None,
                  Order=None, Order_TaxId=None, Family=None, Family_TaxId=None,
                  Genus=None, Genus_TaxId=None, Species=None, Species_TaxId=None,
-                 Coverage=None):
+                 LCA_TaxId=None, Coverage=None):
         
         # info from matches
         self.TaxId = TaxId
-        self.Lineage = Lineage # the results o the match, not considering taxIDs
+        self.Lineage = Lineage # the results of the match, not considering taxIDs
         self.Sample = Sample
         self.RefDatabase = RefDatabase
         self.Abundance = Abundance
@@ -43,6 +43,9 @@ class TaxInfo():
         self.Genus_TaxId = Genus_TaxId
         self.Species = Species
         self.Species_TaxId = Species_TaxId
+        
+        # Taxid of the Lowest Common Ancestor
+        self.LCA_TaxId = LCA_TaxId
 
         # info from Fungi Table only
         self.Coverage = Coverage

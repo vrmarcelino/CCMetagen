@@ -133,7 +133,7 @@ if (mode == 'visual') or (mode == 'both'):
 
     # save dataframe to file
     out1 = args.output_fp + ".tsv"
-    pd.DataFrame.to_csv(krona_info, out1, sep='\t', index=False)
+    pd.DataFrame.to_csv(krona_info, out1, sep='\t', index=False, header=False)
     
     # save krona file
     out2 = args.output_fp + ".html" 
