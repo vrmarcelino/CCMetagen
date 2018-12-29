@@ -86,7 +86,6 @@ q = args.query_identity
 d = args.depth
 p = args.pvalue
 
-
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"
 #f = "2_mtg_ITS.res"
@@ -97,6 +96,12 @@ p = args.pvalue
 #q = 50
 #d = 0.2
 #p = 0.05
+
+# Warning if RefDatabase is unknown
+if ref_database not in ("UNITE", "RefSeq","nt"):
+    print (""" Reference database (-r) must be either UNITE, RefSeq or nt.
+           the input is case sensitive and the default is nt.""")
+    sys.exit("Try again.")
 
 
 
