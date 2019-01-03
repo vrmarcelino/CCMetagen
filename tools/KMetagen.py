@@ -35,13 +35,13 @@ if len(sys.argv) == 1:
     print ("Ex: KMetagen.py -i KMA_out/2_mtg_ITS.res -r nt -o parsed_result_2mtg")
     print ("")
     print ("")
-    print ("""When running KMetagen for multiple files in a folder:
+    print ("""When running KMetagen on multiple files in a folder:
 input_dir=KMA_out
 output_dir=KMetagen_results
 mkdir $output_dir
 for f in $input_dir/*.res; do 
     out=$output_dir/${f/$input_dir\/}
-    KMetagen.py -m visual -i $f -r UNITE -o $out
+    KMetagen.py -m visual -i $f -r nt -o $out
 done""")
     print ("")
     print ("For help and options, type: KMetagen.py -h")
@@ -54,7 +54,7 @@ parser = ArgumentParser()
 
 parser.add_argument('-m', '--mode', default = 'both', 
                     help="""what do you want KMetagen to do? 
-                    Valid options at the moment are:
+                    Valid options are 'visual', 'text' or 'both':
                         text: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information
                         visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation
                         both: outputs both text and visual file formats. Default = both""", required=False)
