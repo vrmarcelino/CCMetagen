@@ -38,15 +38,15 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
 
 # function that takes as input a pandas dataframe with KMA results 
 # and add tax information to results 
-def populate_w_tax(in_df, ref_database):
-
-    # similarity thresholds to accept the tax rank:
-    species_threshold = 98.41 # Yeast - Vu et al 2016
-    genus_threshold = 96.31 # Yeast - Vu et al 2016
-    family_threshold = 88.51 # Filamentous fungi - Vu et al 2019
-    order_threshold = 81.21 # Filamentous fungi - Vu et al 2019
-    class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
-    phyllum_threshold = 0  # no data, no filtering
+def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
+                   family_threshold,order_threshold,class_threshold,phyllum_threshold):
+    #defaults:
+    #species_threshold = 98.41 # Yeast - Vu et al 2016
+    #genus_threshold = 96.31 # Yeast - Vu et al 2016
+    #family_threshold = 88.51 # Filamentous fungi - Vu et al 2019
+    #order_threshold = 81.21 # Filamentous fungi - Vu et al 2019
+    #class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
+    #phyllum_threshold = 0  # no data, no filtering
     
     # index == the #template (fungal match)
     for index, row in in_df.iterrows():
@@ -114,12 +114,12 @@ def populate_w_tax(in_df, ref_database):
         
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
         
-        
-        in_df.at[index, 'Phylum'] = match_info.Phylum
-        if match_info.Phylum_TaxId != None:
-            in_df.at[index, 'LCA_TaxId'] = match_info.Phylum_TaxId
-
         # fill in the rest of the table according to similarity threshold:
+        if qiden >= phyllum_threshold:
+            in_df.at[index, 'Phylum'] = match_info.Phylum
+            if match_info.Phylum_TaxId != None:
+                in_df.at[index, 'LCA_TaxId'] = match_info.Phylum_TaxId
+
         if qiden >= class_threshold:
             in_df.at[index, 'Class'] = match_info.Class
             if match_info.Class_TaxId != None:

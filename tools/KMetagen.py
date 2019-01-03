@@ -7,7 +7,7 @@ Version 0.1
 
 @ V.R.Marcelino
 Created on Wed Jul 25 17:13:10 2018
-Updated: 28 Dec 2019
+Updated: 03 Jan 2019
 Version: 0.1
 
 """
@@ -66,14 +66,27 @@ parser.add_argument('-r', '--reference_database', default = 'nt',
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
 parser.add_argument('-c', '--coverage', default = 20, 
-                    help='Minimum coverage. Default = 20',type=int, required=False)
+                    help='Minimum coverage. Default = 20',type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50, 
-                    help='Minimum query identity (Phyllum level). Default = 50', type=int, required=False)
+                    help='Minimum query identity (Phyllum level). Default = 50', type=float, required=False)
 parser.add_argument('-d', '--depth', default = 0.2,
-                    help='Minimum sequencing depth. Default = 0.2.',type=int, required=False)
+                    help='Minimum sequencing depth. Default = 0.2.',type=float, required=False)
 parser.add_argument('-p', '--pvalue', default = 0.05, 
-                    help='Minimum p-value. Default = 0.05.',type=int, required=False)
+                    help='Minimum p-value. Default = 0.05.',type=float, required=False)
 
+# similarity thresholds:
+parser.add_argument('-st', '--species_threshold', default = 98.41, 
+                    help='Species-level similarity threshold. Default = 98.41',type=float, required=False)
+parser.add_argument('-gt', '--genus_threshold', default = 96.31, 
+                    help='Genus-level similarity threshold. Default = 96.31',type=float, required=False)
+parser.add_argument('-ft', '--family_threshold', default = 88.51, 
+                    help='Family-level similarity threshold. Default = 88.51',type=float, required=False)
+parser.add_argument('-ot', '--order_threshold', default = 81.21, 
+                    help='Order-level similarity threshold. Default = 81.21',type=float, required=False)
+parser.add_argument('-ct', '--class_threshold', default = 80.91, 
+                    help='Class-level similarity threshold. Default = 80.91',type=float, required=False)
+parser.add_argument('-pt', '--phylum_threshold', default = 0, 
+                    help='Phylum-level similarity threshold. Default = 0 - not applied',type=float, required=False)
 
 
 # what to do:
@@ -85,6 +98,15 @@ c = args.coverage
 q = args.query_identity
 d = args.depth
 p = args.pvalue
+
+# taxononomic thresholds:
+st = args.species_threshold
+gt = args.genus_threshold
+ft = args.family_threshold
+ot = args.order_threshold
+ct = args.class_threshold
+pt = args.phylum_threshold
+
 
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"
@@ -119,7 +141,7 @@ df.index.name = "Closest_match"
 df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
 # add tax info
-df = fParseKMA.populate_w_tax(df, ref_database)
+df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)
 
 
 ##### Output a file with tax info
