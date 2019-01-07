@@ -41,7 +41,7 @@ output_dir=KMetagen_results
 mkdir $output_dir
 for f in $input_dir/*.res; do 
     out=$output_dir/${f/$input_dir\/}
-    KMetagen.py -m visual -i $f -r nt -o $out
+    KMetagen.py -i $f -r nt -o $out
 done""")
     print ("")
     print ("For help and options, type: KMetagen.py -h")
@@ -110,14 +110,20 @@ pt = args.phylum_threshold
 
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"
-#f = "2_mtg_ITS.res"
-#f = "9_mtt_ctg_nt_db.res" 
-#ref_database = "nt"
-#mode = '1'
+#f = "3_mtt_refSeq_bf.res"
+#ref_database = "RefSeq"
+#mode = 'text'
 #c = 20
 #q = 50
 #d = 0.2
 #p = 0.05
+#st = 0
+#gt = 0
+#ft = 0
+#ot = 0
+#ct = 0
+#pt = 0
+
 
 # Warning if RefDatabase is unknown
 if ref_database not in ("UNITE", "RefSeq","nt"):

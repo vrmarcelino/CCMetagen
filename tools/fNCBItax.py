@@ -23,7 +23,7 @@ def lineage_extractor(query_taxid, TaxInfo_object):
     names = ncbi.get_taxid_translator(lineage)
 
     for key, val in ranks.items():
-        if val == list_of_taxa_ranks[0]:
+        if val == (list_of_taxa_ranks[0]) or (val == 'superkingdom'):
             TaxInfo_object.Kingdom = names[key]
             TaxInfo_object.Kingdom_TaxId = key
             

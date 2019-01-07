@@ -50,7 +50,6 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
     
     # index == the #template (fungal match)
     for index, row in in_df.iterrows():
-    
         match_info = cTaxInfo.TaxInfo()
 
         # define the tax. rank based on similarity:
@@ -77,7 +76,7 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
         elif ref_database == "RefSeq":
             split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
-            match_info.TaxId = split_match[4]
+            match_info.TaxId = int(split_match[4])
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species
             # include info from NCBI:
@@ -100,20 +99,20 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
                 print ("")
                 
             else:
-                match_info.TaxId = taxid            
+                match_info.TaxId = int(taxid)            
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
             
  
             
-        # Populate the df with lineage info and the LCA taxid:
+        # Populate the df with lineage info and the LCA taxid:       
         in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
         
         # if it matches to uncultured or unclassified fungus, use the Fungi LCA itaxid:
         if match_info.Kingdom == 'Fungi':
             in_df.at[index, 'LCA_TaxId'] = 4751
-        
+
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
-        
+
         # fill in the rest of the table according to similarity threshold:
         if qiden >= phyllum_threshold:
             in_df.at[index, 'Phylum'] = match_info.Phylum
