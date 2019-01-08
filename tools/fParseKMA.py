@@ -47,7 +47,12 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
     #order_threshold = 81.21 # Filamentous fungi - Vu et al 2019
     #class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
     #phyllum_threshold = 0  # no data, no filtering
-    
+
+
+    # Make sure all taxa columns are strings (doesn't automatically happen if the first one is None)
+    in_df = in_df.assign(LCA_TaxId="",Kingdom="",Phylum="",Class="",Order="",Family="",Genus="",Species="")
+
+
     # index == the #template (fungal match)
     for index, row in in_df.iterrows():
         match_info = cTaxInfo.TaxInfo()
@@ -86,7 +91,7 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
         elif ref_database == "nt":
             split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
-            match_info.Lineage = split_match[2]
+            match_info.Lineage = split_match[4] + " " + split_match[6]
             
             #get taxid from accession number
             taxid = split_match[0]
@@ -101,8 +106,7 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
             else:
                 match_info.TaxId = int(taxid)            
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
-            
- 
+   
             
         # Populate the df with lineage info and the LCA taxid:       
         in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
@@ -110,6 +114,7 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
         # if it matches to uncultured or unclassified fungus, use the Fungi LCA itaxid:
         if match_info.Kingdom == 'Fungi':
             in_df.at[index, 'LCA_TaxId'] = 4751
+
 
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
 

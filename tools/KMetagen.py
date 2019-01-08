@@ -110,17 +110,17 @@ pt = args.phylum_threshold
 
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"
-#f = "3_mtt_refSeq_bf.res"
-#ref_database = "RefSeq"
+#f = "7_Outback_Duck.res"
+#ref_database = "nt"
 #mode = 'text'
 #c = 20
 #q = 50
 #d = 0.2
 #p = 0.05
-#st = 0
-#gt = 0
-#ft = 0
-#ot = 0
+#st = 99
+#gt = 98
+#ft = 95
+#ot = 80
 #ct = 0
 #pt = 0
 
