@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Parse the results of 1 KrakenHLL result and store it in the SQLite3 'bench.db'
+Parse the results of 1 KrakenUniq result and store it in the SQLite3 'bench.db'
 
-USAGE ex: python KrakenHLL2SQL.py -i 1_mtt_refseq_f_partial.tsv -n 1_mtt -sql benchm.db -r RefSeq_f_partial
+USAGE ex: python KrakenUniqSQL.py -i 1_mtt_refseq_f_partial.tsv -n 1_mtt -sql benchm.db -r RefSeq_f_partial
 
 @ V.R.Marcelino
 Created on Thu Jul 19 11:06:33 2018
@@ -18,19 +18,19 @@ import fNCBItax # script with function to get lineage from taxid
 import csv
 
 parser = ArgumentParser()
-parser.add_argument('-i', '--input_krakenHLL_report', help='The path to the krakenHLL result', required=True)
+parser.add_argument('-i', '--input_krakenUniq_report', help='The path to the krakenUniq result', required=True)
 parser.add_argument('-n', '--input_sample_name', help='Tthe name of the sample', required=True)
 parser.add_argument('-r', '--reference_database', help='Reference database used, options are RefSeq_f_partial and RefSeq_bf', required=True)
 parser.add_argument('-sql', '--SQL_db', help='SQL database where it should store the data', required=True)
 
 args = parser.parse_args()
-in_res_file = args.input_krakenHLL_report
+in_res_file = args.input_krakenUniq_report
 ref_database = args.reference_database
 sql_fp = args.SQL_db
 sample_name = args.input_sample_name
 
 # Tests and torubleshooting
-#in_res_file = "1_mtt_refseq_f_partial.tsv"
+#in_res_file = "1_mtt_refseq_bf.tsv"
 #sql_fp="benchm.db"
 #ref_database = "RefSeq_f_partial"
 #sample_name="1_mtt"
@@ -42,7 +42,7 @@ cursor = connection.cursor()
 
 # Create a table if it does not exist:
 # Note that Order is written with two 'O's, as Order is a sql command
-query = """CREATE TABLE IF NOT EXISTS KrakenHLL (TaxID integer, Lineage text, 
+query = """CREATE TABLE IF NOT EXISTS KrakenUniq (TaxID integer, Lineage text, 
 Sample text, RefDatabase text, Abundance real, Kingdom text,Kingdom_TaxId integer,
 Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
 Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
@@ -57,7 +57,10 @@ connection.commit()
 store_lineage_info = []
 
 with open(in_res_file) as res:
-    next (res) # skip first line
+#    skip first three lines:
+    next (res)
+    next (res)
+    next (res)
     for line in csv.reader(res, delimiter='\t'):
 
         match_info = cTaxInfo.TaxInfo()
@@ -83,7 +86,7 @@ with open(in_res_file) as res:
 
 
 # output as a SQLite3:
-query = "INSERT INTO KrakenHLL VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+query = "INSERT INTO KrakenUniq VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 for i in store_lineage_info:
     cursor.execute(query,(i.TaxId,i.Lineage,i.Sample,i.RefDatabase,i.Abundance,
                           i.Kingdom,i.Kingdom_TaxId,i.Phylum,i.Phylum_TaxId,
@@ -98,7 +101,7 @@ connection.close()
 
 print ("")
 print ("Done!")
-print ("Table KrakenHLL Table saved in %s sqlite3 database" %(sql_fp))
+print ("Table KrakenUniq Table saved in %s sqlite3 database" %(sql_fp))
 print ("")
 
 

@@ -32,7 +32,7 @@ sql2csv = args.output_csv
 #TaxRank="Species"
 #sql2csv="Res_species.csv"
 
-approaches = ['KMetagen', 'KMA', 'Centrifuge', 'KrakenHLL','Kraken2'] # approaches ot be analysed
+approaches = ['KMetagen', 'KMA', 'Centrifuge', 'KrakenUniq','Kraken2'] # approaches ot be analysed
 
 
 print ("")
