@@ -68,7 +68,7 @@ parser.add_argument('-r', '--reference_database', default = 'nt',
 parser.add_argument('-c', '--coverage', default = 20, 
                     help='Minimum coverage. Default = 20',type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50, 
-                    help='Minimum query identity (Phyllum level). Default = 50', type=float, required=False)
+                    help='Minimum query identity (Phylum level). Default = 50', type=float, required=False)
 parser.add_argument('-d', '--depth', default = 0.2,
                     help='Minimum sequencing depth. Default = 0.2.',type=float, required=False)
 parser.add_argument('-p', '--pvalue', default = 0.05, 
