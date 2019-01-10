@@ -16,9 +16,9 @@ import pandas as pd
 # load files
 kraken_o = "s06.6_kraken.sh.e2637431.txt"
 centrifuge_o = "s06.2_centrifuge_all.txt"
-krakenUniq_o = "s06.5_krakenUniq_test.txt"
-kma_o = "s06.1_KMA_test.txt"
-kmetagen_o = "s06.1_KMetagen_test.txt"
+krakenUniq_o = "s06.5_krakenUniq_refSeq_all.txt"
+kma_o = "s06.1_KMA_all_db.txt"
+kmetagen_o = "s06.1.2_KMetagen_all_db.txt"
 
 
 # save as
@@ -129,7 +129,7 @@ with open(centrifuge_o) as o:
 
 
 
-### KrakenUniq (need the result of one more sample)
+### KrakenUniq
 counter = 0
 program = "KrakenUniq"
 ref_databases = ["RefSeq_f_partial","RefSeq_bf"]
@@ -191,7 +191,7 @@ with open(kma_o) as o:
                        
             store_kma.append(CPU_time)
 
-# ten add it to Kmetagen's CPU time:
+# then add it to Kmetagen's CPU time:
 with open(kmetagen_o) as o:
     for line in o:
         if line.startswith("user"):
@@ -204,16 +204,16 @@ with open(kmetagen_o) as o:
             KMA_time = store_kma[counter]
             CPU_time = CPU_time_filtering + KMA_time
             
-            if 0 <= counter < 9:
+            if 0 <= counter < 7:
                 ref = ref_databases[0]
                 
-            elif 9 <= counter < 18:
+            elif 7 <= counter < 16:
                 ref = ref_databases[1]
                 
-            elif 18 <= counter < 27:
+            elif 16 <= counter < 25:
                 ref = ref_databases[2]
                 
-            elif 27 <= counter < 34:
+            elif 25 <= counter < 34:
                 ref = ref_databases[3]
                 
             else:
