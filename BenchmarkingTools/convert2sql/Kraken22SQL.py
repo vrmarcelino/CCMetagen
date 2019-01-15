@@ -32,10 +32,10 @@ sql_fp = args.SQL_db
 sample_name = args.input_sample_name
 
 # Tests and torubleshooting
-#in_res_file = "5_mtt_ctg_nt_report.tsv"
+#in_res_file = "1_mtt_nt_report.tsv"
 #sql_fp="benchm.db"
 #ref_database = "nt"
-#sample_name="5_mtt"
+#sample_name="1_mtt"
 
 
 ############# 
@@ -77,8 +77,13 @@ with open(in_res_file) as res:
         match_info.TaxId = int(line[4])
 
         if match_info.TaxId != 0:
-            match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
-
+            try:
+                match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+            except ValueError:
+                print ("""
+                       Warning: %i is not a valid taxid and will not be considered in the analysis
+                       """ %(match_info.TaxId))
+                
         else:
             print ("Note: %i percent of the reads were unclassified." %(match_info.Abundance))
 
@@ -109,6 +114,7 @@ print ("")
 
 
 #for i in store_lineage_info:
+#    print (i.Lineage)
 #    print (i.Species)
 #    print (i.Class)
 #    print (i.Order)
