@@ -14,7 +14,7 @@ import pandas as pd
 
 
 # load files
-kraken_o = "s06.6_kraken.sh.e2637431.txt"
+kraken_o = "s06.6_kraken_all_db.txt"
 centrifuge_o = "s06.2_centrifuge_all.txt"
 krakenUniq_o = "s06.5_krakenUniq_refSeq_all.txt"
 kma_o = "s06.1_KMA_all_db.txt"
