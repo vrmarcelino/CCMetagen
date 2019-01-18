@@ -21,8 +21,9 @@ import os
 
 
 parser = ArgumentParser()
-parser.add_argument('-i', '--input_fp', help="""Path to the folder containing KMetagen text (.csv) results.
-                    Note that the folder should not contain other .csv files""", required=True)
+parser.add_argument('-i', '--input_fp', help="""Path to the folder containing KMetagen text results.
+                    Note that files must end with ".res.csv"
+                    ad the folder should not contain other .res.csv files""", required=True)
 parser.add_argument('-t', '--tax_level', default = 'Species',
                     help="""Taxonomic level to merge the results. Options:
                     Closest_match (includes different genes for the same species),
@@ -45,10 +46,8 @@ args = parser.parse_args()
 in_folder = args.input_fp
 tax_level = args.tax_level
 output = args.output_fp
-
 kr = args.keep_or_remove
-level = args.filtering_tax_level
-taxa = args.taxa_list.split(",")
+
 
 
 #in_folder = "05_KMetagen"
@@ -91,9 +90,14 @@ for file in os.listdir(in_folder):
         
         # keep or remove taxa:
         if kr == "k":
+            level = args.filtering_tax_level
+            taxa = args.taxa_list.split(",")
             filt_df_str = "df[df['{}'].isin({})]".format(level,taxa)
             df = eval(filt_df_str)
+            
         elif kr == "r":
+            level = args.filtering_tax_level
+            taxa = args.taxa_list.split(",")
             filt_df_str = "df[~df['{}'].isin({})]".format(level,taxa)
             df = eval(filt_df_str)
         elif kr == "n":

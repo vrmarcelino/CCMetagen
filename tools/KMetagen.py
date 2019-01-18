@@ -87,9 +87,10 @@ parser.add_argument('-ct', '--class_threshold', default = 80.91,
                     help='Class-level similarity threshold. Default = 80.91',type=float, required=False)
 parser.add_argument('-pt', '--phylum_threshold', default = 0, 
                     help='Phylum-level similarity threshold. Default = 0 - not applied',type=float, required=False)
+parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n', 
+                    help='Turns off simularity-based filtering off. Options = y or n. Default = n', required=False)
 
 
-# what to do:
 args = parser.parse_args()
 mode = args.mode
 f = args.res_fp
@@ -100,13 +101,27 @@ d = args.depth
 p = args.pvalue
 
 # taxononomic thresholds:
-st = args.species_threshold
-gt = args.genus_threshold
-ft = args.family_threshold
-ot = args.order_threshold
-ct = args.class_threshold
-pt = args.phylum_threshold
+off = args.turn_off_sim_thresholds
 
+if off == 'y':
+    st = 0
+    gt = 0
+    ft = 0
+    ot = 0
+    ct = 0
+    pt = 0
+    
+elif off == 'n':
+    st = args.species_threshold
+    gt = args.genus_threshold
+    ft = args.family_threshold
+    ot = args.order_threshold
+    ct = args.class_threshold
+    pt = args.phylum_threshold
+
+else:
+    print ("-off argument should be either y or n. ")
+    sys.exit("Try again.")
 
 # developing and debugging:
 #out_fp = "KMetagen_nt_results"

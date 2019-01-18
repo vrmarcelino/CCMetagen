@@ -36,11 +36,10 @@ sample_name = args.input_sample_name
 
 
 # Tests and torubleshooting
-#ref_database = "UNITE" # options are UNITE, RefSeq or UniProt
-#in_res_file = "2_mtg_ITS.res"
-#in_res_file_RefSeq = "2_mtg_refSeq_bf.spa"
+#ref_database = "nt" # options are UNITE, RefSeq or UniProt
+#in_res_file = "Huttenhower_HC1.nt.res"
 #sql_fp="benchm.db"
-#sample_name="mtg"
+#sample_name="Huttenhower_HC1"
 
 ############# 
 connection = sqlite3.connect(sql_fp)
@@ -124,7 +123,19 @@ with open(in_res_file) as res:
             match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
                    
         elif ref_database == "nt":
-            print("write something to search for taxid based on species name")
+            match_info.Lineage = line[0]
+
+            if split_match[0] != 'unk_taxid':
+                match_info.TaxId = split_match[0]
+                # include info from NCBI:
+                match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
+                
+            else:
+                        print ("")
+                        print ("WARNING: no taxid found for %s" %(match_info.Lineage))
+                        print ("this match will not get the NCBItax lineage information")
+                        print ("and will not be included in the analyses")
+                        print ("")
             
         else:
             print ("ref_database must be UNITE, RefSeq_f_partial, RefSeq_bf or nt")
