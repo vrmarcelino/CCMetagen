@@ -45,7 +45,7 @@ function setupdbs()
   $DOCKER_EXEC -t $CENTRIFUGE_CONTAINER sh -c "$CMD_DOWNLOAD_LIBS                   -m -d \"fungi\" refseq >> $CENTRIFUGE_CONTAINERDIR/$SEQIDMAP"
   $DOCKER_EXEC -t $CENTRIFUGE_CONTAINER sh -c "$CENTRIFUGE_DOWNLOAD -o $CTRF_TAXDIR taxonomy"
   $DOCKER_EXEC -t $CENTRIFUGE_CONTAINER sh -c "cat $CTRF_LIBDIR/*/*.fna > input-sequences.fna"
-  $DOCKER_EXEC -t $CENTRIFUGE_CONTAINER sh -c "centrifuge-build -p $THREADS --conversion-table $SEQIDMAP --taxonomy-tree $CTRF_TAXDIR/nodes.dmp --name-table $CTRF_TAXDIR/names.dmp input-sequences.fna bacfun_refseq"
+  $DOCKER_EXEC -t $CENTRIFUGE_CONTAINER sh -c "centrifuge-build -p $THREADS --conversion-table $CENTRIFUGE_CONTAINERDIR/$SEQIDMAP --taxonomy-tree $CTRF_TAXDIR/nodes.dmp --name-table $CTRF_TAXDIR/names.dmp input-sequences.fna bacfun_refseq"
 }
 
 start_centrifuge
