@@ -6,8 +6,10 @@
 ```
 .(gitroot)
 |-- containers
-|   `-- centrifuge
-|       `-- centrifuge.dockerfile
+|   |-- centrifuge
+|   |   `-- centrifuge.dockerfile
+|   `-- kraken2
+|       `-- kraken2.dockerfile
 `-- tools
     `-- setup
         `-- centrifuge-setup.sh
@@ -30,9 +32,16 @@ mounted to `/centrifuge` in the container to store the databases and indices.
 The setup is calling `docker exec`  to invoke the individual steps required for
 the centrifuge setup.
 
-#### Use
+#### Usage
 
 Basic example to use centrifuge and mount the corresponding volume to `/centrifuge`:
 
-
 `docker run --rm -it --mount source=centrifugeVol,target=/centrifuge centrifuge:latest`
+
+### Kraken2
+
+A basic Docker container for kraken2.
+
+#### Usage
+
+`docker run --rm -t kraken2:latest kraken2`
