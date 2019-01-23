@@ -41,7 +41,7 @@ function start_centrifuge()
 
 function stop_centrifuge()
 {
-  $DOCKER_STOP $IMAGE
+  $DOCKER_STOP $CONTAINERID
 }
 
 function setup_centrifuge()
