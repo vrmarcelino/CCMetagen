@@ -12,12 +12,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends  \
      apt-get autoremove -y        && \
      apt-get clean
 
-ENV CTRFG_DST=/tmp/centrifuge
-ENV CTRFG_TAG="v1.0.3"
-ENV CTRFG_SRC=https://github.com/infphilo/centrifuge.git
-RUN git clone --branch $CTRFG_TAG $CTRFG_SRC $CTRFG_DST &&  \
-    cd $CTRFG_DST                                       &&  \
-    make -j10                                           &&  \
+ARG VERSION
+ENV VERSION ${VERSION:-v1.0.3}
+ARG MAKE_JOBS
+ENV MAKE_JOBS ${MAKE_JOBS:-2}
+ENV CTRFG_DST /tmp/centrifuge
+ENV CTRFG_SRC https://github.com/infphilo/centrifuge.git
+RUN git clone --branch $VERSION $CTRFG_SRC $CTRFG_DST &&  \
+    cd $CTRFG_DST                                     &&  \
+    make -j $MAKE_JOBS                                &&  \
     make install prefix=/usr/local
 
 ### Centrifuge
@@ -37,5 +40,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends  \
 WORKDIR /
 COPY --from=blast /blast blast/
 COPY --from=centrifuge_build /usr/local /usr/local
-ENV PATH="/blast/bin:${PATH}"
+ENV PATH "/blast/bin:${PATH}"
 CMD ["/bin/bash"]
