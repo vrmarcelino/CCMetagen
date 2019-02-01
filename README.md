@@ -5,14 +5,15 @@
 ### Repository layout
 ```
 .(gitroot)
-|-- containers
-|   |-- centrifuge
-|   |   `-- centrifuge.dockerfile
-|   `-- kraken2
-|       `-- kraken2.dockerfile
-`-- tools
-    `-- setup
-        `-- centrifuge-setup.sh
+`-- containers
+    |-- centrifuge
+    |   |-- centrifuge.dockerfile
+    |   `-- setup
+    |       `-- centrifuge-setup.sh
+    `-- kraken2
+        `-- kraken2.dockerfile
+
+
 ```
 ### Centrifuge
 
