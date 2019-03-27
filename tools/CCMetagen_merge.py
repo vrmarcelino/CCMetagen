@@ -27,10 +27,10 @@ parser.add_argument('-i', '--input_fp', help="""Path to the folder containing CC
 parser.add_argument('-t', '--tax_level', default = 'Species',
                     help="""Taxonomic level to merge the results. Options:
                     Closest_match (includes different genes for the same species),
-                    Species (Default), Genus, Order, Class, Phylum and Kingdom
+                    Species (Default), Genus, Order, Class, Phylum, Kingdom and Superkingdom
                     """, required=False)
-parser.add_argument('-o', '--output_fp', default = 'merged_samples_abund', 
-                    help='Path to the output file. Default = merged_samples_abund', required=False)
+parser.add_argument('-o', '--output_fp', default = 'merged_samples', 
+                    help='Path to the output file. Default = merged_samples', required=False)
 
 # arguments to filter by taxonomy:
 parser.add_argument('-kr', '--keep_or_remove', default = 'n', 
@@ -48,18 +48,16 @@ tax_level = args.tax_level
 output = args.output_fp
 kr = args.keep_or_remove
 
-
-
-#in_folder = "05_CCMetagen"
+#in_folder = "CCMetagen"
 #tax_level = "Species"
 #output = "merged_samples_depth.csv"
-#kr = "k" # k for keep, r for remove, and n for none
+#kr = "n" # k for keep, r for remove, and n for none
 #level = "Species"
 #taxa = ["Escherichia coli"]
 
 
 # Set the taxonomic levels to retain info:
-l = ['Kingdom','Phylum','Class','Order','Family','Genus','Species']
+l = ['Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']
 
 #f4agg = OrderedDict()
 f4agg = {}
@@ -86,7 +84,7 @@ for file in os.listdir(in_folder):
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
         
-        df = df.fillna("Unclassified")
+        df = df.fillna("NA")
         
         # keep or remove taxa:
         if kr == "k":
@@ -111,11 +109,12 @@ for file in os.listdir(in_folder):
 
         all_samples = pd.concat([all_samples, depth_by_tax], sort=True, axis=1)
     
+    
+
 # name first row
 all_samples.index.name = tax_level
 
-
-# Group taxon ranks
+# Group taxon ranks 
 all_samples = all_samples.groupby(by=all_samples.columns, axis = 1).first()
 
 # add taxon info at the end of the table:
@@ -126,6 +125,12 @@ tax_cols = all_samples[tax_cols_l]
 sample_cols = all_samples.drop(columns=tax_cols_l)
 
 all_samples = pd.merge(sample_cols,tax_cols,left_index=True,right_index=True)
+
+
+# Now the ranks for unclassified stuff must be errased (or it will correspond to teh first assignment)
+all_samples.at['NA', tax_cols_l]= 'NA'
+all_samples.at['NA', tax_level]= 'Unclassified'
+
 
 
 # Fill NaN with zeros:
