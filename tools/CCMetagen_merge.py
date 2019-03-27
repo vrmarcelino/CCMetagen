@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-KMetagen_merge.py
+CCMetagen_merge.py
 
-Merge the abundance results of KMEtagen for several samples into a single table.
-The results must be in .csv format (default KMEtagen or ---mode text)
+Merge the abundance results of CCMetagen for several samples into a single table.
+The results must be in .csv format (default CCMetagen or ---mode text)
 And no other csv file should be present in the folder
 
 USAGE example: Merge table by species and keep only Cryptococcus and Candida:
-python KMetagen_merge.py -i 05_KMetagen -kr k -l Genus -tlist Candida,Cryptococcus
+python CCMetagen_merge.py -i 05_CCMetagen -kr k -l Genus -tlist Candida,Cryptococcus
 
 @ V.R.Marcelino
 Created on Tue Dec 18 10:00:48 2018
@@ -21,7 +21,7 @@ import os
 
 
 parser = ArgumentParser()
-parser.add_argument('-i', '--input_fp', help="""Path to the folder containing KMetagen text results.
+parser.add_argument('-i', '--input_fp', help="""Path to the folder containing CCMetagen text results.
                     Note that files must end with ".res.csv"
                     ad the folder should not contain other .res.csv files""", required=True)
 parser.add_argument('-t', '--tax_level', default = 'Species',
@@ -50,7 +50,7 @@ kr = args.keep_or_remove
 
 
 
-#in_folder = "05_KMetagen"
+#in_folder = "05_CCMetagen"
 #tax_level = "Species"
 #output = "merged_samples_depth.csv"
 #kr = "k" # k for keep, r for remove, and n for none

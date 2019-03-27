@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-KMetagen main script
+CCMetagen main script
 
 Version 0.1
 
@@ -27,24 +27,24 @@ import fNCBItax # needed in fParseKMA
 # help
 if len(sys.argv) == 1:
     print ("")
-    print ("KMetagen - Identify species in metagenome datasets")
+    print ("CCMetagen - Identify species in metagenome datasets")
     print ("version: 0.1")
     print ("To be used with KMA")
     print ("")
-    print ("Usage: KMetagen.py <options> ")
-    print ("Ex: KMetagen.py -i KMA_out/2_mtg_ITS.res -r nt -o parsed_result_2mtg")
+    print ("Usage: CCMetagen.py <options> ")
+    print ("Ex: CCMetagen.py -i KMA_out/2_mtg_ITS.res -r nt -o parsed_result_2mtg")
     print ("")
     print ("")
-    print ("""When running KMetagen on multiple files in a folder:
+    print ("""When running CCMetagen on multiple files in a folder:
 input_dir=KMA_out
-output_dir=KMetagen_results
+output_dir=CCMetagen_results
 mkdir $output_dir
 for f in $input_dir/*.res; do 
     out=$output_dir/${f/$input_dir\/}
-    KMetagen.py -i $f -r nt -o $out
+    CCMetagen.py -i $f -r nt -o $out
 done""")
     print ("")
-    print ("For help and options, type: KMetagen.py -h")
+    print ("For help and options, type: CCMetagen.py -h")
     print ("")
     print ("")
     sys.exit()
@@ -53,15 +53,15 @@ done""")
 parser = ArgumentParser()
 
 parser.add_argument('-m', '--mode', default = 'both', 
-                    help="""what do you want KMetagen to do? 
+                    help="""what do you want CCMetagen to do? 
                     Valid options are 'visual', 'text' or 'both':
                         text: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information
                         visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation
                         both: outputs both text and visual file formats. Default = both""", required=False)
 
 parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=True)
-parser.add_argument('-o', '--output_fp', default = 'KMetagen_out', 
-                    help='Path to the output file. Default = KMetagen_out', required=False)
+parser.add_argument('-o', '--output_fp', default = 'CCMetagen_out', 
+                    help='Path to the output file. Default = CCMetagen_out', required=False)
 parser.add_argument('-r', '--reference_database', default = 'nt', 
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
@@ -124,7 +124,7 @@ else:
     sys.exit("Try again.")
 
 # developing and debugging:
-#out_fp = "KMetagen_nt_results"
+#out_fp = "CCMetagen_nt_results"
 #f = "7_Outback_Duck.res"
 #ref_database = "nt"
 #mode = 'text'
