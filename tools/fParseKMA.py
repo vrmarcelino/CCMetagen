@@ -3,13 +3,9 @@
 """
 Functions to parse KMA results
 
-Working with UNITE - ITS at the moment.
--- RefSeq - to be done.
-
 @ V.R.Marcelino
 Created on 1 Aug 2018
 
-Updated: 28 Dec 2018
 
 """
 import re
