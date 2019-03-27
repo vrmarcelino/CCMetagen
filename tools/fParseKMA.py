@@ -35,18 +35,18 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
 # function that takes as input a pandas dataframe with KMA results 
 # and add tax information to results 
 def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
-                   family_threshold,order_threshold,class_threshold,phyllum_threshold):
+                   family_threshold,order_threshold,class_threshold,phylum_threshold):
     #defaults:
     #species_threshold = 98.41 # Yeast - Vu et al 2016
     #genus_threshold = 96.31 # Yeast - Vu et al 2016
     #family_threshold = 88.51 # Filamentous fungi - Vu et al 2019
     #order_threshold = 81.21 # Filamentous fungi - Vu et al 2019
     #class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
-    #phyllum_threshold = 0  # no data, no filtering
+    #phylum, kingdom and superkingdom = 0  # no data, no filtering
 
 
     # Make sure all taxa columns are strings (doesn't automatically happen if the first one is None)
-    in_df = in_df.assign(LCA_TaxId="",Kingdom="",Phylum="",Class="",Order="",Family="",Genus="",Species="")
+    in_df = in_df.assign(LCA_TaxId="",Superkingdom="",Kingdom="",Phylum="",Class="",Order="",Family="",Genus="",Species="")
 
 
     # index == the #template (fungal match)
@@ -104,18 +104,22 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
                 match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
    
             
-        # Populate the df with lineage info and the LCA taxid:       
+        # Populate the df with lineage info and the LCA taxid: 
+        
+        in_df.at[index, 'Superkingdom'] = match_info.Superkingdom
+
+        # Assign LCA_taxid. Go to Kingdom if possible:
+        in_df.at[index, 'LCA_TaxId'] = match_info.Superkingdom_TaxId
         in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
         
         # if it matches to uncultured or unclassified fungus, use the Fungi LCA itaxid:
         if match_info.Kingdom == 'Fungi':
             in_df.at[index, 'LCA_TaxId'] = 4751
 
-
         in_df.at[index, 'Kingdom'] = match_info.Kingdom
 
         # fill in the rest of the table according to similarity threshold:
-        if qiden >= phyllum_threshold:
+        if qiden >= phylum_threshold:
             in_df.at[index, 'Phylum'] = match_info.Phylum
             if match_info.Phylum_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Phylum_TaxId

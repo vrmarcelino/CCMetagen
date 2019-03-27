@@ -3,11 +3,9 @@
 """
 Classes that store taxonomic info from matches and NCBI lineage
 
-Required to parse the results of matches and store them in the SQLite3 'bench.db'
-
 @ V.R.Marcelino
 Created on 12 Jul 2018
-Last update on 13 Jul 2018
+Last update on 27 March 2019
 
 """
 
@@ -15,7 +13,8 @@ Last update on 13 Jul 2018
 class TaxInfo(): 
     
     def __init__(self, TaxId=None, Lineage=None, Sample=None, RefDatabase=None, 
-                 Abundance=None, Kingdom=None, Kingdom_TaxId=None, Phylum=None, 
+                 Abundance=None, Superkingdom = None, Superkingdom_TaxId = None, 
+                 Kingdom=None, Kingdom_TaxId=None, Phylum=None, 
                  Phylum_TaxId=None, Class=None, Class_TaxId=None,
                  Order=None, Order_TaxId=None, Family=None, Family_TaxId=None,
                  Genus=None, Genus_TaxId=None, Species=None, Species_TaxId=None,
@@ -29,6 +28,8 @@ class TaxInfo():
         self.Abundance = Abundance
 
         # info from NCBI
+        self.Superkingdom = Superkingdom
+        self.Superkingdom_TaxId = Superkingdom_TaxId
         self.Kingdom = Kingdom
         self.Kingdom_TaxId = Kingdom_TaxId
         self.Phylum = Phylum

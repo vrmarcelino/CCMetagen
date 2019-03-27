@@ -177,7 +177,7 @@ if (mode == 'text') or (mode == 'both'):
 
 ##### Output a Krona file 
 if (mode == 'visual') or (mode == 'both'):
-    krona_info = df[['Depth','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
+    krona_info = df[['Depth','Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
 
     # save dataframe to file
     out1 = args.output_fp + ".tsv"
