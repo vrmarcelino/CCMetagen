@@ -1,4 +1,4 @@
-# KMetagen
+# Benchmarking
 
 ## Containers
 
