@@ -1,48 +1,29 @@
-# Benchmarking
+# CCMetagen
 
-## Containers
+CCMetagen processes sequence alignments produced with [KMA](https://bitbucket.org/genomicepidemiology/kma), which implements the ConClave sorting scheme to achieve highly accurate read mappings. The pipeline is fast enough to use the whole NCBI nt collection as reference, facilitating the inclusion of understudied organisms, such as microbial eukaryotes, in metagenome surveys. CCMetagen produces ranked taxonomic results in user-friendly formats that are ready for publication or downstream statistical analyses.
 
-### Repository layout
+If you use CCMetagen in your work, please cite: TBA
+
+A quick-start guide is given below. For a more detailed manual - see: xxx
+We also provide a tutorial to reproduce our metagenome clasisfication of the bird microbiome here: xxx
+
+
+## Requirements and Installation
+
+
+
+
+## Quick Start
+
+
+`write one line code here`
+
 ```
-.(gitroot)
-`-- containers
-    |-- centrifuge
-    |   |-- centrifuge.dockerfile
-    |   `-- setup
-    |       `-- centrifuge-setup.sh
-    `-- kraken2
-        `-- kraken2.dockerfile
+write code here
 
 
 ```
-### Centrifuge
+##### Mapping
 
-#### Setup
+##### Taxonomic profiling
 
-0. Run `tool/setup/centrifuge-setup.sh`
-
-Name                | Type              | Description
---------------------|-------------------|---------------
-`centrifuge`        | Docker image      | Basic image
-`centrifuge-setup`  | Docker container  | Container for setup
-`centrifugeVol`     | Docker volume     | Volume storing databases and indices
-
-`centrifuge.dockerfile` is the Dockerfile to build the basic `centrifuge` image.
-This image is run detached as `centrifuge-setup` with the volume `centrifugeVol`
-mounted to `/centrifuge` in the container to store the databases and indices.
-The setup is calling `docker exec`  to invoke the individual steps required for
-the centrifuge setup.
-
-#### Usage
-
-Basic example to use centrifuge and mount the corresponding volume to `/centrifuge`:
-
-`docker run --rm -it --mount source=centrifugeVol,target=/centrifuge centrifuge:latest`
-
-### Kraken2
-
-A basic Docker container for kraken2.
-
-#### Usage
-
-`docker run --rm -t kraken2:latest kraken2`
