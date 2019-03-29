@@ -8,7 +8,7 @@ The results must be in .csv format (default CCMetagen or ---mode text)
 And no other csv file should be present in the folder
 
 USAGE example: Merge table by species and keep only Cryptococcus and Candida:
-python CCMetagen_merge.py -i 05_CCMetagen -kr k -l Genus -tlist Candida,Cryptococcus
+python CCMetagen_merge.py -i CCMetagen -kr k -l Genus -tlist Candida,Cryptococcus
 
 @ V.R.Marcelino
 Created on Tue Dec 18 10:00:48 2018
