@@ -46,17 +46,18 @@ Then add CCMetagen to the path, temporarily or permanently. For example:
 
 To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
+
 ## Databases
 
 **Option 1:** Download the indexed (ready-to-go) nt database [here - add link]().
-This database contains everything in NCBI nucleotide collection, and therefore is suitable to include microbial eukaryotes in metagenome surveys.
+This database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes. 
 
 **Option 2:** Build your own reference database.
 Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidemiology/kma) to index the database.
 It is important that taxids are incorporated in sequence headers for processing with CCMetagen.
 We provide scripts to rename sequences in the nt database [here](https://github.com/vrmarcelino/CCMetagen/tree/master/benchmarking/rename_nt).
 
-If you use the RefSeq database, the format is similar to what is required for Kraken. The [Opiniomics blog](http://www.opiniomics.org/building-a-kraken-database-with-new-ftp-structure-and-no-gi-numbers/) kindly provides scripts to download sequences in an adequate format.
+If you want to use the RefSeq database, the format is similar to the one required for Kraken. The [Opiniomics blog](http://www.opiniomics.org/building-a-kraken-database-with-new-ftp-structure-and-no-gi-numbers/) describes how to download sequences in an adequate format.
 
 
 ## Quick Start
@@ -68,8 +69,9 @@ kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode
 ```
 
 For single-end files:
+```
 kma -i $SAMPLE -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and
-
+```
 
 Where:
 
@@ -101,7 +103,7 @@ CCMetagen_merge.py -i $CCMetagen_out
 ```
 
 Where $CCMetagen_out is the folder containing the CCMetagen taxonomic classifications.
-The results must be in .csv format (default for CCMetagen or ---mode text), and no other csv file should be present in the folder.
+The results must be in .csv format (default or '--mode text' output of CCMetagen), and no other csv file should be present in the folder.
 
 The flags '-t' define the taxonomic level to merge the results. The default is species-level.
 
@@ -122,12 +124,12 @@ CCMetagen_merge.py -i $CCMetagen_out -t Family -kr r -l Kingdom -tlist Metazoa,V
 For species-level filtering (where there is a space in taxa names), use quotation marks.
 Ex 4: Keep only Escherichia coli and Candida albicans
 ```
-Metagen_merge.py -i 05_KMetagen/ -kr k -l Species -tlist "Escherichia coli,Candida albicans"
+CCMetagen_merge.py -i 05_KMetagen/ -kr k -l Species -tlist "Escherichia coli,Candida albicans"
 ```
 
 For options, type:
 ```
-KMetagen_merge.py -h
+CCMetagen_merge.py -h
 ```
 
 You can also refer to our [tutorial - add link] for an applied example of the CCMetagen pipeline.
