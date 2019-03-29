@@ -97,7 +97,7 @@ For a list of options to customize your analyze, type:
 CCMetagen.py -h
 ```
 
-  * To summarize multiple CCMetagen results and/or exclude taxa from the analyses, use **CCMetagen_merge**:
+  * To summarize results for multiple samples, use **CCMetagen_merge**:
 ```
 CCMetagen_merge.py -i $CCMetagen_out
 ```
@@ -105,12 +105,13 @@ CCMetagen_merge.py -i $CCMetagen_out
 Where $CCMetagen_out is the folder containing the CCMetagen taxonomic classifications.
 The results must be in .csv format (default or '--mode text' output of CCMetagen), and no other csv file should be present in the folder.
 
-The flags '-t' define the taxonomic level to merge the results. The default is species-level.
+The flag '-t' define the taxonomic level to merge the results. The default is species-level.
 
-Use flag -kr to set the program to keep (k) or remove (r) taxa.
+You can also filter out specific taxa, at any taxonomic level:
+
+Use flag -kr to keep (k) or remove (r) taxa.
 Use flag -l to set the taxonomic level for the filtering.
 Use flag -tlist to list the taxa to keep or remove (separated by comma).
-
 
 EX1: Filter out bacteria: `CCMetagen_merge.py -i $CCMetagen_out -kr r -l Kingdom -tlist Bacteria`
 
@@ -122,7 +123,7 @@ CCMetagen_merge.py -i $CCMetagen_out -t Family -kr r -l Kingdom -tlist Metazoa,V
 ```
 
 For species-level filtering (where there is a space in taxa names), use quotation marks.
-Ex 4: Keep only Escherichia coli and Candida albicans
+Ex 4: Keep only Escherichia coli and Candida albicans:
 ```
 CCMetagen_merge.py -i 05_KMetagen/ -kr k -l Species -tlist "Escherichia coli,Candida albicans"
 ```
