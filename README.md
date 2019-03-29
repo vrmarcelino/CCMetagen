@@ -3,7 +3,7 @@
 CCMetagen processes sequence alignments produced with [KMA](https://bitbucket.org/genomicepidemiology/kma), which implements the ConClave sorting scheme to achieve highly accurate read mappings. The pipeline is fast enough to use the whole NCBI nt collection as reference, facilitating the inclusion of understudied organisms, such as microbial eukaryotes, in metagenome surveys. CCMetagen produces ranked taxonomic results in user-friendly formats that are ready for publication or downstream statistical analyses.
 
 If you use CCMetagen, please cite: TBA
-Besides the guide below, we also provide a tutorial to reproduce our metagenome clasisfication of the bird microbiome [here - add link](xx).
+Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial).
 
 
 ## Requirements and Installation
@@ -133,7 +133,7 @@ For options, type:
 CCMetagen_merge.py -h
 ```
 
-You can also refer to our [tutorial - add link] for an applied example of the CCMetagen pipeline.
+You can also refer to our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.
 
 
 ## FAQs
