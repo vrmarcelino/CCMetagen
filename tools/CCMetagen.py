@@ -56,7 +56,7 @@ parser.add_argument('-m', '--mode', default = 'both',
                     help="""what do you want CCMetagen to do? 
                     Valid options are 'visual', 'text' or 'both':
                         text: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information
-                        visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualisation
+                        visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualization
                         both: outputs both text and visual file formats. Default = both""", required=False)
 
 parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=True)
@@ -88,7 +88,7 @@ parser.add_argument('-ct', '--class_threshold', default = 80.91,
 parser.add_argument('-pt', '--phylum_threshold', default = 0, 
                     help='Phylum-level similarity threshold. Default = 0 - not applied',type=float, required=False)
 parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n', 
-                    help='Turns off simularity-based filtering off. Options = y or n. Default = n', required=False)
+                    help='Turns simularity-based filtering off. Options = y or n. Default = n', required=False)
 
 
 args = parser.parse_args()
