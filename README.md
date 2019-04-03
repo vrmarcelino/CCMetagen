@@ -41,7 +41,7 @@ git clone https://github.com/vrmarcelino/CCMetagen
 ```
 You can also download the python files from https://github.com/vrmarcelino/CCMetagen/tree/master/tools
 
-Then add CCMetagen to the path, temporarily or permanently. For example:
+Then add the CCMetagen python scripts to the path, temporarily or permanently. For example:
 `PATH=$PATH<your_folder>/CCMetagen/tools`
 
 To update CCMetagen, go to the CCMetagen folder and type: `git pull`
@@ -153,6 +153,12 @@ If you get this error, please update the python module pandas:
 ```
 pip install pandas --upgrade --user
 ```
+
+  * WARNING: no NCBI's taxid found for accession [something],
+This match will not get taxonomic ranks
+
+This is not an error, this is just a warning indicating that one of your query sequences matchs to a genbank record for which the NCBI taxonomic identifier (taxid) is not known. CCMetagen therefore will not be able to assign taxonomic ranks to this match, but you will still be able to see it in the output file.
+
 
 ## Complete option list
 
