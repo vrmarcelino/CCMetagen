@@ -27,7 +27,7 @@ parser.add_argument('-i', '--input_fp', help="""Path to the folder containing CC
 parser.add_argument('-t', '--tax_level', default = 'Species',
                     help="""Taxonomic level to merge the results. Options:
                     Closest_match (includes different genes for the same species),
-                    Species (Default), Genus, Order, Class, Phylum, Kingdom and Superkingdom
+                    Species (Default), Genus, Family, Order, Class, Phylum, Kingdom and Superkingdom
                     """, required=False)
 parser.add_argument('-o', '--output_fp', default = 'merged_samples', 
                     help='Path to the output file. Default = merged_samples', required=False)
