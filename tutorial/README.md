@@ -25,7 +25,7 @@ To map PE reads to a database, run: `kma -ipe <read1> <read2> -o <output> -t_db 
 We often work with multiple samples. 
 Follow the steps below to run KMA and teh CCMetagen in batch.
 
-Set file paths (note that you will need to replace the file paths according to the locations of your folders):
+Set file paths (note that you need to replace the file paths according to the locations of your folders):
 ```
 input_dir=00_raw_reads
 output_dir=01_KMA_res
