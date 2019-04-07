@@ -117,9 +117,9 @@ EX1: Filter out bacteria: `CCMetagen_merge.py -i $CCMetagen_out -kr r -l Kingdom
 
 EX2: Filter out bacteria and Metazoa: `CCMetagen_merge.py -i $CCMetagen_out -kr r -l Kingdom -tlist Bacteria, Metazoa`
 
-EX3: Merge results at family-level, and remove Metazoa, Viridiplantae and Unclassified (NA) taxa at Kingdom level:
+EX3: Merge results at family-level, and remove Metazoa and Viridiplantae taxa at Kingdom level:
 ```
-CCMetagen_merge.py -i $CCMetagen_out -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae,NA -o family_table
+CCMetagen_merge.py -i $CCMetagen_out -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o family_table
 ```
 
 For species-level filtering (where there is a space in taxa names), use quotation marks.

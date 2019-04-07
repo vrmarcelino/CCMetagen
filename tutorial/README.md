@@ -1,4 +1,4 @@
-# CCMetagen Tutorial
+# Tutorial
 
 CCMetagen is a pipeline to classify organisms in metagenomes or metatranscriptomes accurately.
 This tutorial provides a step-by-step guide to obtain a taxonomic profile for a set of samples.
@@ -63,15 +63,15 @@ done
 ### Produce summary table
 Finally, merge the results into a single table using the script CCMetagen_merge.py
 By default, this script will merge taxa at species level.
-Here we will also remove everything that matches to Metazoa (bird sequences), Viriplantae and everything that was Unclassified at the species level.
+Here we will also remove everything that matches to Metazoa (bird sequences) and Viriplantae.
 Note that the input file here is the output folder of CCMetagen.
 ```
-CCMetagen_merge.py --input_fp $output_dir --keep_or_remove r --filtering_tax_level Kingdom --taxa_list Metazoa,Viridiplantae,Unclassified --output_fp Bird_species_table
+CCMetagen_merge.py --input_fp $output_dir --keep_or_remove r --filtering_tax_level Kingdom --taxa_list Metazoa,Viridiplantae --output_fp Bird_species_table
 ```
 
 This also works:
 ```
-CCMetagen_merge.py -i $output_dir -kr r -l Kingdom -tlist Metazoa,Viridiplantae,Unclassified -o Bird_species_table
+CCMetagen_merge.py -i $output_dir -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o Bird_species_table
 ```
 
 If you prefer to merge taxa at different taxonomic levels, use the flag -t' (or '--tax_level):
@@ -88,6 +88,124 @@ Switch to R to proceed with microbiome analyses using PhyloSeq.
 ### Microbiome analyses
 In this tutorial we will use [PhyloSeq](https://www.bioconductor.org/packages/release/bioc/html/phyloseq.html), which is a user-friendly and well-documented R package to analyse microbiome data.
 
+In R:
 
-....
+##### Install and load packages + settings:
+Install phyloseq:
+```
+source('http://bioconductor.org/biocLite.R')
+biocLite('phyloseq')
+```
+Load the necessary modules:
+```
+library("phyloseq"); packageVersion("phyloseq")
+```
+[1] ‘1.24.2’
+
+```
+library("ggplot2"); packageVersion("ggplot2")
+```
+[1] ‘3.1.0’
+
+```
+library (RColorBrewer); packageVersion("RColorBrewer")
+```
+[1] ‘1.1.2’
+
+Set ggplot colour theme to white: 
+```
+theme_set(theme_bw())
+```
+
+##### Import data and convert to a phyloseq object
+
+```
+raw_CCMetagen_data <-read.csv("Bird_species_table.csv",check.names=FALSE)
+```
+
+Separate species and taxonomy columns - note that this will change according to how many samples you have
+We have 4 samples here, therefore our taxa start at column, while the samples (microbial species data) are in columns 1 to 4.
+```
+taxa_raw <- as.matrix(raw_CCMetagen_data[,5:ncol(raw_CCMetagen_data)])
+rownames(taxa_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
+species_raw <- as.matrix(raw_CCMetagen_data[,1:4])
+rownames(species_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
+```
+Convert to phyloseq object
+```
+tax = tax_table(taxa_raw)
+species = otu_table(species_raw, taxa_are_rows = TRUE)
+species
+
+CCMeta_physeq = phyloseq(species, tax)
+CCMeta_physeq
+```
+
+##### Plot
+
+Plot bar graph
+Note that this takes a while for large files
+```
+plot_bar(CCMeta_physeq, fill = "Kingdom")
+```
+
+Keep only the 50 most abundant Species (excluding taxa that were unclassified at species level)
+```
+TopNOTUs <- names(sort(taxa_sums(CCMeta_physeq), TRUE)[1:51])
+TopNOTUs <- TopNOTUs[-1] #removes the unclassified species, which is the most abundant here.
+TopSpecies <- prune_taxa(TopNOTUs, CCMeta_physeq)
+```
+Plot bars, colouring by different taxonomic ranks
+"NA" here represents taxa that were classified at species level but did not have a higher-rank tax classification.
+```
+plot_bar(TopSpecies, fill = "Superkingdom")
+plot_bar(TopSpecies, fill = "Genus")
+plot_bar(TopSpecies, fill = "Family")
+```
+
+##### Organised plots
+Organise samples and families, add custom colours.
+Arrange the order of families, keeping Fungi and Bacteria Apart 
+The idea is to get bacterial taxa in blue, fungal taxa in red and viral taxa in pink.
+
+```
+p = plot_bar(TopSpecies, fill="Family")
+p$data$Sample <- factor(p$data$Sample, levels = c("Shelduck_Healthy","Temperate_Duck_Flu_Ng",
+                        "Avocet_Outback","Turnstone_Temperate_Flu_Ng"))	
+
+families = levels(p$data$Family)
+families
+p$data$Family <- factor(p$data$Family, levels = c("Bacillaceae","Enterobacteriaceae",
+"Fusobacteriaceae","Streptococcaceae","Apiosporaceae","Aspergillaceae",
+"Bulleribasidiaceae","Cryptococcaceae","Cystofilobasidiaceae",
+"Debaryomycetaceae","Dipodascaceae","Metschnikowiaceae","Mucoraceae","Nectriaceae",
+"Pseudoperisporiaceae","Saccotheciaceae","Sporidiobolaceae","Bromoviridae"))
+```
+
+Set colors
+We need 13 colors for fungi
+```
+getPalette = colorRampPalette(c("#ffffcc", "#800026"))( 13 )
+getPalette
+```
+Then paste the color codes after the blues (4 bacs), and before the pink and grey (last 2 colours)
+```
+family_Palette <- c("#08519c","#2171b5","#4292c6","#6baed6",
+"#FFFFCC","#F4E9BE","#E9D4B0","#DFBFA2","#CA9486","#CA9486","#BF7F79","#B46A6B",
+"#AA555D","#9F3F4F","#952A41","#8A1533", "#800026", "#ae017e","#999999")
+```
+
+Now plot it:
+```                
+fig <- p + scale_fill_manual(values=family_Palette, na.value="grey") +
+  geom_bar(aes(fill=Family), stat="identity", position="stack") +
+  guides(fill=guide_legend(ncol=2))
+
+fig
+```
+
+Note that the 50 most abundant taxa are not exactly the same as the ones in this test dataset.
+To reproduce the figure of the full dataset (teh one in our publication), see R script [here - insert link]
+
+
 
