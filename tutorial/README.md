@@ -18,14 +18,14 @@ This tutorial will not cover quality control, but we highly recommend QC to remo
 If you are working with host-associated microbiomes, it is desirable to remove host reads as well. I personally like [KneadData](http://huttenhower.sph.harvard.edu/kneaddata) because it allows performing quality filtering, adapter removal and host filtering in one go.
 
 
-### Mapping reads to a reference database with [KMA](https://bitbucket.org/genomicepidemiology/kma)
+### Mapping reads to a reference database with KMA
 
 To map PE reads to a database, run: `kma -ipe <read1> <read2> -o <output> -t_db <ref_database> -1t1 -mem_mode -and -apm f`
 
-We often work with multiple samples. To run KMA in batch, you can do:
+We often work with multiple samples. 
+Follow the steps below to run KMA and teh CCMetagen in batch.
 
-Set file paths
-Note that you will need to replace the file paths according to the locations of your folders.
+Set file paths (note that you will need to replace the file paths according to the locations of your folders):
 ```
 input_dir=00_raw_reads
 output_dir=01_KMA_res
