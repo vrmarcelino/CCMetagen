@@ -7,8 +7,11 @@ Merge the abundance results of CCMetagen for several samples into a single table
 The results must be in .csv format (default CCMetagen or ---mode text)
 And no other csv file should be present in the folder
 
-USAGE example: Merge table by species and keep only Cryptococcus and Candida:
-python CCMetagen_merge.py -i CCMetagen -kr k -l Genus -tlist Candida,Cryptococcus
+USAGE example 1: Merge table at family level:
+CCMetagen_merge.py -i CCMetagen_folder -t Family
+
+USAGE example 2: Merge table by species (default) and keep only Cryptococcus and Candida:
+CCMetagen_merge.py -i CCMetagen_folder -kr k -l Genus -tlist Candida,Cryptococcus
 
 @ V.R.Marcelino
 Created on Tue Dec 18 10:00:48 2018
@@ -48,18 +51,19 @@ tax_level = args.tax_level
 output = args.output_fp
 kr = args.keep_or_remove
 
-#in_folder = "CCMetagen"
-#tax_level = "Species"
-#output = "merged_samples_depth.csv"
+
+# debugging:
+#in_folder = "02_CCMetagen"
+#tax_level = "Closest_match"
+#output = "merged_samples_depth"
 #kr = "n" # k for keep, r for remove, and n for none
 #level = "Species"
 #taxa = ["Escherichia coli"]
 
 
 # Set the taxonomic levels to retain info:
-l = ['Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']
+l = ['Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species','Closest_match']
 
-#f4agg = OrderedDict()
 f4agg = {}
 
 f4agg['Depth']= 'sum'
@@ -104,11 +108,15 @@ for file in os.listdir(in_folder):
             print ("kr must be k (keep), r (remove) or n (none).")
             sys.exit("Try again.")
  
+        # if tax_level = closest_match, we need an extra column:
+        # Note that this will raise an ambiguity error in a future version of Pandas.
+        if tax_level == 'Closest_match':
+            df['Closest_match'] = df.index
+        
         depth_by_tax = df.groupby(by=tax_level).agg(f4agg)
         depth_by_tax.rename(columns={'Depth':sample_name}, inplace=True)
 
         all_samples = pd.concat([all_samples, depth_by_tax], sort=True, axis=1)
-    
     
 
 # name first row
@@ -127,10 +135,11 @@ sample_cols = all_samples.drop(columns=tax_cols_l)
 all_samples = pd.merge(sample_cols,tax_cols,left_index=True,right_index=True)
 
 
-# Now the ranks for unclassified stuff must be errased (or it will correspond to teh first assignment)
-all_samples.at['NA', tax_cols_l]= 'NA'
-all_samples.at['NA', tax_level]= 'Unclassified'
-
+# Now the ranks for unclassified stuff must be erased (or it will correspond to the first assignment)
+# not applicable for 'Closest_match'
+if tax_level != 'Closest_match':
+    all_samples.at['NA', tax_cols_l]= 'NA'
+    all_samples.at['NA', tax_level]= 'Unclassified'
 
 
 # Fill NaN with zeros:

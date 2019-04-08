@@ -81,7 +81,15 @@ Options are case-sensitive: Species (Default), Genus, Family, Order, Class, Phyl
 CCMetagen_merge.py --input_fp $output_dir -t Family -o Bird_family_table
 ```
 
-It is also possible to summarize taxa at different taxonomic levels within PhyloSeq. Therefore, we will use the species-level table (Bird_species_table.csv) as input in PhyloSeq.
+It is also possible to summarize taxa at different taxonomic levels within PhyloSeq. However, we do not recommend to use the species table produced here to produce a family-level table in PhyloSeq because you will lose information. Species-level classifications reported with
+
+
+Therefore, we will use the species-level table (Bird_species_table.csv) as input in PhyloSeq.
+
+
+---- add warning!!!
+
+
 
 Switch to R to proceed with microbiome analyses using PhyloSeq.
 
@@ -205,7 +213,7 @@ fig
 ```
 
 Note that the 50 most abundant taxa are not exactly the same as the ones in this test dataset.
-To reproduce the figure of the full dataset (teh one in our publication), see R script [here - insert link]
+To reproduce the figure of the full dataset (teh one in our publication), see R script [here](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/PhyloSeq_graphs_publication.R).
 
 
 

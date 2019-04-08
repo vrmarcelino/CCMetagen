@@ -107,6 +107,8 @@ The results must be in .csv format (default or '--mode text' output of CCMetagen
 
 The flag '-t' define the taxonomic level to merge the results. The default is species-level.
 
+Note that CCMetagen_merge merges together all unclassified taxa. The default species-level often contains several taxa that were unclassified at species level, but were classified at higher taxonomic ranks. This higher-level classification is not taken into account: and the resulting merged table will contain one row with all unclassified species.
+
 You can also filter out specific taxa, at any taxonomic level:
 
 Use flag -kr to keep (k) or remove (r) taxa.
@@ -123,7 +125,7 @@ CCMetagen_merge.py -i $CCMetagen_out -t Family -kr r -l Kingdom -tlist Metazoa,V
 ```
 
 For species-level filtering (where there is a space in taxa names), use quotation marks.
-Ex 4: Keep only Escherichia coli and Candida albicans:
+Ex 4: Keep only _Escherichia coli_ and _Candida albicans_:
 ```
 CCMetagen_merge.py -i 05_KMetagen/ -kr k -l Species -tlist "Escherichia coli,Candida albicans"
 ```
@@ -158,6 +160,10 @@ pip install pandas --upgrade --user
 This match will not get taxonomic ranks
 
 This is not an error, this is just a warning indicating that one of your query sequences matchs to a genbank record for which the NCBI taxonomic identifier (taxid) is not known. CCMetagen therefore will not be able to assign taxonomic ranks to this match, but you will still be able to see it in the output file.
+
+  * The results of the CCMetagen_merge.py at different taxonomic levels do not sum up.
+As explained above, this script merges all unclassified taxa at a given taxonomic level. For example, if you have 20 matches to the genus _Candida_, but only 2 matches were classified at the species level, the output of CCMetagen_merge.py -t Species (default) will only have the abundances of two classified _Candida_ species, while the others will be merged with the "Unclassified" taxa. The output of CCMetagen_merge.py -t Genus however will contain all 20 matches. 
+If this behaviour is undesirable, one option is to disable the similarity thresholds (use flag -off) - so that all taxonomic levels are reported regardless of their similarity to the reference sequence. Alternatively, you can cluster species at the 'Closest_match' (using the flag --tax_level Closest_match), so that taxa are merged at the 'match' level.
 
 
 ## Complete option list
