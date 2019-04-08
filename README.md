@@ -163,7 +163,7 @@ This is not an error, this is just a warning indicating that one of your query s
 
   * The results of the CCMetagen_merge.py at different taxonomic levels do not sum up.
 As explained above, this script merges all unclassified taxa at a given taxonomic level. For example, if you have 20 matches to the genus _Candida_, but only 2 matches were classified at the species level, the output of CCMetagen_merge.py -t Species (default) will only have the abundances of two classified _Candida_ species, while the others will be merged with the "Unclassified" taxa. The output of CCMetagen_merge.py -t Genus however will contain all 20 matches. 
-If this behaviour is undesirable, one option is to disable the similarity thresholds (use flag -off) - so that all taxonomic levels are reported regardless of their similarity to the reference sequence. Alternatively, you can cluster species at the 'Closest_match' (using the flag --tax_level Closest_match), so that taxa are merged at the 'match' level.
+If this behaviour is undesirable, one option is to disable the similarity thresholds (use flag -off) - so that all taxonomic levels are reported regardless of their similarity to the reference sequence. Alternatively, you can cluster species at the 'Closest_match' (using the flag --tax_level Closest_match).
 
 
 ## Complete option list

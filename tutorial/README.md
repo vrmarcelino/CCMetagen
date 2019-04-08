@@ -81,15 +81,15 @@ Options are case-sensitive: Species (Default), Genus, Family, Order, Class, Phyl
 CCMetagen_merge.py --input_fp $output_dir -t Family -o Bird_family_table
 ```
 
-It is also possible to summarize taxa at different taxonomic levels within PhyloSeq. However, we do not recommend to use the species table produced here to produce a family-level table in PhyloSeq because you will lose information. Species-level classifications reported with
+It is also possible to summarize taxa at different taxonomic levels within PhyloSeq. However, we do not recommend to use the species table produced with CCMetagen_merge to produce a family-level figue/analyses in PhyloSeq because you will lose information. 
+When results are merged at species level, all unclassified taxa will be clustered togetehr in one row, while merging at higher taxonomic levels will retain the information about the abudnances of the different taxa.
 
 
-Therefore, we will use the species-level table (Bird_species_table.csv) as input in PhyloSeq.
+Therefore, we let's produce a family-level table, filtering Metazoa and Viriplantae, for input in PhyloSeq:
 
-
----- add warning!!!
-
-
+```
+CCMetagen_merge.py -i $output_dir -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o Bird_family_table_filtered
+```
 
 Switch to R to proceed with microbiome analyses using PhyloSeq.
 
@@ -128,7 +128,7 @@ theme_set(theme_bw())
 ##### Import data and convert to a phyloseq object
 
 ```
-raw_CCMetagen_data <-read.csv("Bird_species_table.csv",check.names=FALSE)
+raw_CCMetagen_data <-read.csv("Bird_family_table_filtered.csv",check.names=FALSE)
 ```
 
 Separate species and taxonomy columns - note that this will change according to how many samples you have
@@ -142,78 +142,83 @@ rownames(species_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
 Convert to phyloseq object
 ```
 tax = tax_table(taxa_raw)
-species = otu_table(species_raw, taxa_are_rows = TRUE)
-species
+taxa = otu_table(species_raw, taxa_are_rows = TRUE)
+taxa
 
-CCMeta_physeq = phyloseq(species, tax)
+CCMeta_physeq = phyloseq(taxa, tax)
 CCMeta_physeq
 ```
 
 ##### Plot
 
-Plot bar graph
+Plot bar graphs
 Note that this takes a while for large files
 ```
-plot_bar(CCMeta_physeq, fill = "Kingdom")
+plot_bar(CCMeta_physeq, fill = "Superkingdom")
+plot_bar(CCMeta_physeq, fill = "Family")
 ```
 
-Keep only the 50 most abundant Species (excluding taxa that were unclassified at species level)
+
+<<Figure 1 here>>
+
+
+This graph is ok, but the large number of taxa makes the figure unclear. Therefore let's keep only the 16 most abundant ones.
+
 ```
-TopNOTUs <- names(sort(taxa_sums(CCMeta_physeq), TRUE)[1:51])
-TopNOTUs <- TopNOTUs[-1] #removes the unclassified species, which is the most abundant here.
-TopSpecies <- prune_taxa(TopNOTUs, CCMeta_physeq)
+TopNOTUs <- names(sort(taxa_sums(CCMeta_physeq), TRUE)[1:16])
+TopFamilies <- prune_taxa(TopNOTUs, CCMeta_physeq)
 ```
 Plot bars, colouring by different taxonomic ranks
-"NA" here represents taxa that were classified at species level but did not have a higher-rank tax classification.
+"NA" here represents taxa that were classified at family level but did not have a higher-rank tax classification.
 ```
-plot_bar(TopSpecies, fill = "Superkingdom")
-plot_bar(TopSpecies, fill = "Genus")
-plot_bar(TopSpecies, fill = "Family")
+plot_bar(TopFamilies, fill = "Superkingdom")
+plot_bar(TopFamilies, fill = "Family")
+
 ```
 
 ##### Organised plots
 Organise samples and families, add custom colours.
 Arrange the order of families, keeping Fungi and Bacteria Apart 
-The idea is to get bacterial taxa in blue, fungal taxa in red and viral taxa in pink.
+The idea is to get bacterial taxa in blue, fungal taxa in red and other eukaryotic taxa in pink.
 
 ```
-p = plot_bar(TopSpecies, fill="Family")
+p = plot_bar(TopFamilies, fill="Family")
 p$data$Sample <- factor(p$data$Sample, levels = c("Shelduck_Healthy","Temperate_Duck_Flu_Ng",
                         "Avocet_Outback","Turnstone_Temperate_Flu_Ng"))	
+
 
 families = levels(p$data$Family)
 families
 p$data$Family <- factor(p$data$Family, levels = c("Bacillaceae","Enterobacteriaceae",
-"Fusobacteriaceae","Streptococcaceae","Apiosporaceae","Aspergillaceae",
-"Bulleribasidiaceae","Cryptococcaceae","Cystofilobasidiaceae",
-"Debaryomycetaceae","Dipodascaceae","Metschnikowiaceae","Mucoraceae","Nectriaceae",
-"Pseudoperisporiaceae","Saccotheciaceae","Sporidiobolaceae","Bromoviridae"))
+"Fusobacteriaceae","Streptococcaceae","Apiosporaceae","Cystofilobasidiaceae",
+"Debaryomycetaceae","Dipodascaceae","Dothioraceae","Metschnikowiaceae","Mucoraceae","Nectriaceae",
+"Saccotheciaceae","Tuberaceae","Trichomonadidae","Unclassified"))
+
 ```
 
 Set colors
-We need 13 colors for fungi
+We need 10 colors for fungi
 ```
-getPalette = colorRampPalette(c("#ffffcc", "#800026"))( 13 )
+getPalette = colorRampPalette(c("#ffffcc", "#800026"))( 10 )
 getPalette
 ```
-Then paste the color codes after the blues (4 bacs), and before the pink and grey (last 2 colours)
+Then paste the color codes after the blues (4 bacterial families), and before the pink and grey (last 2 colours)
 ```
 family_Palette <- c("#08519c","#2171b5","#4292c6","#6baed6",
-"#FFFFCC","#F4E9BE","#E9D4B0","#DFBFA2","#CA9486","#CA9486","#BF7F79","#B46A6B",
-"#AA555D","#9F3F4F","#952A41","#8A1533", "#800026", "#ae017e","#999999")
+"#FFFFCC","#F0E2B9","#E2C6A7","#D4AA94","#C68D82","#B8716F","#AA555D","#9C384A",
+"#8E1C38","#800026","#ae017e","#999999")
 ```
 
 Now plot it:
-```                
-fig <- p + scale_fill_manual(values=family_Palette, na.value="grey") +
+```                          
+fig <- p + scale_fill_manual(values=family_Palette) +
   geom_bar(aes(fill=Family), stat="identity", position="stack") +
   guides(fill=guide_legend(ncol=2))
 
 fig
 ```
 
-Note that the 50 most abundant taxa are not exactly the same as the ones in this test dataset.
-To reproduce the figure of the full dataset (teh one in our publication), see R script [here](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/PhyloSeq_graphs_publication.R).
+To reproduce the figure of the full dataset, see R script [here](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/PhyloSeq_graphs_publication.R).
 
 
 
