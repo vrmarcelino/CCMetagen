@@ -1,5 +1,5 @@
 # Produce nice graphs using PhyloSeq
-# VRMarcelino - 08-April-2019
+# VRMarcelino - 18-April-2019
 
 rm(list=ls(all=TRUE))
 
@@ -24,20 +24,20 @@ theme_set(theme_bw())
 
 #### Import data and convert to a phyloseq object ####
 
-raw_CCMetagen_data <-read.csv("Bird_species_table.csv",check.names=FALSE)
+raw_CCMetagen_data <-read.csv("Bird_family_table.csv",check.names=FALSE)
 
 # separate species and taxonomy columns
 taxa_raw <- as.matrix(raw_CCMetagen_data[,10:ncol(raw_CCMetagen_data)])
 rownames(taxa_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
-species_raw <- as.matrix(raw_CCMetagen_data[,1:9])
-rownames(species_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
+families_raw <- as.matrix(raw_CCMetagen_data[,1:9])
+rownames(families_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
 
 # convert to phyloseq object
 tax = tax_table(taxa_raw)
-species = otu_table(species_raw, taxa_are_rows = TRUE)
-species
+families_depth = otu_table(families_raw, taxa_are_rows = TRUE)
+families_depth
 
-CCMeta_physeq = phyloseq(species, tax)
+CCMeta_physeq = phyloseq(families_depth, tax)
 CCMeta_physeq
 
 
@@ -45,35 +45,40 @@ CCMeta_physeq
 
 # plot bar graph
 # takes a while if the file is large
-# plot_bar(CCMeta_physeq, fill = "Kingdom")
+#plot_bar(CCMeta_physeq, fill = "Kingdom")
+#plot_bar(CCMeta_physeq, fill = "Family")
 
-# Keep only the 50 most abundant Species (excluding taxa that were unclassified at species level)
-TopNOTUs <- names(sort(taxa_sums(CCMeta_physeq), TRUE)[1:51])
-TopNOTUs <- TopNOTUs[-1] #removes the unclassified species
-TopSpecies <- prune_taxa(TopNOTUs, CCMeta_physeq)
+# There are too many taxa to represent, so let's keep the names of the 20 most abundant ones (+Unclassified and 'Others')
+SortedOTUs <- names(sort(taxa_sums(CCMeta_physeq), TRUE))
+Taxa2Merge <- SortedOTUs[22:length(SortedOTUs)] # 22th and beyond will be merged
 
-# Plot bars, colouring by different taxonomic ranks
-# "NA" here represents taxa that were classified at species level but did not have a higher-rank tax classification.
-plot_bar(TopSpecies, fill = "Superkingdom")
-plot_bar(TopSpecies, fill = "Genus")
-plot_bar(TopSpecies, fill = "Family")
+Merged_taxa <- merge_taxa(CCMeta_physeq,Taxa2Merge) 
+# by default, this will merge all to the taxa with highest abundance, but in the plots, this is called 'NA'
+
+plot_bar(Merged_taxa, fill = "Family") + guides(fill=guide_legend(ncol=2))
+
+# cross-checks:
+# otus <- otu_table(Merged_taxa)
+# write.csv(otus, file='otus-fam_check.csv') (note that NA is 'Orthomyxoviridae' in this table)
 
 
+########################
 # organise samples and families, add custom colours:
-p = plot_bar(TopSpecies, fill="Family")
+p = plot_bar(Merged_taxa, fill="Family")
 p$data$Sample <- factor(p$data$Sample, levels = c("1_Shelduck_Disease","2_Shelduck_Healthy",
                         "3_Turnstone_Temperate_Flu_Negative","4_Turnsone_Temperate_Flu_Positive",
                         "5_Temperate_Duck_Flu_positive","6_Temperate_Duck_Flu_negative","7_Outback_Duck",
                         "8_Avocet_Tempereate","9_Avocet_Outback"))	
 
-# organise order of Families, Keeping Fungi and Bacteria Apart:
+# organise order of Families, keeping Fungi and Bacteria Apart:
 families = levels(p$data$Family)
 families
-p$data$Family <- factor(p$data$Family, levels = c("Bacillaceae","Clostridiaceae","Enterobacteriaceae",
-"Fusobacteriaceae","Pseudomonadaceae","Streptococcaceae","Apiosporaceae",
-"Bulleribasidiaceae","Cladosporiaceae","Cryptococcaceae","Cystofilobasidiaceae",
+p$data$Family <- factor(p$data$Family, levels = c("Bacillaceae","Bacteroidaceae",
+"Campylobacteraceae","Enterobacteriaceae","Fusobacteriaceae","Pseudomonadaceae","Streptococcaceae",
+"Apiosporaceae","Bulleribasidiaceae","Cladosporiaceae","Cystofilobasidiaceae",
 "Debaryomycetaceae","Dipodascaceae","Metschnikowiaceae","Mucoraceae","Nectriaceae",
-"Saccotheciaceae","Sporidiobolaceae","Bromoviridae"))
+"Rhizopodaceae","Saccotheciaceae","Sporidiobolaceae","Trichomonadidae","Unclassified"))
+
 
 # set colors
 
@@ -82,11 +87,12 @@ getPalette = colorRampPalette(c("#ffffcc", "#800026"))( 12 )
 getPalette
 
 # then paste after the blues, and before the pink and grey
-family_Palette <- c("#08519c","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef",
+# I got the blues from Color Brewer
+family_Palette <- c("#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef","#eff3ff",
 "#FFFFCC","#F3E7BC","#E7D0AD","#DCB99E","#D0A28F","#C58B80","#B97371","#AE5C62",
-"#A24553","#972E44","#8B1735","#800026", "#ae017e","#999999")
+"#A24553","#972E44","#8B1735","#800026", "#7a0177","#bdbdbd")
                 
-publication_fig <- p + scale_fill_manual(values=family_Palette, na.value="grey") +
+publication_fig <- p + scale_fill_manual(values=family_Palette, na.value="black") +
   geom_bar(aes(fill=Family), stat="identity", position="stack") +
   guides(fill=guide_legend(ncol=2))
 
@@ -95,30 +101,36 @@ publication_fig
 #########################
 ### Notes on families:
 
-# Bacteria:
-"Bacillaceae" 
-"Clostridiaceae"
+# Bacteria (7):
+"Bacillaceae"
+"Bacteroidaceae"
+"Campylobacteraceae"
 "Enterobacteriaceae"
 "Fusobacteriaceae"
 "Pseudomonadaceae"
 "Streptococcaceae"  
 
-#Fungi:
+#Fungi (12)
 "Apiosporaceae"
 "Bulleribasidiaceae"
 "Cladosporiaceae" 
-"Cryptococcaceae"
 "Cystofilobasidiaceae"
 "Debaryomycetaceae"
 "Dipodascaceae"
 "Metschnikowiaceae"
 "Mucoraceae"
 "Nectriaceae"
+"Rhizopodaceae"
 "Saccotheciaceae"
 "Sporidiobolaceae"
 
-# Virus:
-"Bromoviridae"
+# Other euks (protozoa) 
+"Trichomonadidae"
 
 # Taxa without a family-level classification:
+"Unclassified"
+
+# Taxa present at lower abundance were merged and are indicated as 'NA' (manually rename it to 'Others')
 "NA"
+
+
