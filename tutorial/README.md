@@ -162,9 +162,7 @@ plot_bar(CCMeta_physeq, fill = "Superkingdom")```
 ```
 plot_bar(CCMeta_physeq, fill = "Family")
 ```
-
-
-<<Figure 1 here>>
+<img src=figs_tutorial/Family.png width="500" height="500">
 
 
 This graph is ok, but the large number of taxa makes the figure unclear. Therefore let's keep only the 16 most abundant ones.
@@ -176,10 +174,11 @@ TopFamilies <- prune_taxa(TopNOTUs, CCMeta_physeq)
 Plot bars, colouring by different taxonomic ranks
 "NA" here represents taxa that were classified at family level but did not have a higher-rank tax classification.
 ```
-plot_bar(TopFamilies, fill = "Superkingdom")
 plot_bar(TopFamilies, fill = "Family")
 
 ```
+<img src=figs_tutorial/Most_abudnant_families.png width="500" height="500">
+
 
 ##### Organised plots
 Organise samples and families, add custom colours.
@@ -222,8 +221,11 @@ fig <- p + scale_fill_manual(values=family_Palette) +
 
 fig
 ```
+<img src=figs_tutorial/Nicer_fam_figure.png width="500" height="500">
 
 To reproduce the figure of the full dataset, see R script [here](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/PhyloSeq_graphs_publication.R).
+
+
 
 
 
