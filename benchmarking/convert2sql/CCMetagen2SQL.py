@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Parse the results of 1 KMetagen csv file and store them in the SQLite3 'bench.db'
+Parse the results of 1 CCMetagen csv file and store them in the SQLite3 'bench.db'
 
-USAGE ex: python KMetagen2SQL.py -i 2_mtg_ITS.res -n mtg -r UNITE -sql benchm.db
+USAGE ex: python CCMetagen2SQL.py -i 2_mtg_ITS.res -n mtg -r nt -sql benchm.db
 
 
 @ V.R.Marcelino
 Created on 29 Dec 2018
+
+Modified: 30 April 2019
 """
 
 import csv
@@ -23,13 +25,13 @@ import cTaxInfo # script that define classes used here
 import fNCBItax # script with function to get lineage from taxid
 
 parser = ArgumentParser()
-parser.add_argument('-i', '--input_KMetagen_result', help='The path to the .res or .spa file', required=True)
+parser.add_argument('-i', '--input_CCMetagen_result', help='The path to the csv file', required=True)
 parser.add_argument('-n', '--input_sample_name', help='Tthe name of the sample', required=True)
 parser.add_argument('-r', '--reference_database', help='Reference database used, options are UNITE, RefSeq_f_partial and RefSeq_bf', required=True)
 parser.add_argument('-sql', '--SQL_db', help='SQL database where it should store the data', required=True)
 
 args = parser.parse_args()
-in_res_file = args.input_KMetagen_result
+in_res_file = args.input_CCMetagen_result
 ref_database = args.reference_database
 sql_fp = args.SQL_db
 sample_name = args.input_sample_name
@@ -38,9 +40,9 @@ sample_name = args.input_sample_name
 # Tests and torubleshooting
 #ref_database = "RefSeq"
 #in_res_file = "output_2mtg_RefSeq.csv"
-#in_res_file = "KMetagen_result_2mtg_sparse.csv"
-#sql_fp="benchm.db"
-#sample_name="2_mtg"
+#in_res_file = "tests/1_mtt_refSeq_bf.res.csv"
+#sql_fp="tests/benchm.db"
+#sample_name="1_mtt"
 
 ############# 
 connection = sqlite3.connect(sql_fp)
@@ -48,11 +50,11 @@ cursor = connection.cursor()
 
 # Create a table if it does not exist:
 # Note that Order is written with two 'O's, as Order is a sql command
-query = """CREATE TABLE IF NOT EXISTS KMetagen (TaxID integer, Lineage text, 
-Sample text, RefDatabase text, Abundance real, Kingdom text,Kingdom_TaxId integer,
-Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
-Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
-Genus_TaxId integer, Species text, Species_TaxId integer);"""
+query = """CREATE TABLE IF NOT EXISTS CCMetagen (TaxID integer, Lineage text, 
+Sample text, RefDatabase text, Abundance real, Superkingdom text, Superkingdom_TaxId integer,
+Kingdom text,Kingdom_TaxId integer, Phylum text, Phylum_TaxId integer, Class text, 
+Class_TaxId integer, OOrder text, Order_TaxId integer, Family text, 
+Family_TaxId integer, Genus text, Genus_TaxId integer, Species text, Species_TaxId integer);"""
 
 
 cursor.execute(query)
@@ -65,7 +67,7 @@ connection.commit()
 store_lineage_info = []
 
 
-# read Kmetagen as a pandas dataframe:
+# read CCMetagen results as a pandas dataframe:
 df = pd.read_csv(in_res_file, sep=',', index_col=0)
 
 # loop through db and store relevant info
@@ -97,9 +99,10 @@ for index, row in df.iterrows():
         
 
 # output as a SQLite3:
-query = "INSERT INTO KMetagen VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+query = "INSERT INTO CCMetagen VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 for i in store_lineage_info:
     cursor.execute(query,(i.TaxId,i.Lineage,i.Sample,i.RefDatabase,i.Abundance,
+                          i.Superkingdom, i.Superkingdom_TaxId,
                           i.Kingdom,i.Kingdom_TaxId,i.Phylum,i.Phylum_TaxId,
                           i.Class,i.Class_TaxId,i.Order,i.Order_TaxId,i.Family,
                           i.Family_TaxId,i.Genus,i.Genus_TaxId,i.Species,
@@ -112,7 +115,7 @@ connection.close()
 
 print ("")
 print ("Done!")
-print ("Table KMetagen saved in %s sqlite3 database" %(sql_fp))
+print ("Table CCMetagen saved in %s sqlite3 database" %(sql_fp))
 print ("")
 
 
@@ -122,6 +125,10 @@ print ("")
 #check it is all right
 #for i in store_lineage_info:
 #    print (i.TaxId)
+#    print (i.Superkingdom)
+#    print (i.Superkingdom_TaxId)
+#    print (i.Kingdom)
+#    print (i.Kingdom_TaxId)
 #    print (i.Lineage)
 #    print (i.Sample)
 #    print (i.RefDatabase)

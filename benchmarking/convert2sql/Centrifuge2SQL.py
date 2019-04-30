@@ -44,10 +44,10 @@ cursor = connection.cursor()
 # Create a table if it does not exist:
 # Note that Order is written with two 'O's, as Order is a sql command
 query = """CREATE TABLE IF NOT EXISTS Centrifuge (TaxID integer, Lineage text, 
-Sample text, RefDatabase text, Abundance real, Kingdom text,Kingdom_TaxId integer,
-Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
-Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
-Genus_TaxId integer, Species text, Species_TaxId integer);"""
+Sample text, RefDatabase text, Abundance real,  Superkingdom text, Superkingdom_TaxId integer,
+Kingdom text,Kingdom_TaxId integer, Phylum text, Phylum_TaxId integer, Class text, 
+Class_TaxId integer, OOrder text, Order_TaxId integer, Family text, 
+Family_TaxId integer, Genus text, Genus_TaxId integer, Species text, Species_TaxId integer);"""
 
 cursor.execute(query)
 connection.commit()
@@ -65,24 +65,30 @@ with open(in_res_file) as res:
         
         match_info.Lineage = line[0]
 
-        match_info.TaxId = int(line[1])  
+        match_info.TaxId = int(line[1])
         match_info.Sample = sample_name
-        match_info.RefDatabase = ref_database  
+        match_info.RefDatabase = ref_database
         
-        # Abundance here is the number of unique reads, rather than 'abundance' form centrifuge
+        # Abundance here is the number of unique reads, rather than 'abundance' from centrifuge
         # as there are usually not 30 species with abundance > 0.
         match_info.Abundance = int(line[5])
         
-        # get Lineage info from NCBI
-        match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+        # get Lineage info from NCBI if taxid is valid:
+        try:
+            match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+        except ValueError:
+            print ("""
+                   Warning: %i is not a valid taxid and will not be considered in the analysis
+                   """ %(match_info.TaxId))
 
         store_lineage_info.append(match_info)      
 
 
 # output as a SQLite3:
-query = "INSERT INTO Centrifuge VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+query = "INSERT INTO Centrifuge VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 for i in store_lineage_info:
     cursor.execute(query,(i.TaxId,i.Lineage,i.Sample,i.RefDatabase,i.Abundance,
+                          i.Superkingdom, i.Superkingdom_TaxId,
                           i.Kingdom,i.Kingdom_TaxId,i.Phylum,i.Phylum_TaxId,
                           i.Class,i.Class_TaxId,i.Order,i.Order_TaxId,i.Family,
                           i.Family_TaxId,i.Genus,i.Genus_TaxId,i.Species,

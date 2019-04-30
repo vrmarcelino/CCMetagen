@@ -45,18 +45,19 @@ cursor = connection.cursor()
 # Create a table if it does not exist:
 # Note that Order is written with two 'O's, as Order is a sql command
 query = """CREATE TABLE IF NOT EXISTS Fungi (Sample text, Lineage text,
-Coverage float, TaxID integer, Kingdom text,Kingdom_TaxId integer,
-Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
-Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
-Genus_TaxId integer, Species text, Species_TaxId integer);"""
+Coverage float, TaxID integer, Superkingdom text, Superkingdom_TaxId integer,
+Kingdom text, Kingdom_TaxId integer, Phylum text, Phylum_TaxId integer, 
+Class text, Class_TaxId integer, OOrder text, Order_TaxId integer, Family text,
+Family_TaxId integer, Genus text, Genus_TaxId integer, Species text, Species_TaxId integer);"""
 
 cursor.execute(query)
 connection.commit()
 
 # output as a SQLite3:
-query = "INSERT INTO Fungi VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+query = "INSERT INTO Fungi VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 for i in store_fungi_info:
-    cursor.execute(query,(i.Sample,i.Lineage,i.Coverage,i.TaxId,i.Kingdom,
+    cursor.execute(query,(i.Sample,i.Lineage,i.Coverage,i.TaxId,
+                          i.Superkingdom, i.Superkingdom_TaxId,i.Kingdom,
                           i.Kingdom_TaxId,i.Phylum,i.Phylum_TaxId,i.Class,
                           i.Class_TaxId,i.Order,i.Order_TaxId,i.Family,
                           i.Family_TaxId,i.Genus,i.Genus_TaxId,i.Species,
@@ -66,4 +67,3 @@ for i in store_fungi_info:
 # Save db
 connection.commit()
 connection.close()
-

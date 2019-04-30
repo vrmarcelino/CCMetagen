@@ -48,10 +48,10 @@ cursor = connection.cursor()
 # Create a table if it does not exist:
 # Note that Order is written with two 'O's, as Order is a sql command
 query = """CREATE TABLE IF NOT EXISTS KMA (TaxID integer, Lineage text, 
-Sample text, RefDatabase text, Abundance real, Kingdom text,Kingdom_TaxId integer,
-Phylum text, Phylum_TaxId integer, Class text, Class_TaxId integer, OOrder text,
-Order_TaxId integer, Family text, Family_TaxId integer, Genus text, 
-Genus_TaxId integer, Species text, Species_TaxId integer);"""
+Sample text, RefDatabase text, Abundance real, Superkingdom text, Superkingdom_TaxId integer,
+Kingdom text,Kingdom_TaxId integer, Phylum text, Phylum_TaxId integer, 
+Class text, Class_TaxId integer, OOrder text, Order_TaxId integer, Family text, 
+Family_TaxId integer, Genus text, Genus_TaxId integer, Species text, Species_TaxId integer);"""
 
 
 cursor.execute(query)
@@ -149,9 +149,10 @@ with open(in_res_file) as res:
 
 
 # output as a SQLite3:
-query = "INSERT INTO KMA VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+query = "INSERT INTO KMA VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 for i in store_lineage_info:
     cursor.execute(query,(i.TaxId,i.Lineage,i.Sample,i.RefDatabase,i.Abundance,
+                          i.Superkingdom, i.Superkingdom_TaxId,
                           i.Kingdom,i.Kingdom_TaxId,i.Phylum,i.Phylum_TaxId,
                           i.Class,i.Class_TaxId,i.Order,i.Order_TaxId,i.Family,
                           i.Family_TaxId,i.Genus,i.Genus_TaxId,i.Species,
