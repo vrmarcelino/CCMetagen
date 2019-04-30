@@ -154,7 +154,13 @@ CCMeta_physeq
 Plot bar graphs
 Note that this takes a while for large files
 ```
-plot_bar(CCMeta_physeq, fill = "Superkingdom")
+plot_bar(CCMeta_physeq, fill = "Superkingdom")```
+
+```
+![Superkingdom](figs_tutorial/Superkingdom.pdf)
+
+
+```
 plot_bar(CCMeta_physeq, fill = "Family")
 ```
 
