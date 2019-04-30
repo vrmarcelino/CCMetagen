@@ -157,7 +157,7 @@ Note that this takes a while for large files
 plot_bar(CCMeta_physeq, fill = "Superkingdom")```
 
 ```
-![Superkingdom](figs_tutorial/Superkingdom.pdf)
+![Superkingdom](figs_tutorial/Superkingdom.png)
 
 
 ```
