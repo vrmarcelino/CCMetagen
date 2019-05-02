@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script to assess the accuracy and recall of the different programs
+Script to assess the precision and recall of the different programs
 
-USAGE: python AccuracyRecall.py -tr Species -sql benchm.db -o Res_species.csv
-    
+USAGE: python PrecisionRecall.py -tr Species -sql benchm.db -o Res_species.csv
+
 @ V.R.Marcelino
 Created on Mon Jul 16 11:29:09 2018
-Modified - 30 Nov 2018
+Modified - 30 Apr 2019
 """
 
 import sqlite3
@@ -32,7 +32,7 @@ sql2csv = args.output_csv
 #TaxRank="Species"
 #sql2csv="Res_species.csv"
 
-approaches = ['KMetagen', 'KMA', 'Centrifuge', 'Kraken2'] # approaches ot be analysed
+approaches = ['CCMetagen', 'KMA', 'Centrifuge', 'KrakenUniq','Kraken2'] # approaches ot be analysed
 
 
 print ("")
@@ -90,8 +90,8 @@ for apr in approaches:
         total_input = cursor.fetchall()[0][0]
         row.Recall = round((row.TruePos * 100 / total_input), 4)
 
-        # Calc accuracy (% from all matches that are true positives)
-        row.Accuracy = round((row.TruePos * 100  / total_matches), 4)
+        # Calc precision (% from all matches that are true positives)
+        row.Precision = round((row.TruePos * 100  / total_matches), 4)
       
         store_results.append(row)
     
@@ -100,7 +100,7 @@ for apr in approaches:
 ### Create new Results database
 query = """CREATE TABLE IF NOT EXISTS Results{} (Approach text, 
 Sample text, RefDatabase text, TruePos integer, FalsePos integer, 
-Recall float, Accuracy float);""".format(TaxRank)
+Recall float, Precision float);""".format(TaxRank)
 
 cursor.execute(query)
 connection.commit()
@@ -110,14 +110,14 @@ connection.commit()
 query = "INSERT INTO Results{} VALUES (?,?,?,?,?,?,?);".format(TaxRank)
 for i in store_results:
     cursor.execute(query,(i.Approach, i.Sample, i.RefDatabase, i.TruePos,
-                          i.FalsePos, i.Recall, i.Accuracy))
+                          i.FalsePos, i.Recall, i.Precision))
     
     
 ### Save to csv file?
 if sql2csv != None:
   
     header=('Approach', 'Sample', 'RefDatabase', 'TruePos', 'FalsePos',
-        'Recall', 'Accuracy')
+        'Recall', 'Precision')
     
     csvWriter = csv.writer(open(sql2csv, "w"))    
     csvWriter.writerow(header)

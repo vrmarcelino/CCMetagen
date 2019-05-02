@@ -7,14 +7,14 @@ Required to benchmark the results and store info in 'bench.db'
 
 @ V.R.Marcelino
 Created on 17 Jul 2018
-Last update ---
+Last update 30 Apr 2019
 
 """
 
 ### Class to store info that goes in the Results tables
 class results_info():
      def __init__(self, Approach=None,Sample=None,RefDatabase=None,
-                  TruePos=None,FalsePos=None,Recall=None,Accuracy=None,TaxLevel=None):
+                  TruePos=None,FalsePos=None,Recall=None,Precision=None,TaxLevel=None):
          
          self.Approach = Approach
          self.Sample = Sample
@@ -22,7 +22,7 @@ class results_info():
          self.TruePos = TruePos
          self.FalsePos = FalsePos
          self.Recall = Recall
-         self.Accuracy = Accuracy
+         self.Precision = Precision
          self.TaxLevel = TaxLevel
 
 def query4trues(approach,sample,taxLevel,RefDb):

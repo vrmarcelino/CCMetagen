@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script to get one file per Database with Accuracy at several taxon levels
+Script to get one file per Database with Precision at several taxon levels
 
 Works wth sqlite3
 
@@ -31,7 +31,7 @@ out_file = args.output_csv
 #sql_fp="benchm.db"
 #ref_db="RefSeq_f_partial"
 
-accuracy_results=['ResultsPhylum','ResultsClass','ResultsOrder','ResultsFamily','ResultsGenus','ResultsSpecies']
+precision_results=['ResultsPhylum','ResultsClass','ResultsOrder','ResultsFamily','ResultsGenus','ResultsSpecies']
 
 
 
@@ -45,8 +45,8 @@ store_results = []
 
 
 # Loop trough taxon levels and get the wanted results for each level
-for r in accuracy_results:
-    query="SELECT Approach, Sample, Accuracy, Recall FROM {} WHERE RefDatabase = '{}';".format(r,ref_db)
+for r in precision_results:
+    query="SELECT Approach, Sample, Precision, Recall FROM {} WHERE RefDatabase = '{}';".format(r,ref_db)
     cursor.execute(query)
     info_from_results = cursor.fetchall()
     
@@ -56,7 +56,7 @@ for r in accuracy_results:
     
         row.Approach = i[0]
         row.Sample = i[1]
-        row.Accuracy = i[2]
+        row.Precision = i[2]
         row.Recall = i[3]
         
         
@@ -72,7 +72,7 @@ for r in accuracy_results:
 # Save 
 with open(out_file, 'w') as csv_file:
     wr = csv.writer(csv_file, delimiter=',')
-    wr.writerow(["Aproach","Sample","Accuracy","Recall","TaxLevel"])
+    wr.writerow(["Aproach","Sample","Precision","Recall","TaxLevel"])
     for i in store_results:
         wr.writerow(list(i))
         
