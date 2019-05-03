@@ -16,9 +16,9 @@ import pandas as pd
 # load files
 kraken_o = "s06.6_kraken_all_db.txt"
 centrifuge_o = "s06.2_centrifuge_all.txt"
-krakenUniq_o = "s06.5_krakenUniq_refSeq_all.txt"
+krakenUniq_o = "s06.5_krakenUniq_all_db.txt"
 kma_o = "s06.1_KMA_all_db.txt"
-kmetagen_o = "s06.1.2_KMetagen_all_db.txt"
+kmetagen_o = "s06.1.2_CCMetagen_all_db.txt"
 
 
 # save as
@@ -132,7 +132,7 @@ with open(centrifuge_o) as o:
 ### KrakenUniq
 counter = 0
 program = "KrakenUniq"
-ref_databases = ["RefSeq_f_partial","RefSeq_bf"]
+ref_databases = ["RefSeq_f_partial", "RefSeq_bf", "nt"]
 
 
 with open(krakenUniq_o) as o:
@@ -150,7 +150,10 @@ with open(krakenUniq_o) as o:
                 
             elif 9 <= counter < 18:
                 ref = ref_databases[1]
-
+                
+            elif 18 <= counter < 27:
+                ref = ref_databases[2]
+                
             else:
                 print ("number of results don't match")
                 
