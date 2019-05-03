@@ -49,7 +49,8 @@ To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
 ## Databases
 
-**Option 1:** Download the indexed (ready-to-go) nt database [here - add link]().
+**Option 1:** Download the indexed (ready-to-go) nt database [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH).
+Download the ncbi_nt_kma.zip file (96GB zipped file, 268GB uncompressed).
 This database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes. 
 
 **Option 2:** Build your own reference database.

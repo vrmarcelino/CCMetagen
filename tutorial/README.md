@@ -11,8 +11,8 @@ You can download the test dataset [here -- link]. This dataset is composed of 4 
 
 Make sure you have CCMetagen, KMA, and all its dependencies are installed and accessible from your $PATH. The installation is described [here](https://github.com/vrmarcelino/CCMetagen).
 
-Download or build your own indexed database. The indexed NCBI nt database can be downloaded [here -- link].
-This database occupies 171GB of disk space, and will require around 500GB of RAM to run. If that is an issue, smaller reference databases can be used (e.g. RefSeq and UNITE databases). [Insert links to download].
+Download or build your own indexed database. The indexed NCBI nt database (ncbi_nt_kma.zip file) can be downloaded [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH).
+This database occupies 266GB of disk space, and will require around 500GB of RAM to run. If that is an issue, smaller reference databases can be used (e.g. RefSeq and UNITE databases). [Insert links to download].
 
 This tutorial will not cover quality control, but we highly recommend QC to remove low-quality reads and adapters from your data.
 If you are working with host-associated microbiomes, it is desirable to remove host reads as well. I personally like [KneadData](http://huttenhower.sph.harvard.edu/kneaddata) because it allows performing quality filtering, adapter removal and host filtering in one go.
