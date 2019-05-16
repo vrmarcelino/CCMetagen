@@ -6,6 +6,10 @@ If you use CCMetagen, please cite: TBA
 Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial).
 
 
+The guidelines below will guide you in using teh command-line version of the CCMetagen pipeline.
+CCMetagen is also available as a web service at https://cge.cbs.dtu.dk/services/ccmetagen/.
+
+
 ## Requirements and Installation
 
 Make sure you have the dependencies below installed and accessible in your $PATH.
@@ -49,7 +53,7 @@ To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
 ## Databases
 
-**Option 1:** Download the indexed (ready-to-go) nt database [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH).
+**Option 1:** Download the indexed (ready-to-go) nt database either [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH) or [here](http://www.cbs.dtu.dk/public/CGE/databases/CCMetagen/).
 Download the ncbi_nt_kma.zip file (96GB zipped file, 268GB uncompressed).
 Unzip the database: `unzip ncbi_nt_kma`.
 This database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes. 
@@ -64,7 +68,8 @@ If you want to use the RefSeq database, the format is similar to the one require
 
 ## Quick Start
 
-  * First map reads to the database with **KMA**.
+  * First map sequence reads (or contigs) to the database with **KMA**.
+
 For paired-end files:
 ```
 kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and -apm f
@@ -162,6 +167,9 @@ pip install pandas --upgrade --user
 This match will not get taxonomic ranks
 
 This is not an error, this is just a warning indicating that one of your query sequences matchs to a genbank record for which the NCBI taxonomic identifier (taxid) is not known. CCMetagen therefore will not be able to assign taxonomic ranks to this match, but you will still be able to see it in the output file.
+
+  * KeyError: "['Superkingdom' 'Kingdom' 'Phylum' 'Class' 'Order' 'Family' .... ] not in index"
+Make sure that the output of CCMetagen ends in '.csv'.
 
   * The results of the CCMetagen_merge.py at different taxonomic levels do not sum up.
 As explained above, this script merges all unclassified taxa at a given taxonomic level. For example, if you have 20 matches to the genus _Candida_, but only 2 matches were classified at the species level, the output of CCMetagen_merge.py -t Species (default) will only have the abundances of two classified _Candida_ species, while the others will be merged with the "Unclassified" taxa. The output of CCMetagen_merge.py -t Genus however will contain all 20 matches. 

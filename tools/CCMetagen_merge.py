@@ -25,8 +25,8 @@ import os
 
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_fp', help="""Path to the folder containing CCMetagen text results.
-                    Note that files must end with ".res.csv"
-                    ad the folder should not contain other .res.csv files""", required=True)
+                    Note that files must end with ".csv"
+                    and the folder should not contain other .csv files""", required=True)
 parser.add_argument('-t', '--tax_level', default = 'Species',
                     help="""Taxonomic level to merge the results. Options:
                     Closest_match (includes different genes for the same species),
@@ -81,9 +81,9 @@ all_samples = pd.DataFrame()
 
 # read input files and merge results
 for file in os.listdir(in_folder):
-    if file.endswith("res.csv"):
+    if file.endswith(".csv"):
         
-        sample_name = file.split(".res.csv")[0]
+        sample_name = file.split(".csv")[0]
         result_fp = os.path.join(in_folder, file)
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
