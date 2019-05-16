@@ -6,7 +6,7 @@ If you use CCMetagen, please cite: TBA
 Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial).
 
 
-The guidelines below will guide you in using teh command-line version of the CCMetagen pipeline.
+The guidelines below will guide you in using the command-line version of the CCMetagen pipeline.
 CCMetagen is also available as a web service at https://cge.cbs.dtu.dk/services/ccmetagen/.
 
 
