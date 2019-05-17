@@ -101,6 +101,8 @@ Done! This will make an additional quality filter and output a text file with ra
 
 An example of the CCMetagen output can be found [here (.csv file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.csv) and [here (.html file)](https://htmlpreview.github.io/?https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.html).
 
+<img src=figs_tutorial/krona_photo.png width="500" height="500">
+
 For a list of options to customize your analyze, type:
 ```
 CCMetagen.py -h
@@ -143,9 +145,9 @@ For options, type:
 ```
 CCMetagen_merge.py -h
 ```
-This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Bird_family_table_filtered.csv).
+This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Bird_family_table_filtered.csv).
 
-Check out our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.
+**Check out our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.**
 
 
 ## FAQs

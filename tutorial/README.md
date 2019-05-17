@@ -44,7 +44,7 @@ for r1 in $input_dir/*R1.fastq; do
 done
 ```
 
-KKMA will produce three files. The one used in CCMetagen ends with .res, and it should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res).
+KMA will produce three files. The one used in CCMetagen ends with .res, and it should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res).
 
 ### Process the results with CCMetagen
 First reset the variables:
