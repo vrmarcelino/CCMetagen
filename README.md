@@ -7,8 +7,7 @@ Besides the guidelines below, we also provide a tutorial to reproduce our metage
 
 
 The guidelines below will guide you in using the command-line version of the CCMetagen pipeline.
-CCMetagen is also available as a web service at https://cge.cbs.dtu.dk/services/ccmetagen/.
-
+CCMetagen will also be available soon as a web service at https://cge.cbs.dtu.dk/services/ccmetagen/.
 
 ## Requirements and Installation
 
