@@ -43,6 +43,9 @@ for r1 in $input_dir/*R1.fastq; do
 	kma -ipe $r1 $r2 -o $o -t_db $nt_db -t 4 -1t1 -mem_mode -and -apm f
 done
 ```
+
+KKMA will produce three files. The one used in CCMetagen ends with .res, and it should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res).
+
 ### Process the results with CCMetagen
 First reset the variables:
 
@@ -60,6 +63,10 @@ for f in $input_dir/*.res; do
 done
 ```
 
+This will generate another 3 files per sample.
+Here are examples of the produced [.csv file](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.csv), the [.html file](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.html), which you can download and open in a webbrowser, and the [.tsv file](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.tsv), which is used to produce the krona graph.
+
+
 ### Produce summary table
 Finally, merge the results into a single table using the script CCMetagen_merge.py
 By default, this script will merge taxa at species level.
@@ -68,6 +75,8 @@ Note that the input file here is the output folder of CCMetagen.
 ```
 CCMetagen_merge.py --input_fp $output_dir --keep_or_remove r --filtering_tax_level Kingdom --taxa_list Metazoa,Viridiplantae --output_fp Bird_species_table
 ```
+
+
 
 This also works:
 ```
@@ -90,6 +99,7 @@ Therefore, we let's produce a family-level table, filtering Metazoa and Viriplan
 ```
 CCMetagen_merge.py -i $output_dir -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o Bird_family_table_filtered
 ```
+This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Bird_family_table_filtered.csv).
 
 Switch to R to proceed with microbiome analyses using PhyloSeq.
 

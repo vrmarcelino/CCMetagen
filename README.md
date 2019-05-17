@@ -15,8 +15,8 @@ CCMetagen is also available as a web service at https://cge.cbs.dtu.dk/services/
 Make sure you have the dependencies below installed and accessible in your $PATH.
 The guidelines below are for Unix systems.
 
-  * If you do not have it already, download and install [Python 3](https://www.python.org/downloads/)
-CCMetagen requires Python modules [pandas](https://pandas.pydata.org/) and [ETE3](http://etetoolkit.org/). The easiest way to install these modules is via conda or pip:
+  * If you do not have it already, download and install [Python 3.6](https://www.python.org/downloads/)
+CCMetagen requires Python modules [pandas (>0.23)](https://pandas.pydata.org/) and [ETE3](http://etetoolkit.org/). The easiest way to install these modules is via conda or pip:
 
 `conda install pandas`
 
@@ -99,6 +99,8 @@ Note that if you are running CCMetagen from the local folder (instead of adding 
 
 Done! This will make an additional quality filter and output a text file with ranked taxonomic classifications and a krona graph file for interactive visualization.
 
+An example of the CCMetagen output can be found [here (.csv file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.csv) and [here (.html file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.html).
+
 For a list of options to customize your analyze, type:
 ```
 CCMetagen.py -h
@@ -141,8 +143,9 @@ For options, type:
 ```
 CCMetagen_merge.py -h
 ```
+This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Bird_family_table_filtered.csv).
 
-You can also refer to our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.
+Check out our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.
 
 
 ## FAQs
