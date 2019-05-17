@@ -99,7 +99,7 @@ Note that if you are running CCMetagen from the local folder (instead of adding 
 
 Done! This will make an additional quality filter and output a text file with ranked taxonomic classifications and a krona graph file for interactive visualization.
 
-An example of the CCMetagen output can be found [here (.csv file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.csv) and [here (.html file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Turnstone_Temperate_Flu_Ng.res.html).
+An example of the CCMetagen output can be found [here (.csv file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.csv) and [here (.html file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.html).
 
 For a list of options to customize your analyze, type:
 ```
