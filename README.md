@@ -14,6 +14,7 @@ The guidelines below will guide you in using the command-line version of the CCM
 
 CCMetagen is also available as a web service at https://cge.cbs.dtu.dk/services/ccmetagen/.
 
+
 ## Requirements and Installation
 
 Make sure you have the dependencies below installed and accessible in your $PATH.
@@ -67,7 +68,7 @@ Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidem
 It is important that taxids are incorporated in sequence headers for processing with CCMetagen.
 We provide scripts to rename sequences in the nt database [here](https://github.com/vrmarcelino/CCMetagen/tree/master/benchmarking/rename_nt).
 
-If you want to use the RefSeq database, the format is similar to the one required for Kraken. The [Opiniomics blog](http://www.opiniomics.org/building-a-kraken-database-with-new-ftp-structure-and-no-gi-numbers/) describes how to download sequences in an adequate format.
+If you want to use the RefSeq database, the format is similar to the one required for Kraken. The [Opiniomics blog](http://www.opiniomics.org/building-a-kraken-database-with-new-ftp-structure-and-no-gi-numbers/) describes how to download sequences in an adequate format. Note that you still need to build the index with KMA: `kma_index -i refseq.fna -o refseq_indexed -NI -Sparse -` or `kma_index -i refseq.fna -o refseq_indexed -NI -Sparse TG` for faster analysis.
 
 
 ## Quick Start
