@@ -24,11 +24,10 @@ def lineage_extractor(query_taxid, TaxInfo_object):
 
     for key, val in ranks.items():
         
-        # check if it has a Superkingdom:
         if val == list_of_taxa_ranks[0]:
             TaxInfo_object.Superkingdom = names[key]
-            TaxInfo_object.Superkingdom_TaxId = key 
-                        
+            TaxInfo_object.Superkingdom_TaxId = key            
+             
         elif val == list_of_taxa_ranks[1]:
             TaxInfo_object.Kingdom = names[key]
             TaxInfo_object.Kingdom_TaxId = key
@@ -56,7 +55,6 @@ def lineage_extractor(query_taxid, TaxInfo_object):
         elif val == list_of_taxa_ranks[7]:
             TaxInfo_object.Species = names[key]
             TaxInfo_object.Species_TaxId = key
-            
     return TaxInfo_object
 
 
