@@ -110,7 +110,9 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
 
         # Assign LCA_taxid. Go to Kingdom if possible:
         in_df.at[index, 'LCA_TaxId'] = match_info.Superkingdom_TaxId
-        in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
+        
+        if match_info.Kingdom is not None:
+            in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
         
         # if it matches to uncultured or unclassified fungus, use the Fungi LCA itaxid:
         if match_info.Kingdom == 'Fungi':
