@@ -125,6 +125,7 @@ for file in os.listdir(in_folder):
 
 ## create here an idex with all tax ranks (becaus enow multiple things have the same name)
 ## in phyloseq - use this index (or recreate it)
+## Also remove the "NAs" - they are ugly
 
 # name first row
 all_samples.index.name = tax_level
