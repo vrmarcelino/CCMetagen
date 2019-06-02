@@ -13,7 +13,7 @@ Besides the guidelines below, we also provide a tutorial to reproduce our metage
 The guidelines below will guide you in using the command-line version of the CCMetagen pipeline.
 
 CCMetagen is also available as a web service at https://cge.cbs.dtu.dk/services/ccmetagen/.
-
+Note that we recommend using this command-line version to analyze data exceeding 1.5Gb.
 
 ## Requirements and Installation
 
@@ -157,8 +157,8 @@ This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/
 
 ## FAQs
 
-  * Error taxid not found.
-You probably need to update your local ETE3 database, which contains the taxids and their lineages information:
+* Error taxid not found.
+  You probably need to update your local ETE3 database, which contains the taxids and lineage information:
 ```
 python
 from ete3 import NCBITaxa
@@ -167,23 +167,22 @@ ncbi.update_taxonomy_database()
 quit()
 ```
 
-  * TypeError: concat() got an unexpected keyword argument 'sort'.
-If you get this error, please update the python module pandas:
+* TypeError: concat() got an unexpected keyword argument 'sort'.
+  If you get this error, please update the python module pandas:
 ```
 pip install pandas --upgrade --user
 ```
 
-  * WARNING: no NCBI's taxid found for accession [something],
-This match will not get taxonomic ranks
+* WARNING: no NCBI's taxid found for accession [something], this match will not get taxonomic ranks
 
-This is not an error, this is just a warning indicating that one of your query sequences matchs to a genbank record for which the NCBI taxonomic identifier (taxid) is not known. CCMetagen therefore will not be able to assign taxonomic ranks to this match, but you will still be able to see it in the output file.
+  This is not an error, this is just a warning indicating that one of your query sequences matchs to a genbank record for which the NCBI taxonomic identifier (taxid) is not known. CCMetagen therefore will not be able to assign taxonomic ranks to this match, but you will still be able to see it in the output file.
 
-  * KeyError: "['Superkingdom' 'Kingdom' 'Phylum' 'Class' 'Order' 'Family' .... ] not in index"
-Make sure that the output of CCMetagen ends in '.csv'.
+* KeyError: "['Superkingdom' 'Kingdom' 'Phylum' 'Class' 'Order' 'Family' .... ] not in index"
+  Make sure that the output of CCMetagen ends in '.csv'.
 
-  * The results of the CCMetagen_merge.py at different taxonomic levels do not sum up.
-As explained above, this script merges all unclassified taxa at a given taxonomic level. For example, if you have 20 matches to the genus _Candida_, but only 2 matches were classified at the species level, the output of CCMetagen_merge.py -t Species (default) will only have the abundances of two classified _Candida_ species, while the others will be merged with the "Unclassified" taxa. The output of CCMetagen_merge.py -t Genus however will contain all 20 matches. 
-If this behaviour is undesirable, one option is to disable the similarity thresholds (use flag -off) - so that all taxonomic levels are reported regardless of their similarity to the reference sequence. Alternatively, you can cluster species at the 'Closest_match' (using the flag --tax_level Closest_match).
+* The results of the CCMetagen_merge.py at different taxonomic levels do not sum up.
+  As explained above, this script merges all unclassified taxa at a given taxonomic level. For example, if you have 20 matches to the genus _Candida_, but only 2 matches were classified at the species level, the output of CCMetagen_merge.py -t Species (default) will only have the abundances of two classified _Candida_ species, while the others will be merged with the "Unclassified" taxa. The output of CCMetagen_merge.py -t Genus however will contain all 20 matches. 
+  If this behaviour is undesirable, one option is to disable the similarity thresholds (use flag -off) - so that all taxonomic levels are reported regardless of their similarity to the reference sequence. Alternatively, you can cluster species at the 'Closest_match' (using the flag --tax_level Closest_match).
 
 
 ## Complete option list
