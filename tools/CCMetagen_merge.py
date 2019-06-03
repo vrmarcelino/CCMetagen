@@ -53,10 +53,10 @@ kr = args.keep_or_remove
 
 
 # debugging:
-in_folder = "CCMetagen_new"
-tax_level = "Species"
-output = "merged_samples_depth"
-kr = "n" # k for keep, r for remove, and n for none
+#in_folder = "CCMetagen_new"
+#tax_level = "Species"
+#output = "merged_samples_depth"
+#kr = "n" # k for keep, r for remove, and n for none
 #level = "Species"
 #taxa = ["Escherichia coli"]
 
@@ -91,6 +91,7 @@ for file in os.listdir(in_folder):
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
         
+        # this is needed because groupby excludes rows with NAs 
         df = df.fillna("NA")
         
         # keep or remove taxa:
@@ -121,14 +122,6 @@ for file in os.listdir(in_folder):
 
         all_samples = pd.concat([all_samples, depth_by_tax], sort=True, axis=1)
     
-#pd.DataFrame.to_csv(all_samples, "check3.csv", index=False)
-
-## create here an idex with all tax ranks (becaus enow multiple things have the same name)
-## in phyloseq - use this index (or recreate it)
-## Also remove the "NAs" - they are ugly
-
-# name first row
-all_samples.index.name = tax_level
 
 # Group taxon ranks 
 all_samples = all_samples.groupby(by=all_samples.columns, axis = 1).first()
@@ -142,9 +135,12 @@ sample_cols = all_samples.drop(columns=tax_cols_l)
 
 all_samples = pd.merge(sample_cols,tax_cols,left_index=True,right_index=True)
 
-
 # Fill NaN with zeros:
 all_samples = all_samples.fillna(0)
+
+# Remove the artificially added NAs:
+all_samples = all_samples.replace(["NA"], value = "")
+
 
 ### Save
 out = output + ".csv"
