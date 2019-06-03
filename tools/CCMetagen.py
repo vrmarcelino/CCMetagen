@@ -124,10 +124,10 @@ else:
     sys.exit("Try again.")
 
 # developing and debugging:
-#out_fp = "CCMetagen_nt_results"
-#f = "7_Outback_Duck.res"
+#args.output_fp = "CCMetagen_nt_results"
+#f = "ALG_1.res"
 #ref_database = "nt"
-#mode = 'text'
+#mode = 'both'
 #c = 20
 #q = 50
 #d = 0.2
@@ -179,6 +179,9 @@ if (mode == 'text') or (mode == 'both'):
 if (mode == 'visual') or (mode == 'both'):
     krona_info = df[['Depth','Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
 
+    # remove the unk_xx for better krona representation
+    krona_info = krona_info.replace('unk_.*$', value = '',regex=True)
+    
     # save dataframe to file
     out1 = args.output_fp + ".tsv"
     pd.DataFrame.to_csv(krona_info, out1, sep='\t', index=False, header=False)
@@ -193,8 +196,3 @@ if (mode == 'visual') or (mode == 'both'):
     print ("")
 
 
-
-    
-
-    
-    
