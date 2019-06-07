@@ -65,12 +65,21 @@ parser.add_argument('-o', '--output_fp', default = 'CCMetagen_out',
 parser.add_argument('-r', '--reference_database', default = 'nt', 
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
+parser.add_argument('-du', '--depth_unit', default = 'nc',
+                    help="""Desired unit for Depth(abundance) measurmeents. 
+                    Default = nc (nu,mber of nucleotides overlapping each template).
+                    Alternatively, you can keep the KMA default depth (number of nucleotides overlaping the template,
+                    divided by the lengh of the template). This would be better suitable
+                    for when using reference databases containing genes only (e.g. UNITE).
+                    If you use the 'kma' option, remember to change the default --depth parameter accordingly.
+                    Valid options are nc and kma""", required=False)
+parser.add_argument('-d', '--depth', default = 200,
+                    help='Minimum sequencing depth. Default = 200 (200 nucleotides)',type=float, required=False)
+
 parser.add_argument('-c', '--coverage', default = 20, 
                     help='Minimum coverage. Default = 20',type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50, 
                     help='Minimum query identity (Phylum level). Default = 50', type=float, required=False)
-parser.add_argument('-d', '--depth', default = 0.2,
-                    help='Minimum sequencing depth. Default = 0.2.',type=float, required=False)
 parser.add_argument('-p', '--pvalue', default = 0.05, 
                     help='Minimum p-value. Default = 0.05.',type=float, required=False)
 
@@ -98,6 +107,7 @@ ref_database = args.reference_database
 c = args.coverage
 q = args.query_identity
 d = args.depth
+du = args.depth_unit
 p = args.pvalue
 
 # taxononomic thresholds:
@@ -130,7 +140,7 @@ else:
 #mode = 'both'
 #c = 20
 #q = 50
-#d = 0.2
+#d = 200
 #p = 0.05
 #st = 99
 #gt = 98
@@ -147,7 +157,6 @@ if ref_database not in ("UNITE", "RefSeq","nt"):
     sys.exit("Try again.")
 
 
-
 ### Read input files and output a pandas dataframe
 print ("")
 print ("Reading file %s" %(f))
@@ -157,7 +166,12 @@ df = pd.read_csv(f, sep='\t', index_col=0)
 
 # Rename headers:
 df.index.name = "Closest_match"
- 
+
+# adjust depth to reflect number of bases:
+if du == 'nc':
+    df['Depth'] = df.Depth * df.Template_length
+
+
 # first quality filter (coverage, query identity, Depth and p-value)
 df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
