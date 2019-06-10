@@ -162,7 +162,7 @@ print ("")
 print ("Reading file %s" %(f))
 print ("")
     
-df = pd.read_csv(f, sep='\t', index_col=0)
+df = pd.read_csv(f, sep='\t', index_col=0, encoding='latin1')
 
 # Rename headers:
 df.index.name = "Closest_match"
