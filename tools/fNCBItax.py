@@ -81,7 +81,7 @@ def lineage_extractor(query_taxid, TaxInfo_object):
         TaxInfo_object.Genus = "unk_g"
         
     if TaxInfo_object.Species is None:
-        TaxInfo_object.Species = "unk_f"        
+        TaxInfo_object.Species = "unk_s"  
         
         
     return TaxInfo_object
