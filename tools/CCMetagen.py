@@ -3,14 +3,13 @@
 """
 CCMetagen main script
 
-Version 0.1
 
 @ V.R.Marcelino
 Created on Wed Jul 25 17:13:10 2018
-Updated: 03 Jan 2019
-Version: 0.1
 
 """
+
+version_numb = 'v.0.2'
 
 # imports
 import sys
@@ -28,11 +27,11 @@ import fNCBItax # needed in fParseKMA
 if len(sys.argv) == 1:
     print ("")
     print ("CCMetagen - Identify species in metagenome datasets")
-    print ("version: 0.1")
+    print (version_numb)
     print ("To be used with KMA")
     print ("")
     print ("Usage: CCMetagen.py <options> ")
-    print ("Ex: CCMetagen.py -i KMA_out/2_mtg_ITS.res -r nt -o parsed_result_2mtg")
+    print ("Ex: CCMetagen.py -i KMA_out/2_mtg.res -o 2_mtg_result")
     print ("")
     print ("")
     print ("""When running CCMetagen on multiple files in a folder:
@@ -41,7 +40,7 @@ output_dir=CCMetagen_results
 mkdir $output_dir
 for f in $input_dir/*.res; do 
     out=$output_dir/${f/$input_dir\/}
-    CCMetagen.py -i $f -r nt -o $out
+    CCMetagen.py -i $f -o $out
 done""")
     print ("")
     print ("For help and options, type: CCMetagen.py -h")
@@ -100,7 +99,10 @@ parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n',
                     help='Turns simularity-based filtering off. Options = y or n. Default = n', required=False)
 
 
+parser.add_argument('--version', action='version', version=version_numb)
+
 args = parser.parse_args()
+args(['--version'])
 mode = args.mode
 f = args.res_fp
 ref_database = args.reference_database
