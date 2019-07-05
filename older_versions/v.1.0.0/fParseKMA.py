@@ -107,17 +107,16 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
         # Populate the df with lineage info and the LCA taxid: 
         
         in_df.at[index, 'Superkingdom'] = match_info.Superkingdom
-        in_df.at[index, 'Kingdom'] = match_info.Kingdom
-        
+
         # Assign LCA_taxid. Go to Kingdom if possible:
         in_df.at[index, 'LCA_TaxId'] = match_info.Superkingdom_TaxId
-        
-        if match_info.Kingdom_TaxId is not None:
-            in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
+        in_df.at[index, 'LCA_TaxId'] = match_info.Kingdom_TaxId
         
         # if it matches to uncultured or unclassified fungus, use the Fungi LCA itaxid:
         if match_info.Kingdom == 'Fungi':
             in_df.at[index, 'LCA_TaxId'] = 4751
+
+        in_df.at[index, 'Kingdom'] = match_info.Kingdom
 
         # fill in the rest of the table according to similarity threshold:
         if qiden >= phylum_threshold:

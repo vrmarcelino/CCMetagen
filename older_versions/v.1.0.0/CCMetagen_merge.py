@@ -53,8 +53,8 @@ kr = args.keep_or_remove
 
 
 # debugging:
-#in_folder = "CCMetagen_new"
-#tax_level = "Species"
+#in_folder = "02_CCMetagen"
+#tax_level = "Closest_match"
 #output = "merged_samples_depth"
 #kr = "n" # k for keep, r for remove, and n for none
 #level = "Species"
@@ -74,9 +74,6 @@ for i in l:
     else:
         f4agg[i] = 'first'
     
-# list of wanted taxa (no depth):
-wanted_taxa = list(f4agg.keys())
-wanted_taxa.remove('Depth')
 
 # create new dataframe:
 all_samples = pd.DataFrame()
@@ -91,7 +88,6 @@ for file in os.listdir(in_folder):
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
         
-        # this is needed because groupby excludes rows with NAs 
         df = df.fillna("NA")
         
         # keep or remove taxa:
@@ -117,11 +113,14 @@ for file in os.listdir(in_folder):
         if tax_level == 'Closest_match':
             df['Closest_match'] = df.index
         
-        depth_by_tax = df.groupby(by=wanted_taxa).agg(f4agg)
+        depth_by_tax = df.groupby(by=tax_level).agg(f4agg)
         depth_by_tax.rename(columns={'Depth':sample_name}, inplace=True)
 
         all_samples = pd.concat([all_samples, depth_by_tax], sort=True, axis=1)
     
+
+# name first row
+all_samples.index.name = tax_level
 
 # Group taxon ranks 
 all_samples = all_samples.groupby(by=all_samples.columns, axis = 1).first()
@@ -135,12 +134,16 @@ sample_cols = all_samples.drop(columns=tax_cols_l)
 
 all_samples = pd.merge(sample_cols,tax_cols,left_index=True,right_index=True)
 
+
+# Now the ranks for unclassified stuff must be erased (or it will correspond to the first assignment)
+# not applicable for 'Closest_match'
+if tax_level != 'Closest_match':
+    all_samples.at['NA', tax_cols_l]= 'NA'
+    all_samples.at['NA', tax_level]= 'Unclassified'
+
+
 # Fill NaN with zeros:
 all_samples = all_samples.fillna(0)
-
-# Remove the artificially added NAs:
-all_samples = all_samples.replace(["NA"], value = "")
-
 
 ### Save
 out = output + ".csv"

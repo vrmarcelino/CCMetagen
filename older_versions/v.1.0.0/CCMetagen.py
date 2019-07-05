@@ -3,13 +3,14 @@
 """
 CCMetagen main script
 
+Version 0.1
 
 @ V.R.Marcelino
 Created on Wed Jul 25 17:13:10 2018
+Updated: 03 Jan 2019
+Version: 0.1
 
 """
-
-version_numb = 'v.0.2'
 
 # imports
 import sys
@@ -27,11 +28,11 @@ import fNCBItax # needed in fParseKMA
 if len(sys.argv) == 1:
     print ("")
     print ("CCMetagen - Identify species in metagenome datasets")
-    print (version_numb)
+    print ("version: 0.1")
     print ("To be used with KMA")
     print ("")
     print ("Usage: CCMetagen.py <options> ")
-    print ("Ex: CCMetagen.py -i KMA_out/2_mtg.res -o 2_mtg_result")
+    print ("Ex: CCMetagen.py -i KMA_out/2_mtg_ITS.res -r nt -o parsed_result_2mtg")
     print ("")
     print ("")
     print ("""When running CCMetagen on multiple files in a folder:
@@ -40,7 +41,7 @@ output_dir=CCMetagen_results
 mkdir $output_dir
 for f in $input_dir/*.res; do 
     out=$output_dir/${f/$input_dir\/}
-    CCMetagen.py -i $f -o $out
+    CCMetagen.py -i $f -r nt -o $out
 done""")
     print ("")
     print ("For help and options, type: CCMetagen.py -h")
@@ -64,21 +65,12 @@ parser.add_argument('-o', '--output_fp', default = 'CCMetagen_out',
 parser.add_argument('-r', '--reference_database', default = 'nt', 
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
-parser.add_argument('-du', '--depth_unit', default = 'nc',
-                    help="""Desired unit for Depth(abundance) measurmeents. 
-                    Default = nc (nu,mber of nucleotides overlapping each template).
-                    Alternatively, you can keep the KMA default depth (number of nucleotides overlaping the template,
-                    divided by the lengh of the template). This would be better suitable
-                    for when using reference databases containing genes only (e.g. UNITE).
-                    If you use the 'kma' option, remember to change the default --depth parameter accordingly.
-                    Valid options are nc and kma""", required=False)
-parser.add_argument('-d', '--depth', default = 200,
-                    help='Minimum sequencing depth. Default = 200 (200 nucleotides)',type=float, required=False)
-
 parser.add_argument('-c', '--coverage', default = 20, 
                     help='Minimum coverage. Default = 20',type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50, 
                     help='Minimum query identity (Phylum level). Default = 50', type=float, required=False)
+parser.add_argument('-d', '--depth', default = 0.2,
+                    help='Minimum sequencing depth. Default = 0.2.',type=float, required=False)
 parser.add_argument('-p', '--pvalue', default = 0.05, 
                     help='Minimum p-value. Default = 0.05.',type=float, required=False)
 
@@ -99,17 +91,13 @@ parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n',
                     help='Turns simularity-based filtering off. Options = y or n. Default = n', required=False)
 
 
-parser.add_argument('--version', action='version', version=version_numb)
-
 args = parser.parse_args()
-args(['--version'])
 mode = args.mode
 f = args.res_fp
 ref_database = args.reference_database
 c = args.coverage
 q = args.query_identity
 d = args.depth
-du = args.depth_unit
 p = args.pvalue
 
 # taxononomic thresholds:
@@ -136,13 +124,13 @@ else:
     sys.exit("Try again.")
 
 # developing and debugging:
-#args.output_fp = "CCMetagen_nt_results"
-#f = "ALG_1.res"
+#out_fp = "CCMetagen_nt_results"
+#f = "7_Outback_Duck.res"
 #ref_database = "nt"
-#mode = 'both'
+#mode = 'text'
 #c = 20
 #q = 50
-#d = 200
+#d = 0.2
 #p = 0.05
 #st = 99
 #gt = 98
@@ -159,21 +147,17 @@ if ref_database not in ("UNITE", "RefSeq","nt"):
     sys.exit("Try again.")
 
 
+
 ### Read input files and output a pandas dataframe
 print ("")
 print ("Reading file %s" %(f))
 print ("")
     
-df = pd.read_csv(f, sep='\t', index_col=0, encoding='latin1')
+df = pd.read_csv(f, sep='\t', index_col=0)
 
 # Rename headers:
 df.index.name = "Closest_match"
-
-# adjust depth to reflect number of bases:
-if du == 'nc':
-    df['Depth'] = df.Depth * df.Template_length
-
-
+ 
 # first quality filter (coverage, query identity, Depth and p-value)
 df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
     
@@ -195,9 +179,6 @@ if (mode == 'text') or (mode == 'both'):
 if (mode == 'visual') or (mode == 'both'):
     krona_info = df[['Depth','Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
 
-    # remove the unk_xx for better krona representation
-    krona_info = krona_info.replace('unk_.*$', value = '',regex=True)
-    
     # save dataframe to file
     out1 = args.output_fp + ".tsv"
     pd.DataFrame.to_csv(krona_info, out1, sep='\t', index=False, header=False)
@@ -212,3 +193,8 @@ if (mode == 'visual') or (mode == 'both'):
     print ("")
 
 
+
+    
+
+    
+    
