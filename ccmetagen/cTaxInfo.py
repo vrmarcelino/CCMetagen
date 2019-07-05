@@ -50,5 +50,3 @@ class TaxInfo():
 
         # info from Fungi Table only
         self.Coverage = Coverage
-
-

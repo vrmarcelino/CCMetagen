@@ -19,10 +19,9 @@ from argparse import ArgumentParser
 import subprocess
 
 # local imports
-import fParseKMA
-import cTaxInfo # needed in fParseKMA
-import fNCBItax # needed in fParseKMA
-
+from ccmetagen import fParseKMA
+from ccmetagen import cTaxInfo # needed in fParseKMA
+from ccmetagen import fNCBItax # needed in fParseKMA
 
 # help
 if len(sys.argv) == 1:

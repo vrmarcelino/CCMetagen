@@ -11,8 +11,9 @@ Created on 1 Aug 2018
 import re
 
 # local imports
-import cTaxInfo
-import fNCBItax
+from ccmetagen import cTaxInfo
+from ccmetagen import fNCBItax
+
 import subprocess
 
 # function to filter a res file in pandas df format:
