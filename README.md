@@ -220,11 +220,11 @@ optional arguments:
                         RefSeq or nt. Default = nt
   -du DEPTH_UNIT, --depth_unit DEPTH_UNIT
                         Desired unit for Depth(abundance) measurmeents.
-                        Default = nc (nu,mber of nucleotides overlapping each
+                        Default = nc (number of nucleotides overlapping each
                         template). Alternatively, you can keep the KMA default
                         depth (number of nucleotides overlaping the template,
-                        divided by the lengh of the template). This would be
-                        better suitable for when using reference databases
+                        divided by the lengh of the template). This is
+                        suitable for when using reference databases
                         containing genes only (e.g. UNITE). If you use the
                         'kma' option, remember to change the default --depth
                         parameter accordingly. Valid options are nc and kma

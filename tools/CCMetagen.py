@@ -65,10 +65,10 @@ parser.add_argument('-r', '--reference_database', default = 'nt',
 
 parser.add_argument('-du', '--depth_unit', default = 'nc',
                     help="""Desired unit for Depth(abundance) measurmeents. 
-                    Default = nc (nu,mber of nucleotides overlapping each template).
+                    Default = nc (number of nucleotides overlapping each template).
                     Alternatively, you can keep the KMA default depth (number of nucleotides overlaping the template,
-                    divided by the lengh of the template). This would be better suitable
-                    for when using reference databases containing genes only (e.g. UNITE).
+                    divided by the lengh of the template). This is suitable
+                    when using reference databases containing genes only (e.g. UNITE).
                     If you use the 'kma' option, remember to change the default --depth parameter accordingly.
                     Valid options are nc and kma""", required=False)
 parser.add_argument('-d', '--depth', default = 200,
