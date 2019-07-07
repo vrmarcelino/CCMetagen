@@ -17,6 +17,8 @@ Note that we recommend using this command-line version to analyze data exceeding
 
 ## Requirements and Installation
 
+**Note:** We are improving the installation process and the latest CCMetagen version is still unstable. If you experience problems, please use [version 1.0.0](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.0.0). This was the version used in the analyses of our preprint.
+
 Make sure you have the dependencies below installed and accessible in your $PATH.
 The guidelines below are for Unix systems.
 
