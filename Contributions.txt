@@ -1,0 +1,10 @@
+Contributors:
+
+CCMetagen code:
+Vanessa R. Marcelino
+Jan P. Buchmann
+Andreas Sjödin
+
+CCMetagen web server and KMA:
+Philip T.L.C. Clausen
+
