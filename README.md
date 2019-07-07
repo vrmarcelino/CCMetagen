@@ -17,7 +17,7 @@ Note that we recommend using this command-line version to analyze data exceeding
 
 ## Requirements and Installation
 
-**Note:** We are improving the installation process and the latest CCMetagen version is still unstable. If you experience problems, please use [version 1.0.0](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.0.0). This was the version used in the analyses of our preprint.
+**Note:** We are improving the installation process and the latest CCMetagen version is still unstable. If you experience problems, please use [version 1.0.0](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.0.0). This was the version used in our preprint analyses.
 
 Make sure you have the dependencies below installed and accessible in your $PATH.
 The guidelines below are for Unix systems.
@@ -60,12 +60,14 @@ To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
 ## Databases
 
-**Option 1:** Download the indexed (ready-to-go) nt database either [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH) or [here](http://www.cbs.dtu.dk/public/CGE/databases/CCMetagen/).
+**Option 1** Download the indexed (ready-to-go) nt database either [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH) or [here](http://www.cbs.dtu.dk/public/CGE/databases/CCMetagen/).
 Download the ncbi_nt_kma.zip file (96GB zipped file, 165GB uncompressed).
 Unzip the database: `unzip ncbi_nt_kma`.
-This database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes. 
+This database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
 
-**Option 2:** Build your own reference database.
+**Option 2** We have indexed a more recent version of the ncbi nucleotide collection (June 2019) that does not contain environemntal or artificial sequences. The file ncbi_nt_no_env_11jun2019.zip can be downloaded [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH) and contains all ncbi nt entries excluding the descendants of environmental eukaryotes (taxid 61964), environmental prokaryotes (48479), unclassified sequences (12908) and artificial sequences (28384).
+
+**Option 3:** Build your own reference database.
 Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidemiology/kma) to index the database.
 It is important that taxids are incorporated in sequence headers for processing with CCMetagen.
 We provide scripts to rename sequences in the nt database [here](https://github.com/vrmarcelino/CCMetagen/tree/master/benchmarking/rename_nt).
