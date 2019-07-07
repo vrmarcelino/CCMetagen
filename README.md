@@ -127,8 +127,6 @@ The results must be in .csv format (default or '--mode text' output of CCMetagen
 
 The flag '-t' define the taxonomic level to merge the results. The default is species-level.
 
-Note that CCMetagen_merge merges together all unclassified taxa. The default species-level often contains several taxa that were unclassified at species level, but were classified at higher taxonomic ranks. This higher-level classification is not taken into account: and the resulting merged table will contain one row with all unclassified species.
-
 You can also filter out specific taxa, at any taxonomic level:
 
 Use flag -kr to keep (k) or remove (r) taxa.
@@ -150,7 +148,9 @@ Ex 4: Keep only _Escherichia coli_ and _Candida albicans_:
 CCMetagen_merge.py -i 05_KMetagen/ -kr k -l Species -tlist "Escherichia coli,Candida albicans"
 ```
 
-For options, type:
+If you only have one sample, you can also use CMetagen_merge to get one line per taxa.
+
+To see all options, type:
 ```
 CCMetagen_merge.py -h
 ```
@@ -194,11 +194,12 @@ pip install pandas --upgrade --user
 CCMetagen:
 ```
 usage: CCMetagen.py [-h] [-m MODE] -i RES_FP [-o OUTPUT_FP]
-                    [-r REFERENCE_DATABASE] [-c COVERAGE] [-q QUERY_IDENTITY]
-                    [-d DEPTH] [-p PVALUE] [-st SPECIES_THRESHOLD]
-                    [-gt GENUS_THRESHOLD] [-ft FAMILY_THRESHOLD]
-                    [-ot ORDER_THRESHOLD] [-ct CLASS_THRESHOLD]
-                    [-pt PHYLUM_THRESHOLD] [-off TURN_OFF_SIM_THRESHOLDS]
+                    [-r REFERENCE_DATABASE] [-du DEPTH_UNIT] [-d DEPTH]
+                    [-c COVERAGE] [-q QUERY_IDENTITY] [-p PVALUE]
+                    [-st SPECIES_THRESHOLD] [-gt GENUS_THRESHOLD]
+                    [-ft FAMILY_THRESHOLD] [-ot ORDER_THRESHOLD]
+                    [-ct CLASS_THRESHOLD] [-pt PHYLUM_THRESHOLD]
+                    [-off TURN_OFF_SIM_THRESHOLDS] [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -217,12 +218,23 @@ optional arguments:
   -r REFERENCE_DATABASE, --reference_database REFERENCE_DATABASE
                         Which reference database was used. Options: UNITE,
                         RefSeq or nt. Default = nt
+  -du DEPTH_UNIT, --depth_unit DEPTH_UNIT
+                        Desired unit for Depth(abundance) measurmeents.
+                        Default = nc (nu,mber of nucleotides overlapping each
+                        template). Alternatively, you can keep the KMA default
+                        depth (number of nucleotides overlaping the template,
+                        divided by the lengh of the template). This would be
+                        better suitable for when using reference databases
+                        containing genes only (e.g. UNITE). If you use the
+                        'kma' option, remember to change the default --depth
+                        parameter accordingly. Valid options are nc and kma
+  -d DEPTH, --depth DEPTH
+                        Minimum sequencing depth. Default = 200 (200
+                        nucleotides)
   -c COVERAGE, --coverage COVERAGE
                         Minimum coverage. Default = 20
   -q QUERY_IDENTITY, --query_identity QUERY_IDENTITY
                         Minimum query identity (Phylum level). Default = 50
-  -d DEPTH, --depth DEPTH
-                        Minimum sequencing depth. Default = 0.2.
   -p PVALUE, --pvalue PVALUE
                         Minimum p-value. Default = 0.05.
   -st SPECIES_THRESHOLD, --species_threshold SPECIES_THRESHOLD
@@ -239,8 +251,9 @@ optional arguments:
                         Phylum-level similarity threshold. Default = 0 - not
                         applied
   -off TURN_OFF_SIM_THRESHOLDS, --turn_off_sim_thresholds TURN_OFF_SIM_THRESHOLDS
-                        Turns simularity-based filtering off. Options = y
-                        or n. Default = n
+                        Turns simularity-based filtering off. Options = y or
+                        n. Default = n
+  --version             show program's version number and exit
  ```
 
 CCMetagen_merge:
@@ -253,13 +266,13 @@ optional arguments:
   -h, --help            show this help message and exit
   -i INPUT_FP, --input_fp INPUT_FP
                         Path to the folder containing CCMetagen text results.
-                        Note that files must end with ".res.csv" ad the folder
-                        should not contain other .res.csv files
+                        Note that files must end with ".csv" and the folder
+                        should not contain other .csv files
   -t TAX_LEVEL, --tax_level TAX_LEVEL
                         Taxonomic level to merge the results. Options:
                         Closest_match (includes different genes for the same
-                        species), Species (Default), Genus, Order, Class,
-                        Phylum, Kingdom and Superkingdom
+                        species), Species (Default), Genus, Family, Order,
+                        Class, Phylum, Kingdom and Superkingdom
   -o OUTPUT_FP, --output_fp OUTPUT_FP
                         Path to the output file. Default = merged_samples
   -kr KEEP_OR_REMOVE, --keep_or_remove KEEP_OR_REMOVE
