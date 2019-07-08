@@ -112,12 +112,16 @@ An example of the CCMetagen output can be found [here (.csv file)](https://githu
 
 <img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
+In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in two ways: by counting the number of nucleotides matching the reference sequence (CCMetagen default), or by applying an additional correction for template length (default in KMA, use flag --depth_unit kma)
+
+You can adjust the stringency of the taxonomic assignments by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity).
+
 For a list of options to customize your analyze, type:
 ```
 CCMetagen.py -h
 ```
 
-  * To summarize results for multiple samples, use **CCMetagen_merge**:
+  * To get the abundance of each taxon, and/or summarize results for multiple samples, use **CCMetagen_merge**:
 ```
 CCMetagen_merge.py -i $CCMetagen_out
 ```
