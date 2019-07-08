@@ -59,7 +59,7 @@ Then run CCMetagen:
 for f in $input_dir/*.res; do 
 	echo $f
 	out=$output_dir/${f/$input_dir\/}
-	CCMetagen.py -i $f -r nt -o $out
+	CCMetagen.py -i $f -o $out
 done
 ```
 

@@ -101,7 +101,7 @@ parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n',
 parser.add_argument('--version', action='version', version=version_numb)
 
 args = parser.parse_args()
-args(['--version'])
+
 mode = args.mode
 f = args.res_fp
 ref_database = args.reference_database
