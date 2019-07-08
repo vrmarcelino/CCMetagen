@@ -66,6 +66,8 @@ done
 This will generate another 3 files per sample.
 Here are examples of the produced [.csv file](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.csv), the [.html file](https://htmlpreview.github.io/?https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.html), and the [.tsv file](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.tsv), which is used to produce the krona graph.
 
+If you use the entire nt database (ncbi_nt_kma), you might get raws without taxonomic information - these are entries in genbank without a valid taxid. To avoid those entries, use the updated and 'clean' nt database [ncbi_nt_no_env_11jun2019.zip](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH).
+
 
 ### Produce summary table
 Finally, merge the results into a single table using the script CCMetagen_merge.py
@@ -75,7 +77,6 @@ Note that the input file here is the output folder of CCMetagen.
 ```
 CCMetagen_merge.py --input_fp $output_dir --keep_or_remove r --filtering_tax_level Kingdom --taxa_list Metazoa,Viridiplantae --output_fp Bird_species_table
 ```
-
 
 This also works:
 ```
