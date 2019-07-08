@@ -69,7 +69,7 @@ Here are examples of the produced [.csv file](https://github.com/vrmarcelino/CCM
 
 ### Produce summary table
 Finally, merge the results into a single table using the script CCMetagen_merge.py
-By default, this script will merge taxa at species level.
+By default, this script will merge taxa at the species level.
 Here we will also remove everything that matches to Metazoa (bird sequences) and Viriplantae.
 Note that the input file here is the output folder of CCMetagen.
 ```
@@ -89,11 +89,7 @@ Options are case-sensitive: Species (Default), Genus, Family, Order, Class, Phyl
 CCMetagen_merge.py --input_fp $output_dir -t Family -o Bird_family_table
 ```
 
-It is also possible to summarize taxa at different taxonomic levels within PhyloSeq. However, we do not recommend to use the species table produced with CCMetagen_merge to produce a family-level figue/analyses in PhyloSeq because you will lose information. 
-When results are merged at species level, all unclassified taxa will be clustered togetehr in one row, while merging at higher taxonomic levels will retain the information about the abudnances of the different taxa.
-
-
-Therefore, we let's produce a family-level table, filtering Metazoa and Viriplantae, for input in PhyloSeq:
+Let's produce a family-level table, filtering Metazoa and Viriplantae, for input in PhyloSeq:
 
 ```
 CCMetagen_merge.py -i $output_dir -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o Bird_family_table_filtered
