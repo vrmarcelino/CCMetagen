@@ -108,8 +108,8 @@ f = args.res_fp
 ref_database = args.reference_database
 c = args.coverage
 q = args.query_identity
-d = args.depth
 du = args.depth_unit
+d = args.depth
 p = args.pvalue
 
 # taxononomic thresholds:
@@ -137,7 +137,7 @@ else:
 
 # developing and debugging:
 #args.output_fp = "CCMetagen_nt_results"
-#f = "ALG_1.res"
+#f = "2_mtg_nt_test.res"
 #ref_database = "nt"
 #mode = 'both'
 #c = 20
@@ -150,6 +150,7 @@ else:
 #ot = 80
 #ct = 0
 #pt = 0
+#du = 'kma'
 
 ## Run implicitly ete3.NCBITaxa.__init__() to check for valid taxonomy database
 NCBITaxa()
@@ -174,6 +175,14 @@ df.index.name = "Closest_match"
 # adjust depth to reflect number of bases:
 if du == 'nc':
     df['Depth'] = df.Depth * df.Template_length
+elif du == 'kma':
+    print ("using KMA's default depth calculation - correcting for gene length")
+    print ("""remember to adjust minimum depth value (ex: -d 20). 
+           If you get an empty result, you are probably filtering out all your matchs.""")
+    print ("")
+else:
+    print ("--depth_unit option must be nc or kma. Treating it as 'nc'.")
+    print ("")
 
 
 # first quality filter (coverage, query identity, Depth and p-value)
