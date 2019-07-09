@@ -64,16 +64,17 @@ parser.add_argument('-o', '--output_fp', default = 'CCMetagen_out',
 parser.add_argument('-r', '--reference_database', default = 'nt',
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
-parser.add_argument('-du', '--depth_unit', default = 'nc',
+parser.add_argument('-du', '--depth_unit', default = 'kma',
                     help="""Desired unit for Depth(abundance) measurmeents.
-                    Default = nc (number of nucleotides overlapping each template).
-                    Alternatively, you can keep the KMA default depth (number of nucleotides overlaping the template,
-                    divided by the lengh of the template). This is suitable
-                    when using reference databases containing genes only (e.g. UNITE).
-                    If you use the 'kma' option, remember to change the default --depth parameter accordingly.
+                    Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
+                    divided by the lengh of the template).
+                    Alternatively, you can simply count the number of nucleotides overlaping the template (option 'nc')
+                    If you use the 'nc' option, remember to change the default --depth parameter accordingly.
                     Valid options are nc and kma""", required=False)
-parser.add_argument('-d', '--depth', default = 200,
-                    help='Minimum sequencing depth. Default = 200 (200 nucleotides)',type=float, required=False)
+parser.add_argument('-d', '--depth', default = 0.2,
+                    help="""minimum sequencing depth. Default = 0.2.
+                    If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides) 
+                    is similar to -d 0.2 when using the default '--depth_unit kma' option.""",type=float, required=False)
 
 parser.add_argument('-c', '--coverage', default = 20,
                     help='Minimum coverage. Default = 20',type=float, required=False)
@@ -142,7 +143,7 @@ else:
 #mode = 'both'
 #c = 20
 #q = 50
-#d = 200
+#d = 0.2
 #p = 0.05
 #st = 99
 #gt = 98
@@ -175,13 +176,12 @@ df.index.name = "Closest_match"
 # adjust depth to reflect number of bases:
 if du == 'nc':
     df['Depth'] = df.Depth * df.Template_length
+    print ("calculating depth as number of nucleotides, ignoring template length")
+    print ("""remember to adjust minimum depth value (ex: -d 200). """)
 elif du == 'kma':
-    print ("using KMA's default depth calculation - correcting for gene length")
-    print ("""remember to adjust minimum depth value (ex: -d 0.2). 
-           If you get an empty result, you are probably filtering out all your matchs.""")
     print ("")
 else:
-    print ("--depth_unit option must be nc or kma. Treating it as 'nc'.")
+    print ("--depth_unit option must be nc or kma. Treating it as 'kma'.")
     print ("")
 
 
