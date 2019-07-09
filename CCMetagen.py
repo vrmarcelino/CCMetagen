@@ -177,7 +177,7 @@ if du == 'nc':
     df['Depth'] = df.Depth * df.Template_length
 elif du == 'kma':
     print ("using KMA's default depth calculation - correcting for gene length")
-    print ("""remember to adjust minimum depth value (ex: -d 20). 
+    print ("""remember to adjust minimum depth value (ex: -d 0.2). 
            If you get an empty result, you are probably filtering out all your matchs.""")
     print ("")
 else:
