@@ -9,13 +9,14 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.1.0'
+version_numb = 'v1.1.2'
 
 # imports
 import sys
 import pandas as pd
 from argparse import ArgumentParser
 import subprocess
+from ete3 import NCBITaxa
 
 # local imports
 from ccmetagen import fParseKMA
@@ -97,10 +98,10 @@ parser.add_argument('-pt', '--phylum_threshold', default = 0,
 parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n',
                     help='Turns simularity-based filtering off. Options = y or n. Default = n', required=False)
 
-
 parser.add_argument('--version', action='version', version=version_numb)
 
 args = parser.parse_args()
+
 
 mode = args.mode
 f = args.res_fp
@@ -150,6 +151,8 @@ else:
 #ct = 0
 #pt = 0
 
+## Run implicitly ete3.NCBITaxa.__init__() to check for valid taxonomy database
+NCBITaxa()
 
 # Warning if RefDatabase is unknown
 if ref_database not in ("UNITE", "RefSeq","nt"):
