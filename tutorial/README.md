@@ -11,8 +11,7 @@ You can download the test dataset [here -- link]. This dataset is composed of 4 
 
 Make sure you have CCMetagen, KMA, and all its dependencies are installed and accessible from your $PATH. The installation is described [here](https://github.com/vrmarcelino/CCMetagen).
 
-Download or build your own indexed database. The indexed NCBI nt database (ncbi_nt_kma.zip file) can be downloaded [here](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH).
-This database occupies 266GB of disk space, and will require around 500GB of RAM to run. If that is an issue, smaller reference databases can be used (e.g. RefSeq and UNITE databases). [Insert links to download].
+Download or build your own indexed database. Here we will use the the [ncbi_nt_no_env_11jun2019](https://cloudstor.aarnet.edu.au/plus/s/Mp8gLimDYoLfelH), which contains the ncbi nucleotide collection but excludes most artificial (e.g. cloning vectors) and environmental sequences without valid taxids. This database occupies 196GB of disk space, and will require around 500GB of RAM to run. If that is an issue, smaller reference databases can be used (e.g. RefSeq and UNITE databases). [Insert links to download]. You can also use the [CCMetagen webserver](https://cge.cbs.dtu.dk/services/ccmetagen/).
 
 This tutorial will not cover quality control, but we highly recommend QC to remove low-quality reads and adapters from your data.
 If you are working with host-associated microbiomes, it is desirable to remove host reads as well. I personally like [KneadData](http://huttenhower.sph.harvard.edu/kneaddata) because it allows performing quality filtering, adapter removal and host filtering in one go.
@@ -90,7 +89,7 @@ Options are case-sensitive: Species (Default), Genus, Family, Order, Class, Phyl
 CCMetagen_merge.py --input_fp $output_dir -t Family -o Bird_family_table
 ```
 
-Let's produce a family-level table, filtering Metazoa and Viriplantae, for input in PhyloSeq:
+Let's produce a family-level table to process in PhyloSeq, filtering Metazoa and Viriplantae, for input in PhyloSeq:
 
 ```
 CCMetagen_merge.py -i $output_dir -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o Bird_family_table_filtered
