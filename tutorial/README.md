@@ -193,7 +193,7 @@ Note that this takes a while for large files
 plot_bar(CCMeta_physeq, fill = "Superkingdom")
 
 ```
-<img src=figs_tutorial/Superkingdom.png width="500" height="450">
+<img src=figs_tutorial/Superkingdom.png width="500" height="500">
 
 You can also fill in teh graphs by Family, but the figure is unclear due to the large number of families.
 Therefore let's keep only the 16 most abundant ones.
@@ -208,7 +208,7 @@ Plot bars, colouring by different taxonomic ranks
 plot_bar(TopFamilies, fill = "Family")
 
 ```
-<img src=figs_tutorial/Most_abudnant_families.png width="500" height="550">
+<img src=figs_tutorial/Most_abudnant_families.png width="500" height="500">
 
 
 ##### Organised plots
@@ -250,7 +250,7 @@ fig <- p + scale_fill_manual(values=family_Palette) +
 
 fig
 ```
-<img src=figs_tutorial/Nicer_fam_figure.png width="500" height="550">
+<img src=figs_tutorial/Nicer_fam_figure.png width="500" height="500">
 
 To reproduce the figure of the full dataset, see R script [here](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/PhyloSeq_graphs_publication.R).
 
