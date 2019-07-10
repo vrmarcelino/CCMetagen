@@ -69,7 +69,7 @@ parser.add_argument('-du', '--depth_unit', default = 'kma',
                     Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
                     divided by the lengh of the template).
                     Alternatively, you can simply count the number of nucleotides overlaping the template (option 'nc')
-                    If you use the 'nc' option, remember to change the default --depth parameter accordingly.
+                    If you use the 'nc' option, remember to change the default --depth parameter accordingly for more accurate results.
                     Valid options are nc and kma""", required=False)
 parser.add_argument('-d', '--depth', default = 0.2,
                     help="""minimum sequencing depth. Default = 0.2.
