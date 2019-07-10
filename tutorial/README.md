@@ -141,13 +141,13 @@ We have 4 samples here, therefore our taxa start at column, while the samples (m
 ```
 taxa_raw <- as.matrix(raw_CCMetagen_data[,5:ncol(raw_CCMetagen_data)])
 rownames(taxa_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
-species_raw <- as.matrix(raw_CCMetagen_data[,1:4])
-rownames(species_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
+abund_raw <- as.matrix(raw_CCMetagen_data[,1:4])
+rownames(abund_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
 ```
 Convert to phyloseq object
 ```
 tax = tax_table(taxa_raw)
-taxa = otu_table(species_raw, taxa_are_rows = TRUE)
+taxa = otu_table(abund_raw, taxa_are_rows = TRUE)
 taxa
 
 CCMeta_physeq = phyloseq(taxa, tax)
