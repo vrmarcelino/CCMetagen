@@ -140,8 +140,8 @@ theme_set(theme_bw())
 raw_CCMetagen_data <-read.csv("Bird_family_table_filtered.csv",check.names=FALSE)
 ```
 
-PhyloSeq does not like rows with the same taxonomy, so our unclassififed taxa (unk_f) are a problem. 
-We will therefore separate bacterial from eukaryotic unclassifified taxa. Note that you can skip these steps if you remove unclassififed taxa (unk_f) with CCMetagen_merge.
+PhyloSeq does not like rows with the same taxonomy, so our unclassified taxa (unk_f) are a problem. 
+We will therefore separate bacterial from eukaryotic unclassified taxa. Note that you can skip these steps if you remove unclassified taxa (unk_f) with CCMetagen_merge.
 
 First, we will add a new column containing family names and superkingdom:
 
@@ -150,13 +150,13 @@ raw_CCMetagen_data$SuperKFamily <- paste(raw_CCMetagen_data$Superkingdom, raw_CC
 
 ```
 
-Let's also add an 'unclassififed' string at the end of these to avoid confusion:
+Let's also add an 'unclassified' string at the end of these to avoid confusion:
 ```
-raw_CCMetagen_data <- data.frame(lapply(raw_CCMetagen_data, function(x) {sub("Bacteria_$", "Bacteria_unclassififed", x)}))
-raw_CCMetagen_data <- data.frame(lapply(raw_CCMetagen_data, function(x) {sub("Eukaryota_$", "Eukaryota_unclassififed", x)}))
+raw_CCMetagen_data <- data.frame(lapply(raw_CCMetagen_data, function(x) {sub("Bacteria_$", "Bacteria_unclassified", x)}))
+raw_CCMetagen_data <- data.frame(lapply(raw_CCMetagen_data, function(x) {sub("Eukaryota_$", "Eukaryota_unclassified", x)}))
 ```
 
-Then we need to deete taxonomic ranks for which there are multiple taxa merged into 'Eukaryota_unclassififed' or 'Bacteria_unclassififed'. In our case , we will delete Phylum, Class, Order and the previous Family. We will also convert the abundances to numeric, aggregate the unclassififed taxa, and rename the new family column:
+Then we need to delete taxonomic ranks for which there are multiple taxa merged into 'Eukaryota_unclassified' or 'Bacteria_unclassified'. In our case, we will delete Phylum, Class, Order and the previous Family. We will also convert the abundances to numeric, aggregate the unclassified taxa, and rename the new family column:
 
 ```
 CCMetagen_data <-raw_CCMetagen_data[,-which(names(raw_CCMetagen_data) %in% c("Phylum","Class","Order","Family"))]
@@ -166,7 +166,6 @@ colnames(CCMetagen_data)[3] <- "Family"
 ```
 
 Now this data is ready to be converted to PhyloSeq.
-
 
 Separate species' abundances and taxonomy columns
 ```
@@ -195,7 +194,7 @@ plot_bar(CCMeta_physeq, fill = "Superkingdom")
 ```
 <img src=figs_tutorial/Superkingdom.png width="500" height="500">
 
-You can also fill in teh graphs by Family, but the figure is unclear due to the large number of families.
+You can also color by Family, but the figure is unclear due to the large number of families.
 Therefore let's keep only the 16 most abundant ones.
 
 ```
