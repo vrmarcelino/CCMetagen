@@ -9,7 +9,7 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.1.2'
+version_numb = 'v1.1.3'
 
 # imports
 import sys
