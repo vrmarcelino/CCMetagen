@@ -14,3 +14,9 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Changed
 
   - ETE3 checks its taxonomy database after help implicitly
+
+## [v1.1.3](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.2...v1.1.3) - 10.07.2019
+
+### Changed
+
+  - Changed default abundance calculations back to the default kma - i.e. taking gene lengths into consideration.
