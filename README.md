@@ -116,6 +116,10 @@ In the .csv file, you will find the depth (abundance) of each match. Depth can b
 
 You can adjust the stringency of the taxonomic assignments by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity).
 
+**Understanding the ranked taxonomic output of CCMetagen:** The taxonomic classifications reflect the sequence similarity between query and reference sequences, according to default or user-defined similarity thresholds. For example, if a match is 97% similar to the reference sequence, the match will not get a species-level classification. If the match is 85% similar to the reference sequence, then the species, genus and family-level classifications will be 'none'.
+Note that this is different from identifications tagged as unk_x (unknown taxa). These unknowns indicate taxa where higher-rank classifications have not been defined (according to the NCBI taxonomy database), and it is unrelated to sequence similarity.
+
+
 For a list of options to customize your analyze, type:
 ```
 CCMetagen.py -h
