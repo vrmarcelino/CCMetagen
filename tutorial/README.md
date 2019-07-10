@@ -124,6 +124,10 @@ library("ggplot2"); packageVersion("ggplot2")
 library (RColorBrewer); packageVersion("RColorBrewer")
 ```
 [1] ‘1.1.2’
+```
+library(dplyr); packageVersion("dplyr")
+```
+[1] ‘0.7.8’
 
 Set ggplot colour theme to white: 
 ```
@@ -136,13 +140,40 @@ theme_set(theme_bw())
 raw_CCMetagen_data <-read.csv("Bird_family_table_filtered.csv",check.names=FALSE)
 ```
 
-Separate species and taxonomy columns - note that this will change according to how many samples you have
-We have 4 samples here, therefore our taxa start at column, while the samples (microbial species data) are in columns 1 to 4.
+PhyloSeq does not like rows with the same taxonomy, so our unclassififed taxa (unk_f) are a problem. 
+We will therefore separate bacterial from eukaryotic unclassifified taxa. Note that you can skip these steps if you remove unclassififed taxa (unk_f) with CCMetagen_merge.
+
+First, we will add a new column containing family names and superkingdom:
+
 ```
-taxa_raw <- as.matrix(raw_CCMetagen_data[,5:ncol(raw_CCMetagen_data)])
-rownames(taxa_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
-abund_raw <- as.matrix(raw_CCMetagen_data[,1:4])
-rownames(abund_raw) <- raw_CCMetagen_data[,ncol(raw_CCMetagen_data)]
+raw_CCMetagen_data$SuperKFamily <- paste(raw_CCMetagen_data$Superkingdom, raw_CCMetagen_data$Family, sep="_")
+
+```
+
+Let's also add an 'unclassififed' string at the end of these to avoid confusion:
+```
+raw_CCMetagen_data <- data.frame(lapply(raw_CCMetagen_data, function(x) {sub("Bacteria_$", "Bacteria_unclassififed", x)}))
+raw_CCMetagen_data <- data.frame(lapply(raw_CCMetagen_data, function(x) {sub("Eukaryota_$", "Eukaryota_unclassififed", x)}))
+```
+
+Then we need to deete taxonomic ranks for which there are multiple taxa merged into 'Eukaryota_unclassififed' or 'Bacteria_unclassififed'. In our case , we will delete Phylum, Class, Order and the previous Family. We will also convert the abundances to numeric, aggregate the unclassififed taxa, and rename the new family column:
+
+```
+CCMetagen_data <-raw_CCMetagen_data[,-which(names(raw_CCMetagen_data) %in% c("Phylum","Class","Order","Family"))]
+CCMetagen_data[,1:4] <-mutate_all(CCMetagen_data[,1:4], function(x) as.numeric(as.character(x)))
+CCMetagen_data <- aggregate(. ~ Superkingdom+Kingdom+SuperKFamily,CCMetagen_data, sum)
+colnames(CCMetagen_data)[3] <- "Family"
+```
+
+Now this data is ready to be converted to PhyloSeq.
+
+
+Separate species' abundances and taxonomy columns
+```
+taxa_raw <- as.matrix(CCMetagen_data[,1:3])
+rownames(taxa_raw) <- taxa_raw[,3]
+abund_raw <- as.matrix(CCMetagen_data[,4:7])
+rownames(abund_raw) <- CCMetagen_data[,3]
 ```
 Convert to phyloseq object
 ```
@@ -164,13 +195,8 @@ plot_bar(CCMeta_physeq, fill = "Superkingdom")
 ```
 <img src=figs_tutorial/Superkingdom.png width="500" height="500">
 
-```
-plot_bar(CCMeta_physeq, fill = "Family")
-```
-<img src=figs_tutorial/Family.png width="500" height="500">
-
-
-This graph is ok, but the large number of taxa makes the figure unclear. Therefore let's keep only the 16 most abundant ones.
+You can also fill in teh graphs by Family, but the figure is unclear due to the large number of families.
+Therefore let's keep only the 16 most abundant ones.
 
 ```
 TopNOTUs <- names(sort(taxa_sums(CCMeta_physeq), TRUE)[1:16])
@@ -192,30 +218,28 @@ The idea is to get bacterial taxa in blue, fungal taxa in red and other eukaryot
 
 ```
 p = plot_bar(TopFamilies, fill="Family")
-p$data$Sample <- factor(p$data$Sample, levels = c("Shelduck_Healthy","Temperate_Duck_Flu_Ng",
-                        "Avocet_Outback","Turnstone_Temperate_Flu_Ng"))	
-
+p$data$Sample <- factor(p$data$Sample, levels = c("Shelduck_Healthy.res","Temperate_Duck_Flu_Ng.res",
+                        "Avocet_Outback.res","Turnstone_Temperate_Flu_Ng.res"))	
 
 families = levels(p$data$Family)
 families
-p$data$Family <- factor(p$data$Family, levels = c("Bacillaceae","Enterobacteriaceae",
-"Fusobacteriaceae","Streptococcaceae","Apiosporaceae","Cystofilobasidiaceae",
-"Debaryomycetaceae","Dipodascaceae","Dothioraceae","Metschnikowiaceae","Mucoraceae","Nectriaceae",
-"Saccotheciaceae","Tuberaceae","Trichomonadidae","Unclassified"))
-
+p$data$Family <- factor(p$data$Family, levels = c("Bacteria_Bacillaceae","Bacteria_Enterobacteriaceae",
+"Bacteria_Fusobacteriaceae","Bacteria_Streptococcaceae","Bacteria_unk_f","Eukaryota_Apiosporaceae","Eukaryota_Cystofilobasidiaceae",
+"Eukaryota_Debaryomycetaceae","Eukaryota_Dipodascaceae","Eukaryota_Dothioraceae","Eukaryota_Metschnikowiaceae","Eukaryota_Mucoraceae",
+"Eukaryota_Nectriaceae","Eukaryota_Saccotheciaceae","Eukaryota_Tuberaceae","Eukaryota_Trichomonadidae","Eukaryota_unk_f"))
 ```
 
 Set colors
-We need 10 colors for fungi
+We need 11 colors for fungi
 ```
-getPalette = colorRampPalette(c("#ffffcc", "#800026"))( 10 )
+getPalette = colorRampPalette(c("#ffffcc", "#800026"))( 11 )
 getPalette
 ```
-Then paste the color codes after the blues (4 bacterial families), and before the pink and grey (last 2 colours)
+Then paste the color codes after the blues (5 bacterial families), and before the pink and grey (last 2 colours)
 ```
-family_Palette <- c("#08519c","#2171b5","#4292c6","#6baed6",
-"#FFFFCC","#F0E2B9","#E2C6A7","#D4AA94","#C68D82","#B8716F","#AA555D","#9C384A",
-"#8E1C38","#800026","#ae017e","#999999")
+family_Palette <- c("#08519c","#2171b5","#4292c6","#6baed6","#c6dbef",
+"#FFFFCC","#F2E5BB","#E5CCAA","#D8B29A","#CC9989","#BF7F79","#B26568",
+"#A64C57","#993247","#8C1936","#800026")
 ```
 
 Now plot it:
