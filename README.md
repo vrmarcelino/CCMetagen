@@ -51,7 +51,7 @@ git clone https://github.com/vrmarcelino/CCMetagen
 You can also download the python files from https://github.com/vrmarcelino/CCMetagen/tree/master/tools
 
 Then add the CCMetagen python scripts to the path, temporarily or permanently. For example:
-`PATH=$PATH<your_folder>/CCMetagen/tools`
+`PATH=$PATH<your_folder>/CCMetagen`
 
 To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
