@@ -7,7 +7,7 @@ We will use a set of metatranscriptomes from Australian birds.
 
 The full dataset can be downloaded [here](http://www.ncbi.nlm.nih.gov/bioproject/PRJNA472212).
 In this tutorial we will use a subset of it - 75000 PE reads from four libraries - that way you can test and run the pipeline faster. 
-You can download the test dataset [here -- link]. This dataset is composed of 4 metatranscritptome libraries of Australian birds, including ducks, avocets and turnstones.
+You can download the test dataset [here](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Subset_bird_data.zip). This dataset is composed of 4 metatranscritptome libraries of Australian birds, including ducks, avocets and turnstones.
 
 Make sure you have CCMetagen, KMA, and all its dependencies are installed and accessible from your $PATH. The installation is described [here](https://github.com/vrmarcelino/CCMetagen).
 
