@@ -48,7 +48,8 @@ If you have git:
 ```
 git clone https://github.com/vrmarcelino/CCMetagen
 ```
-You can also download the python files from https://github.com/vrmarcelino/CCMetagen/tree/master/tools
+This will download CCMetagen and the tutorial files.
+You can also just download the python files from this folder (CCMetagen.py, CCMetagen_merge.py) and the ones in the ccmetagen folder if you rather avoid downloading all other files.
 
 Then add the CCMetagen python scripts to the path, temporarily or permanently. For example:
 `PATH=$PATH<your_folder>/CCMetagen`
