@@ -3,13 +3,12 @@
 """
 CCMetagen main script
 
-
 @ V.R.Marcelino
 Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.1.3'
+version_numb = 'v1.1.4'
 
 # imports
 import sys
@@ -17,6 +16,7 @@ import pandas as pd
 from argparse import ArgumentParser
 import subprocess
 from ete3 import NCBITaxa
+import re
 
 # local imports
 from ccmetagen import fParseKMA
@@ -65,7 +65,7 @@ parser.add_argument('-r', '--reference_database', default = 'nt',
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
 
 parser.add_argument('-du', '--depth_unit', default = 'kma',
-                    help="""Desired unit for Depth(abundance) measurmeents.
+                    help="""Desired unit for Depth(abundance) measurements.
                     Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
                     divided by the lengh of the template).
                     Alternatively, you can simply count the number of nucleotides overlaping the template (option 'nc')
@@ -137,21 +137,24 @@ else:
     sys.exit("Try again.")
 
 # developing and debugging:
-#args.output_fp = "CCMetagen_nt_results"
-#f = "2_mtg_nt_test.res"
-#ref_database = "nt"
-#mode = 'both'
-#c = 20
-#q = 50
-#d = 0.2
-#p = 0.05
-#st = 99
-#gt = 98
-#ft = 95
-#ot = 80
-#ct = 0
-#pt = 0
-#du = 'kma'
+args.output_fp = "CCMetagen_nt_results"
+f = "KMA_res/1_mtt_nt.res"
+mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically??
+ref_database = "nt"
+mode = 'both'
+c = 20
+q = 50
+d = 0.2
+p = 0.05
+st = 99
+gt = 98
+ft = 95
+ot = 80
+ct = 0
+pt = 0
+du = 'nc'
+
+
 
 ## Run implicitly ete3.NCBITaxa.__init__() to check for valid taxonomy database
 NCBITaxa()
@@ -174,15 +177,30 @@ df = pd.read_csv(f, sep='\t', index_col=0, encoding='latin1')
 df.index.name = "Closest_match"
 
 # adjust depth to reflect number of bases:
-if du == 'nc':
+if (du == 'nc') or (du == 'nc_RPM'):
     df['Depth'] = df.Depth * df.Template_length
     print ("calculating depth as number of nucleotides, ignoring template length")
     print ("""remember to adjust minimum depth value (ex: -d 200). """)
+
+# calculate RPM:   
+####3 Needs fix - probably add the function to fParseKMA!
+if (du == 'kma_RPM') or (du == 'nc_RPM'):
+    print ("calculating RPM...")
+    # read the mapstat file to calculate RPM
+    with open(mapstat) as mapfile:
+        fragments_line=mapfile.readlines()[3]
+    total_frags = re.split(r'(\t|\n)',fragments_line)[2]
+    df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
+    df_stats['RPM'] = 1000000 * df_stats['fragmentCount'] / int(total_frags)
+    df = df.join(df_stats['RPM']) # jpoin RPM counts to the main dataframe
+
 elif du == 'kma':
     print ("")
+    
 else:
-    print ("--depth_unit option must be nc or kma. Treating it as 'kma'.")
+    print ("--depth_unit option must be nc, nc_RPM, kma_RPM, or kma. Treating it as 'kma'.")
     print ("")
+
 
 
 # first quality filter (coverage, query identity, Depth and p-value)

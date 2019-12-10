@@ -32,7 +32,6 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
     return df
 
 
-
 # function that takes as input a pandas dataframe with KMA results 
 # and add tax information to results 
 def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
