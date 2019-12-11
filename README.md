@@ -88,6 +88,11 @@ For single-end files:
 kma -i $SAMPLE -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and
 ```
 
+If you intend to calculate abundance in reads per million (RPM), add the flag -ef (extended features:
+```
+kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and -apm f -ef
+```
+
 Where:
 
 $db is the path to the reference database
@@ -111,9 +116,12 @@ An example of the CCMetagen output can be found [here (.csv file)](https://githu
 
 <img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
-In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in two ways: by counting the number of nucleotides matching the reference sequence (CCMetagen default), or by applying an additional correction for template length (default in KMA, use flag --depth_unit kma)
+In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in three ways: by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm).
 
 You can adjust the stringency of the taxonomic assignments by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity).
+
+If you change the default depth unit, we recommend adjusting the minimum abundance (--depth) to remove taxa found in low abundance accordingly. For example, you can use -d 200 (200 nucleotides) when using --depth_unit nc, which is similar to -d 0.2 when using the default '--depth_unit kma' option. If you choose to calculate abundances in RPM, you may want to adjust the minimum abundance according to your sequence depth.
+
 
 **Understanding the ranked taxonomic output of CCMetagen:** The taxonomic classifications reflect the sequence similarity between query and reference sequences, according to default or user-defined similarity thresholds. For example, if a match is 97% similar to the reference sequence, the match will not get a species-level classification. If the match is 85% similar to the reference sequence, then the species, genus and family-level classifications will be 'none'.
 Note that this is different from identifications tagged as unk_x (unknown taxa). These unknowns indicate taxa where higher-rank classifications have not been defined (according to the NCBI taxonomy database), and it is unrelated to sequence similarity.
@@ -201,8 +209,8 @@ pip install pandas --upgrade --user
 CCMetagen:
 ```
 usage: CCMetagen.py [-h] [-m MODE] -i RES_FP [-o OUTPUT_FP]
-                    [-r REFERENCE_DATABASE] [-du DEPTH_UNIT] [-d DEPTH]
-                    [-c COVERAGE] [-q QUERY_IDENTITY] [-p PVALUE]
+                    [-r REFERENCE_DATABASE] [-du DEPTH_UNIT] [-map MAPSTAT]
+                    [-d DEPTH] [-c COVERAGE] [-q QUERY_IDENTITY] [-p PVALUE]
                     [-st SPECIES_THRESHOLD] [-gt GENUS_THRESHOLD]
                     [-ft FAMILY_THRESHOLD] [-ot ORDER_THRESHOLD]
                     [-ct CLASS_THRESHOLD] [-pt PHYLUM_THRESHOLD]
@@ -210,6 +218,7 @@ usage: CCMetagen.py [-h] [-m MODE] -i RES_FP [-o OUTPUT_FP]
 
 optional arguments:
   -h, --help            show this help message and exit
+  
   -m MODE, --mode MODE  what do you want CCMetagen to do? Valid options are
                         'visual', 'text' or 'both': text: parses kma, filters
                         based on quality and output a text file with taxonomic
@@ -218,6 +227,7 @@ optional arguments:
                         simplified text file and a krona html file for
                         visualization both: outputs both text and visual file
                         formats. Default = both
+
   -i RES_FP, --res_fp RES_FP
                         Path to the KMA result (.res file)
   -o OUTPUT_FP, --output_fp OUTPUT_FP
@@ -225,19 +235,28 @@ optional arguments:
   -r REFERENCE_DATABASE, --reference_database REFERENCE_DATABASE
                         Which reference database was used. Options: UNITE,
                         RefSeq or nt. Default = nt
+
   -du DEPTH_UNIT, --depth_unit DEPTH_UNIT
-                        Desired unit for Depth(abundance) measurmeents.
-                        Default = nc (number of nucleotides overlapping each
-                        template). Alternatively, you can keep the KMA default
-                        depth (number of nucleotides overlaping the template,
-                        divided by the lengh of the template). This is
-                        suitable for when using reference databases
-                        containing genes only (e.g. UNITE). If you use the
-                        'kma' option, remember to change the default --depth
-                        parameter accordingly. Valid options are nc and kma
+                        Desired unit for Depth(abundance) measurements.
+                        Default = kma (KMA default depth, which is the number
+                        of nucleotides overlapping each template, divided by
+                        the lengh of the template). Alternatively, you can
+                        have abundance calculated in Reads Per Million (RPM,
+                        option 'rpm'), or simply count the number of
+                        nucleotides overlaping the template (option 'nc'). If
+                        you use the 'nc' or 'rpm' options, remember to change
+                        the default --depth parameter accordingly. Valid
+                        options are nc, rpm and kma
+  -map MAPSTAT, --mapstat MAPSTAT
+                        Path to the mapstat file produced with KMA when using
+                        the -ef flag (.mapstat). Required when calculating
+                        abundances in RPM.
   -d DEPTH, --depth DEPTH
-                        Minimum sequencing depth. Default = 200 (200
-                        nucleotides)
+                        minimum sequencing depth. Default = 0.2. If you use
+                        --depth_unit nc, change this accordingly. For example,
+                        -d 200 (200 nucleotides) is similar to -d 0.2 when
+                        using the default '--depth_unit kma' option.
+
   -c COVERAGE, --coverage COVERAGE
                         Minimum coverage. Default = 20
   -q QUERY_IDENTITY, --query_identity QUERY_IDENTITY
@@ -260,6 +279,7 @@ optional arguments:
   -off TURN_OFF_SIM_THRESHOLDS, --turn_off_sim_thresholds TURN_OFF_SIM_THRESHOLDS
                         Turns simularity-based filtering off. Options = y or
                         n. Default = n
+
   --version             show program's version number and exit
  ```
 
