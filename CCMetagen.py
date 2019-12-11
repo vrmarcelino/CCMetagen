@@ -68,9 +68,12 @@ parser.add_argument('-du', '--depth_unit', default = 'kma',
                     help="""Desired unit for Depth(abundance) measurements.
                     Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
                     divided by the lengh of the template).
-                    Alternatively, you can simply count the number of nucleotides overlaping the template (option 'nc')
-                    If you use the 'nc' option, remember to change the default --depth parameter accordingly for more accurate results.
-                    Valid options are nc and kma""", required=False)
+                    Alternatively, you can have abundance calculated in Reads Per Million (RPM, option 'rpm'), or 
+                    simply count the number of nucleotides overlaping the template (option 'nc').
+                    If you use the 'nc' or 'rpm' options, remember to change the default --depth parameter accordingly.
+                    Valid options are nc, rpm and kma""", required=False)
+parser.add_argument('-map', '--mapstat', help="""Path to the mapstat file produced with KMA when using the -ef flag (.mapstat).
+                    Required when calculating abundances in RPM.""", required = False)
 parser.add_argument('-d', '--depth', default = 0.2,
                     help="""minimum sequencing depth. Default = 0.2.
                     If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides) 
@@ -103,7 +106,6 @@ parser.add_argument('--version', action='version', version=version_numb)
 
 args = parser.parse_args()
 
-
 mode = args.mode
 f = args.res_fp
 ref_database = args.reference_database
@@ -112,6 +114,7 @@ q = args.query_identity
 du = args.depth_unit
 d = args.depth
 p = args.pvalue
+mapstat = args.mapstat
 
 # taxononomic thresholds:
 off = args.turn_off_sim_thresholds
@@ -137,26 +140,27 @@ else:
     sys.exit("Try again.")
 
 # developing and debugging:
-args.output_fp = "CCMetagen_nt_results"
-f = "KMA_res/1_mtt_nt.res"
-mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically??
-ref_database = "nt"
-mode = 'both'
-c = 20
-q = 50
-d = 0.2
-p = 0.05
-st = 99
-gt = 98
-ft = 95
-ot = 80
-ct = 0
-pt = 0
-du = 'nc'
+#args.output_fp = "CCMetagen_nt_results"
+#f = "KMA_res/1_mtt_nt.res"
+#mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically?? Flag -mapstat?
+#ref_database = "nt"
+#mode = 'both'
+#c = 20
+#q = 50
+#d = 0.2
+#p = 0.05
+#st = 99
+#gt = 98
+#ft = 95
+#ot = 80
+#ct = 0
+#pt = 0
+#du = 'kma'
 
 
+##### Checks:
 
-## Run implicitly ete3.NCBITaxa.__init__() to check for valid taxonomy database
+# Run implicitly ete3.NCBITaxa.__init__() to check for valid taxonomy database
 NCBITaxa()
 
 # Warning if RefDatabase is unknown
@@ -166,7 +170,7 @@ if ref_database not in ("UNITE", "RefSeq","nt"):
     sys.exit("Try again.")
 
 
-### Read input files and output a pandas dataframe
+##### Read input files and output a pandas dataframe
 print ("")
 print ("Reading file %s" %(f))
 print ("")
@@ -176,34 +180,43 @@ df = pd.read_csv(f, sep='\t', index_col=0, encoding='latin1')
 # Rename headers:
 df.index.name = "Closest_match"
 
-# adjust depth to reflect number of bases:
-if (du == 'nc') or (du == 'nc_RPM'):
-    df['Depth'] = df.Depth * df.Template_length
-    print ("calculating depth as number of nucleotides, ignoring template length")
-    print ("""remember to adjust minimum depth value (ex: -d 200). """)
 
-# calculate RPM:   
-####3 Needs fix - probably add the function to fParseKMA!
-if (du == 'kma_RPM') or (du == 'nc_RPM'):
-    print ("calculating RPM...")
-    # read the mapstat file to calculate RPM
+##### Adjust depth to reflect number of bases or RPM if needed:
+
+# number of nucleotides:
+if du == 'nc':
+    df['Depth'] = df.Depth * df.Template_length
+    print ("Calculating depth as number of nucleotides, ignoring template length.")
+    print ("""Remember to adjust minimum depth value (ex: -d 200) to filter low abundance hits.""")
+
+# RPM:   
+elif du == 'rpm':
+    print ("Calculating RPM...")
+    print ("""
+           Note 1: to calculate RPM, you need to generate the mapstat file when
+           running KMA (flag -ef), and use it as input in CCMetagen (flag --mapstat).
+           
+           Note 2: you might want to adjust the minimum depth (-d) value accordingly.
+           The default minimum depth is 0.2.
+           """)
+
     with open(mapstat) as mapfile:
         fragments_line=mapfile.readlines()[3]
     total_frags = re.split(r'(\t|\n)',fragments_line)[2]
     df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
-    df_stats['RPM'] = 1000000 * df_stats['fragmentCount'] / int(total_frags)
-    df = df.join(df_stats['RPM']) # jpoin RPM counts to the main dataframe
+    df['Depth'] = 1000000 * df_stats['fragmentCount'] / int(total_frags)
 
 elif du == 'kma':
     print ("")
-    
+
 else:
-    print ("--depth_unit option must be nc, nc_RPM, kma_RPM, or kma. Treating it as 'kma'.")
+    print ("""Warning: the depth unit you specified makes no sense.
+           --depth_unit option must be nc, rpm, or kma. Using 'kma'.""")
     print ("")
 
-
-
-# first quality filter (coverage, query identity, Depth and p-value)
+##### Quality control + taxonomic assignments
+    
+# quality filter (coverage, query identity, Depth and p-value)
 df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
 
 # add tax info
