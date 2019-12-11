@@ -116,8 +116,7 @@ An example of the CCMetagen output can be found [here (.csv file)](https://githu
 
 <img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
-In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in three ways: by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm). If you want RPM values, you will need to suply a .mapstats file generated with KMA. For example:
-
+In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in three ways: by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm). If you want RPM values, you will need to suply the .mapstats file generated with KMA.
 
 You can adjust the stringency of the taxonomic assignments by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity).
 
