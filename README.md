@@ -116,11 +116,17 @@ An example of the CCMetagen output can be found [here (.csv file)](https://githu
 
 <img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
-In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in three ways: by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm).
+In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in three ways: by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm). If you want RPM values, you will need to suply a .mapstats file generated with KMA. For example:
+
 
 You can adjust the stringency of the taxonomic assignments by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity).
 
 If you change the default depth unit, we recommend adjusting the minimum abundance (--depth) to remove taxa found in low abundance accordingly. For example, you can use -d 200 (200 nucleotides) when using --depth_unit nc, which is similar to -d 0.2 when using the default '--depth_unit kma' option. If you choose to calculate abundances in RPM, you may want to adjust the minimum abundance according to your sequence depth.
+For example, to calculate abundances in RPM, and filter out all matches with less than one read per million:
+
+```
+CCMetagen.py -i $sample_out_kma.res -o results --depth_unit rpm --mapstat $sample_out_kma.mapstat --depth 1
+```
 
 
 **Understanding the ranked taxonomic output of CCMetagen:** The taxonomic classifications reflect the sequence similarity between query and reference sequences, according to default or user-defined similarity thresholds. For example, if a match is 97% similar to the reference sequence, the match will not get a species-level classification. If the match is 85% similar to the reference sequence, then the species, genus and family-level classifications will be 'none'.
