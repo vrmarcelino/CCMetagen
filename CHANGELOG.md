@@ -20,3 +20,11 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Changed
 
   - Changed default abundance calculations back to the default kma - i.e. taking gene lengths into consideration.
+
+## [v1.1.4](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.3...v1.1.4) - 12.12.2019
+
+### Changed
+
+  - Added option to calculate abundance in Reads Per Million (RPM).
+
+  
