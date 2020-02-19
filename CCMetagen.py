@@ -23,6 +23,26 @@ from ccmetagen import cTaxInfo # needed in fParseKMA
 from ccmetagen import fNCBItax # needed in fParseKMA
 from ccmetagen import version
 
+class TaxThresholdsSettings:
+    """Struct like approach to keep threshold settings sane. The tx prefix
+       is required since attributes may clash with Python keywords."""
+    def __init__(self, args):
+      self.txspecies = 0.0
+      self.txgenus = 0.0
+      self.txfamily = 0.0
+      self.txorder = 0.0
+      self.txclass = 0.0
+      self.txphylum = 0.0
+
+      if not args.turn_off_sim_thresholdsoff:
+        self.txspecies = args.species_threshold
+        self.txgenus = args.genus_threshold
+        self.txfamily = args.family_threshold
+        self.txorder = args.order_threshold
+        self.txclass = args.class_threshold
+        self.txphylum = args.phylum_threshold
+
+
 # help
 if len(sys.argv) == 1:
     print ("")
@@ -162,38 +182,25 @@ p = args.pvalue
 mapstat = args.mapstat
 
 # taxononomic thresholds:
-st = args.species_threshold
-gt = args.genus_threshold
-ft = args.family_threshold
-ot = args.order_threshold
-ct = args.class_threshold
-pt = args.phylum_threshold
+tts = TaxThresholdsSettings(args)
 
-if args.turn_off_sim_thresholdsoff:
-    args.species_threshold = 0.0
-    args.genus_threshold = 0.0
-    args.family_threshold = 0.0
-    args.order_threshold = 0.0
-    args.class_threshold = 0.0
-    args.phylum_threshold = 0.0
 # developing and debugging:
 #args.output_fp = "CCMetagen_nt_results"
-#f = "KMA_res/1_mtt_nt.res"
-#mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically?? Flag -mapstat?
-#ref_database = "nt"
-#mode = 'both'
-#c = 20
-#q = 50
-#d = 0.2
-#p = 0.05
-#st = 99
-#gt = 98
-#ft = 95
-#ot = 80
-#ct = 0
-#pt = 0
-#du = 'kma'
-
+#args.res_fp = "KMA_res/1_mtt_nt.res"
+#args.mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically?? Flag -mapstat?
+#args.reference_database = "nt"
+#args.mode = 'both'
+#args.coverage = 20
+#args.query_identity = 50
+#args.depth = 0.2
+#args.pvalue = 0.05
+#tts.txspecies = 99
+#tts.txgenus = 98
+#tts.txfamily = 95
+#tts.txorder = 80
+#tts.txclass = 0
+#tts.txphylum = 0
+#args.depth_unit = 'kma'
 
 ##### Checks:
 
@@ -202,10 +209,8 @@ NCBITaxa()
 
 # Warning if RefDatabase is unknown
 if ref_database not in ("UNITE", "RefSeq","nt"):
-    print (""" Reference database (-r) must be either UNITE, RefSeq or nt.
-           the input is case sensitive and the default is nt.""")
-    sys.exit("Try again.")
-
+    sys.exit("""Reference database (-r) must be either UNITE, RefSeq or nt.
+                the input is case sensitive and the default is nt. Try again.""")
 
 ##### Read input files and output a pandas dataframe
 print ("\"\nReading file {} \n\"".format(args.res_fp))
@@ -246,26 +251,19 @@ else:
 ##### Quality control + taxonomic assignments
 
 # quality filter (coverage, query identity, Depth and p-value)
-df = fParseKMA.res_filter(df, ref_database, args.coverage, q, d, p)
+df = fParseKMA.res_filter(df, args.reference_database, args.coverage,
+                              args.query_identity, args.depth, args.pvalue)
 
 # add tax info
-df = fParseKMA.populate_w_tax(df, ref_database,
-                                  args.species_threshold,
-                                  args.genus_threshold,
-                                  args.family_threshold,
-                                  args.order_threshold,
-                                  args.class_threshold,
-                                  args.phylum_threshold)
-
+df = fParseKMA.populate_w_tax(df, args.reference_database, tts)
 
 ##### Output a file with tax info
 if (mode == 'text') or (mode == 'both'):
-
     # save to file
     out = args.output_fp + ".csv"
     pd.DataFrame.to_csv(df, out)
 
-    print ("csv file saved as %s" %(out))
+    print ("csv file saved as {}".format(out))
     print ("")
 
 ##### Output a Krona file
@@ -273,7 +271,7 @@ if (mode == 'visual') or (mode == 'both'):
     krona_info = df[['Depth','Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
 
     # remove the unk_xx for better krona representation
-    krona_info = krona_info.replace('unk_.*$', value = '',regex=True)
+    krona_info = krona_info.replace('unk_.*$', value='',regex=True)
 
     # save dataframe to file
     out1 = args.output_fp + ".tsv"
@@ -281,9 +279,6 @@ if (mode == 'visual') or (mode == 'both'):
 
     # save krona file
     out2 = args.output_fp + ".html"
-
-    shell_command = "ktImportText " + out1 + " -o " + out2
-    subprocess.run(shell_command, shell=True)
-
-    print ("krona file saved as %s" %(out2))
+    subprocess.run(["ktImportText", out1, "-o " , out2], shell=True)
+    print ("krona file saved as {}".format(out2))
     print ("")

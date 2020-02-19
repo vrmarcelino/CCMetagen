@@ -33,8 +33,9 @@ def res_filter(df,ref_database, cov,Iden,Depth,p):
 
 # function that takes as input a pandas dataframe with KMA results
 # and add tax information to results
-def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
-                   family_threshold,order_threshold,class_threshold,phylum_threshold):
+#def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
+#                   family_threshold,order_threshold,class_threshold,phylum_threshold):
+def populate_w_tax(in_df, ref_database, txthresholds):
     #defaults:
     #species_threshold = 98.41 # Yeast - Vu et al 2016
     #genus_threshold = 96.31 # Yeast - Vu et al 2016
@@ -43,36 +44,29 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
     #class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
     #phylum, kingdom and superkingdom = 0  # no data, no filtering
 
-
     # Make sure all taxa columns are strings (doesn't automatically happen if the first one is None)
-    in_df = in_df.assign(LCA_TaxId="",Superkingdom="",Kingdom="",Phylum="",Class="",Order="",Family="",Genus="",Species="")
-
-
+    in_df = in_df.assign(LCA_TaxId="", Superkingdom="", Kingdom="", Phylum="",
+                         Class="", Order="", Family="", Genus="", Species="")
     # index == the #template (fungal match)
+    # match_info is a dirty hack since info is stored as cTAxInfo() and than
+    # overwritten with a new instance created by fNCBItax.lineage_extractor()
     for index, row in in_df.iterrows():
         match_info = cTaxInfo.TaxInfo()
-
         # define the tax. rank based on similarity:
         if ref_database == "UNITE":
             split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
             match_info.Lineage = split_match[12]
-
             # if taxid is knwon:
             if split_match[4] != 'unk_taxid':
-
                 match_info.TaxId = int(split_match[4])
-                match_info = fNCBItax.lineage_extractor(match_info.TaxId , match_info)
-
-                # Warning about unknown taxids:
+                fNCBItax.lineage_extractor(match_info.TaxId , match_info)
+            # Warning about unknown taxids:
             else:
-                print ("")
-                print ("WARNING: based on accession number, no taxonomic information was found in NCBI for %s" %(match_info.Lineage))
-                print ("This match will not get NCBItax taxonomic ranks")
-                print ("")
+                print("WARNING: based on accession number, no taxonomic \
+                      information was found in NCBI for {}.This match will not \
+                      get NCBItax taxonomic ranks".format(match_info.Lineage))
                 match_info.TaxId = split_match[4] # 'unk_taxid'
-
-
         elif ref_database == "RefSeq":
             split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
@@ -80,28 +74,20 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
             species = split_match[6] + " " + split_match[8]
             match_info.Lineage = species
             # include info from NCBI:
-            match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
-
-
+            fNCBItax.lineage_extractor(match_info.TaxId, match_info)
         elif ref_database == "nt":
             split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
             match_info.Lineage = split_match[4] + " " + split_match[6]
-
             #get taxid from accession number
             taxid = split_match[0]
-
             if taxid == 'unk_taxid':
                 # Warning about unknown taxids:
-                print ("")
-                print ("WARNING: no NCBI's taxid found for accession %s" %(match_info.Lineage))
-                print ("This match will not get taxonomic ranks")
-                print ("")
-
+                print ("WARNING: no NCBI's taxid found for accession {}. \
+                        This match will not get taxonomic ranks".format(match_info.Lineage))
             else:
                 match_info.TaxId = int(taxid)
-                match_info = fNCBItax.lineage_extractor(match_info.TaxId, match_info)
-
+                fNCBItax.lineage_extractor(match_info.TaxId, match_info)
 
         # Populate the df with lineage info and the LCA taxid:
 
@@ -119,32 +105,32 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
             in_df.at[index, 'LCA_TaxId'] = 4751
 
         # fill in the rest of the table according to similarity threshold:
-        if qiden >= phylum_threshold:
+        if qiden >= txthresholds.txphylum:
             in_df.at[index, 'Phylum'] = match_info.Phylum
             if match_info.Phylum_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Phylum_TaxId
 
-        if qiden >= class_threshold:
+        if qiden >= txthresholds.txclass:
             in_df.at[index, 'Class'] = match_info.Class
             if match_info.Class_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Class_TaxId
 
-        if qiden >= order_threshold:
+        if qiden >= txthresholds.txorder:
             in_df.at[index, 'Order'] = match_info.Order
             if match_info.Order_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Order_TaxId
 
-        if qiden >= family_threshold:
+        if qiden >= txthresholds.txfamily:
             in_df.at[index, 'Family'] = match_info.Family
             if match_info.Family_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Family_TaxId
 
-        if qiden >= genus_threshold:
+        if qiden >= txthresholds.txgenus:
             in_df.at[index, 'Genus'] = match_info.Genus
             if match_info.Genus_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Genus_TaxId
 
-        if qiden >= species_threshold:
+        if qiden >= txthresholds.txspecies:
             in_df.at[index, 'Species'] = match_info.Species
             if match_info.Species_TaxId != None:
                 in_df.at[index, 'LCA_TaxId'] = match_info.Species_TaxId

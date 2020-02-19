@@ -9,8 +9,8 @@ Created on 12 Jul 2018
 
 """
 
+
 from ete3 import NCBITaxa
-from ccmetagen import cTaxInfo  # where we define classes used here
 
 
 def lineage_extractor(query_taxid, TaxInfo_object):
@@ -21,7 +21,6 @@ def lineage_extractor(query_taxid, TaxInfo_object):
     names = ncbi.get_taxid_translator(lineage)
 
 # get known data
-
     for key, val in ranks.items():
 
         if val == list_of_taxa_ranks[0]:
@@ -80,6 +79,3 @@ def lineage_extractor(query_taxid, TaxInfo_object):
 
     if TaxInfo_object.Species is None:
         TaxInfo_object.Species = "unk_s"
-
-
-    return TaxInfo_object
