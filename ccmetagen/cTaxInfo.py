@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Classes that store taxonomic info from matches and NCBI lineage
 
@@ -10,16 +8,16 @@ Last update on 27 March 2019
 """
 
 ### Stores taxid and other info
-class TaxInfo(): 
-    
-    def __init__(self, TaxId=None, Lineage=None, Sample=None, RefDatabase=None, 
-                 Abundance=None, Superkingdom = None, Superkingdom_TaxId = None, 
-                 Kingdom=None, Kingdom_TaxId=None, Phylum=None, 
+class TaxInfo():
+
+    def __init__(self, TaxId=None, Lineage=None, Sample=None, RefDatabase=None,
+                 Abundance=None, Superkingdom = None, Superkingdom_TaxId = None,
+                 Kingdom=None, Kingdom_TaxId=None, Phylum=None,
                  Phylum_TaxId=None, Class=None, Class_TaxId=None,
                  Order=None, Order_TaxId=None, Family=None, Family_TaxId=None,
                  Genus=None, Genus_TaxId=None, Species=None, Species_TaxId=None,
                  LCA_TaxId=None, Coverage=None):
-        
+
         # info from matches
         self.TaxId = TaxId
         self.Lineage = Lineage # the results of the match, not considering taxIDs
@@ -44,7 +42,7 @@ class TaxInfo():
         self.Genus_TaxId = Genus_TaxId
         self.Species = Species
         self.Species_TaxId = Species_TaxId
-        
+
         # Taxid of the Lowest Common Ancestor
         self.LCA_TaxId = LCA_TaxId
 

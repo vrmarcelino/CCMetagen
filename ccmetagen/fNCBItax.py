@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Function that takes a taxid as input and returns a class containing the taxonomic info and taxids
 for multiple taxonomic ranks.

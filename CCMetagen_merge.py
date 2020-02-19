@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 CCMetagen_merge.py
 
@@ -18,7 +17,7 @@ Created on Tue Dec 18 10:00:48 2018
 """
 
 import sys
-import pandas as pd 
+import pandas as pd
 from argparse import ArgumentParser
 import os
 
@@ -32,17 +31,17 @@ parser.add_argument('-t', '--tax_level', default = 'Species',
                     Closest_match (includes different genes for the same species),
                     Species (Default), Genus, Family, Order, Class, Phylum, Kingdom and Superkingdom
                     """, required=False)
-parser.add_argument('-o', '--output_fp', default = 'merged_samples', 
+parser.add_argument('-o', '--output_fp', default = 'merged_samples',
                     help='Path to the output file. Default = merged_samples', required=False)
 
 # arguments to filter by taxonomy:
-parser.add_argument('-kr', '--keep_or_remove', default = 'n', 
+parser.add_argument('-kr', '--keep_or_remove', default = 'n',
                     help='keep or remove taxa. Options = k (keep), r (remove) and n (none, default)', required=False)
 
-parser.add_argument('-l', '--filtering_tax_level', default = 'none', 
+parser.add_argument('-l', '--filtering_tax_level', default = 'none',
                     help='level to perform taxonomic filtering, default = none', required=False)
 
-parser.add_argument('-tlist', '--taxa_list', default = [], type=str, 
+parser.add_argument('-tlist', '--taxa_list', default = [], type=str,
                     help='list taxon names (comma-separated) that you want to keep or exclude', required=False)
 
 args = parser.parse_args()
@@ -73,7 +72,7 @@ for i in l:
         break
     else:
         f4agg[i] = 'first'
-    
+
 # list of wanted taxa (no depth):
 wanted_taxa = list(f4agg.keys())
 wanted_taxa.remove('Depth')
@@ -85,45 +84,45 @@ all_samples = pd.DataFrame()
 # read input files and merge results
 for file in os.listdir(in_folder):
     if file.endswith(".csv"):
-        
+
         sample_name = file.split(".csv")[0]
         result_fp = os.path.join(in_folder, file)
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
-        
-        # this is needed because groupby excludes rows with NAs 
+
+        # this is needed because groupby excludes rows with NAs
         df = df.fillna("NA")
-        
+
         # keep or remove taxa:
         if kr == "k":
             level = args.filtering_tax_level
             taxa = args.taxa_list.split(",")
             filt_df_str = "df[df['{}'].isin({})]".format(level,taxa)
             df = eval(filt_df_str)
-            
+
         elif kr == "r":
             level = args.filtering_tax_level
             taxa = args.taxa_list.split(",")
             filt_df_str = "df[~df['{}'].isin({})]".format(level,taxa)
             df = eval(filt_df_str)
         elif kr == "n":
-            pass        
+            pass
         else:
             print ("kr must be k (keep), r (remove) or n (none).")
             sys.exit("Try again.")
- 
+
         # if tax_level = closest_match, we need an extra column:
         # Note that this will raise an ambiguity error in a future version of Pandas.
         if tax_level == 'Closest_match':
             df['Closest_match'] = df.index
-        
+
         depth_by_tax = df.groupby(by=wanted_taxa).agg(f4agg)
         depth_by_tax.rename(columns={'Depth':sample_name}, inplace=True)
 
         all_samples = pd.concat([all_samples, depth_by_tax], sort=True, axis=1)
-    
 
-# Group taxon ranks 
+
+# Group taxon ranks
 all_samples = all_samples.groupby(by=all_samples.columns, axis = 1).first()
 
 # add taxon info at the end of the table:

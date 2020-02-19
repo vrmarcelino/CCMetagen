@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 CCMetagen main script
 
@@ -22,6 +21,7 @@ import re
 from ccmetagen import fParseKMA
 from ccmetagen import cTaxInfo # needed in fParseKMA
 from ccmetagen import fNCBItax # needed in fParseKMA
+from ccmetagen import version
 
 # help
 if len(sys.argv) == 1:
@@ -51,56 +51,101 @@ done""")
 
 parser = ArgumentParser()
 
-parser.add_argument('-m', '--mode', default = 'both',
+parser.add_argument('-m', '--mode',
+                    default='both',
+                    required=False,
                     help="""what do you want CCMetagen to do?
                     Valid options are 'visual', 'text' or 'both':
                         text: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information
                         visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualization
-                        both: outputs both text and visual file formats. Default = both""", required=False)
+                        both: outputs both text and visual file formats. Default = both""")
+parser.add_argument('-i', '--res_fp',
+                    help='Path to the KMA result (.res file)',
+                    required=True)
+parser.add_argument('-o', '--output_fp',
+                    default='CCMetagen_out',
+                    required=False,
+                    help='Path to the output file. Default = CCMetagen_out')
+parser.add_argument('-r', '--reference_database',
+                    default = 'nt',
+                    required=False,
+                    help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt')
 
-parser.add_argument('-i', '--res_fp', help='Path to the KMA result (.res file)', required=True)
-parser.add_argument('-o', '--output_fp', default = 'CCMetagen_out',
-                    help='Path to the output file. Default = CCMetagen_out', required=False)
-parser.add_argument('-r', '--reference_database', default = 'nt',
-                    help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
-
-parser.add_argument('-du', '--depth_unit', default = 'kma',
+parser.add_argument('-du', '--depth_unit',
+                    default='kma',
+                    required=False,
                     help="""Desired unit for Depth(abundance) measurements.
                     Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
                     divided by the lengh of the template).
-                    Alternatively, you can have abundance calculated in Reads Per Million (RPM, option 'rpm'), or 
+                    Alternatively, you can have abundance calculated in Reads Per Million (RPM, option 'rpm'), or
                     simply count the number of nucleotides overlaping the template (option 'nc').
                     If you use the 'nc' or 'rpm' options, remember to change the default --depth parameter accordingly.
-                    Valid options are nc, rpm and kma""", required=False)
-parser.add_argument('-map', '--mapstat', help="""Path to the mapstat file produced with KMA when using the -ef flag (.mapstat).
-                    Required when calculating abundances in RPM.""", required = False)
-parser.add_argument('-d', '--depth', default = 0.2,
+                    Valid options are nc, rpm and kma""")
+parser.add_argument('-map', '--mapstat',
+                    required=False,
+                    help="""Path to the mapstat file produced with KMA when using the -ef flag (.mapstat).
+                            Required when calculating abundances in RPM.""")
+parser.add_argument('-d', '--depth',
+                    type=float,
+                    default=0.2,
+                    required=False,
                     help="""minimum sequencing depth. Default = 0.2.
-                    If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides) 
-                    is similar to -d 0.2 when using the default '--depth_unit kma' option.""",type=float, required=False)
+                    If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides)
+                    is similar to -d 0.2 when using the default '--depth_unit kma' option.""")
 
-parser.add_argument('-c', '--coverage', default = 20,
-                    help='Minimum coverage. Default = 20',type=float, required=False)
-parser.add_argument('-q', '--query_identity', default = 50,
-                    help='Minimum query identity (Phylum level). Default = 50', type=float, required=False)
-parser.add_argument('-p', '--pvalue', default = 0.05,
-                    help='Minimum p-value. Default = 0.05.',type=float, required=False)
+parser.add_argument('-c', '--coverage',
+                    type=float,
+                    default=20,
+                    required=False,
+                    help='Minimum coverage. Default = 20')
+parser.add_argument('-q', '--query_identity',
+                    type=float,
+                    default=50,
+                    required=False,
+                    help='Minimum query identity (Phylum level). Default = 50')
+parser.add_argument('-p', '--pvalue',
+                    type=float,
+                    default = 0.05,
+                    required=False,
+                    help='Minimum p-value. Default = 0.05.')
 
 # similarity thresholds:
-parser.add_argument('-st', '--species_threshold', default = 98.41,
-                    help='Species-level similarity threshold. Default = 98.41',type=float, required=False)
-parser.add_argument('-gt', '--genus_threshold', default = 96.31,
-                    help='Genus-level similarity threshold. Default = 96.31',type=float, required=False)
-parser.add_argument('-ft', '--family_threshold', default = 88.51,
-                    help='Family-level similarity threshold. Default = 88.51',type=float, required=False)
-parser.add_argument('-ot', '--order_threshold', default = 81.21,
-                    help='Order-level similarity threshold. Default = 81.21',type=float, required=False)
-parser.add_argument('-ct', '--class_threshold', default = 80.91,
-                    help='Class-level similarity threshold. Default = 80.91',type=float, required=False)
-parser.add_argument('-pt', '--phylum_threshold', default = 0,
-                    help='Phylum-level similarity threshold. Default = 0 - not applied',type=float, required=False)
-parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n',
-                    help='Turns simularity-based filtering off. Options = y or n. Default = n', required=False)
+parser.add_argument('-st', '--species_threshold',
+                    type=float,
+                    default=98.41,
+                    required=False,
+                    help='Species-level similarity threshold. Default = 98.41')
+parser.add_argument('-gt', '--genus_threshold',
+                    type=float,
+                    default=96.31,
+                    required=False,
+                    help='Genus-level similarity threshold. Default = 96.31')
+parser.add_argument('-ft', '--family_threshold',
+                    type=float,
+                    default=88.51,
+                    required=False,
+                    help='Family-level similarity threshold. Default = 88.51')
+parser.add_argument('-ot', '--order_threshold',
+                    type=float,
+                    default=81.21,
+                    required=False,
+                    help='Order-level similarity threshold. Default = 81.21')
+parser.add_argument('-ct', '--class_threshold',
+                    type=float,
+                    default=80.91,
+                    required=False,
+                    help='Class-level similarity threshold. Default = 80.91')
+parser.add_argument('-pt', '--phylum_threshold',
+                    type=float,
+                    default=0.0,
+                    required=False,
+                    help='Phylum-level similarity threshold. Default = 0 - not applied')
+parser.add_argument('-off', '--turn_off_sim_thresholds',
+                    default='n',
+                    action='store_true'
+                    default=False,
+                    required=False,
+                    help='Turns simularity-based filtering off. Options = y or n. Default = n')
 
 parser.add_argument('--version', action='version', version=version_numb)
 
@@ -117,28 +162,20 @@ p = args.pvalue
 mapstat = args.mapstat
 
 # taxononomic thresholds:
-off = args.turn_off_sim_thresholds
+st = args.species_threshold
+gt = args.genus_threshold
+ft = args.family_threshold
+ot = args.order_threshold
+ct = args.class_threshold
+pt = args.phylum_threshold
 
-if off == 'y':
-    st = 0
-    gt = 0
-    ft = 0
-    ot = 0
-    ct = 0
-    pt = 0
-
-elif off == 'n':
-    st = args.species_threshold
-    gt = args.genus_threshold
-    ft = args.family_threshold
-    ot = args.order_threshold
-    ct = args.class_threshold
-    pt = args.phylum_threshold
-
-else:
-    print ("-off argument should be either y or n. ")
-    sys.exit("Try again.")
-
+if args.turn_off_sim_thresholdsoff:
+    args.species_threshold = 0.0
+    args.genus_threshold = 0.0
+    args.family_threshold = 0.0
+    args.order_threshold = 0.0
+    args.class_threshold = 0.0
+    args.phylum_threshold = 0.0
 # developing and debugging:
 #args.output_fp = "CCMetagen_nt_results"
 #f = "KMA_res/1_mtt_nt.res"
@@ -171,56 +208,54 @@ if ref_database not in ("UNITE", "RefSeq","nt"):
 
 
 ##### Read input files and output a pandas dataframe
-print ("")
-print ("Reading file %s" %(f))
-print ("")
-
-df = pd.read_csv(f, sep='\t', index_col=0, encoding='latin1')
+print ("\"\nReading file {} \n\"".format(args.res_fp))
+df = pd.read_csv(args.res_fp, sep='\t', index_col=0, encoding='latin1')
 
 # Rename headers:
 df.index.name = "Closest_match"
 
-
 ##### Adjust depth to reflect number of bases or RPM if needed:
-
 # number of nucleotides:
-if du == 'nc':
+
+#if du == 'nc':
+if args.depth_unit == 'nc':
     df['Depth'] = df.Depth * df.Template_length
     print ("Calculating depth as number of nucleotides, ignoring template length.")
     print ("""Remember to adjust minimum depth value (ex: -d 200) to filter low abundance hits.""")
 
-# RPM:   
-elif du == 'rpm':
+# RPM:
+elif args.depth_unit == 'rpm':
     print ("Calculating RPM...")
     print ("""
            Note 1: to calculate RPM, you need to generate the mapstat file when
            running KMA (flag -ef), and use it as input in CCMetagen (flag --mapstat).
-           
+
            Note 2: you might want to adjust the minimum depth (-d) value accordingly.
            The default minimum depth is 0.2.
            """)
-
-    with open(mapstat) as mapfile:
+    with open(args.mapstat) as mapfile:
         fragments_line=mapfile.readlines()[3]
     total_frags = re.split(r'(\t|\n)',fragments_line)[2]
-    df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
+    df_stats = pd.read_csv(args.mapstat, sep='\t', index_col=0, header=6, encoding='latin1')
     df['Depth'] = 1000000 * df_stats['fragmentCount'] / int(total_frags)
-
-elif du == 'kma':
-    print ("")
-
 else:
+  if args.depth_unit != 'kma':
     print ("""Warning: the depth unit you specified makes no sense.
            --depth_unit option must be nc, rpm, or kma. Using 'kma'.""")
-    print ("")
 
 ##### Quality control + taxonomic assignments
-    
+
 # quality filter (coverage, query identity, Depth and p-value)
-df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
+df = fParseKMA.res_filter(df, ref_database, args.coverage, q, d, p)
 
 # add tax info
-df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)
+df = fParseKMA.populate_w_tax(df, ref_database,
+                                  args.species_threshold,
+                                  args.genus_threshold,
+                                  args.family_threshold,
+                                  args.order_threshold,
+                                  args.class_threshold,
+                                  args.phylum_threshold)
 
 
 ##### Output a file with tax info
