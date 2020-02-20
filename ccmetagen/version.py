@@ -7,7 +7,7 @@
 
 major = 1
 minor = 1
-micro = 5
+micro = 6
 revision = None
 
 def get_version():
