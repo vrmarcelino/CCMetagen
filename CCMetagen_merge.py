@@ -16,11 +16,16 @@ CCMetagen_merge.py -i CCMetagen_folder -kr k -l Genus -tlist Candida,Cryptococcu
 Created on Tue Dec 18 10:00:48 2018
 """
 
-import sys
-import pandas as pd
-from argparse import ArgumentParser
-import os
 
+import os
+import sys
+from argparse import ArgumentParser
+
+
+import pandas as pd
+
+
+from ccmetagen import version
 
 parser = ArgumentParser()
 parser.add_argument('-i', '--input_fp', help="""Path to the folder containing CCMetagen text results.
@@ -43,6 +48,8 @@ parser.add_argument('-l', '--filtering_tax_level', default = 'none',
 
 parser.add_argument('-tlist', '--taxa_list', default = [], type=str,
                     help='list taxon names (comma-separated) that you want to keep or exclude', required=False)
+
+parser.add_argument('--version', action='version', version=version.get_version())
 
 args = parser.parse_args()
 in_folder = args.input_fp
