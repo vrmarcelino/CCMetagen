@@ -25,21 +25,12 @@ class TaxThresholdsSettings:
     """Struct like approach to keep threshold settings sane. The tx prefix
        is required since attributes may clash with Python keywords."""
     def __init__(self, args):
-      self.txspecies = 0.0
-      self.txgenus = 0.0
-      self.txfamily = 0.0
-      self.txorder = 0.0
-      self.txclass = 0.0
-      self.txphylum = 0.0
-
-      if not args.turn_off_sim_thresholdsoff:
-        self.txspecies = args.species_threshold
-        self.txgenus = args.genus_threshold
-        self.txfamily = args.family_threshold
-        self.txorder = args.order_threshold
-        self.txclass = args.class_threshold
-        self.txphylum = args.phylum_threshold
-
+      self.txspecies = 0.0 if args.turn_off_sim_thresholdsoff else args.species_threshold
+      self.txgenus = 0.0 if args.turn_off_sim_thresholdsoff else args.genus_threshold
+      self.txfamily = 0.0 if args.turn_off_sim_thresholdsoff else args.family_threshold
+      self.txorder = 0.0 if args.turn_off_sim_thresholdsoff else args.order_threshold
+      self.txclass = 0.0 if args.turn_off_sim_thresholdsoff else args.class_threshold
+      self.txphylum = 0.0 if args.turn_off_sim_thresholdsoff else args.phylum_threshold
 
 if len(sys.argv) == 1:
     sys.exit("CCMetagen - Identify species in metagenome datasets \nv{0}\n \
@@ -54,7 +45,6 @@ if len(sys.argv) == 1:
                out={1}\n\
                CCMetagen.py -i $f -o $out\n\
              done\n".format(version.get_version(), "$output_dir/${f/$input_dir/}"))
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mode',
@@ -76,7 +66,6 @@ parser.add_argument('-r', '--reference_database',
                     default='nt',
                     required=False,
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt')
-
 parser.add_argument('-du', '--depth_unit',
                     default='kma',
                     required=False,
@@ -98,7 +87,6 @@ parser.add_argument('-d', '--depth',
                     help="""minimum sequencing depth. Default = 0.2.
                     If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides)
                     is similar to -d 0.2 when using the default '--depth_unit kma' option.""")
-
 parser.add_argument('-c', '--coverage',
                     type=float,
                     default=20,
@@ -151,54 +139,50 @@ parser.add_argument('-off', '--turn_off_sim_thresholds',
                     default=False,
                     required=False,
                     help='Turns simularity-based filtering off. Options = y or n. Default = n')
+parser.add_argument('--dev',
+                    action='store_true',
+                    default=False,
+                    required=False,
+                    help='Set parameters for development and debugging. Do not use for analysis')
 
 parser.add_argument('--version', action='version', version=version.get_version())
-
 args = parser.parse_args()
-
-mode = args.mode
-f = args.res_fp
-ref_database = args.reference_database
-c = args.coverage
-q = args.query_identity
-du = args.depth_unit
-d = args.depth
-p = args.pvalue
-mapstat = args.mapstat
 
 # taxononomic thresholds:
 tts = TaxThresholdsSettings(args)
 
 # developing and debugging:
-#args.output_fp = "CCMetagen_nt_results"
-#args.res_fp = "KMA_res/1_mtt_nt.res"
-#args.mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically?? Flag -mapstat?
-#args.reference_database = "nt"
-#args.mode = 'both'
-#args.coverage = 20
-#args.query_identity = 50
-#args.depth = 0.2
-#args.pvalue = 0.05
-#tts.txspecies = 99
-#tts.txgenus = 98
-#tts.txfamily = 95
-#tts.txorder = 80
-#tts.txclass = 0
-#tts.txphylum = 0
-#args.depth_unit = 'kma'
+if args.dev:
+  print("Warning: using debugging options!")
+  args.output_fp = "CCMetagen_nt_results"
+  args.res_fp = "KMA_res/1_mtt_nt.res"
+  args.mapstat = "KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically?? Flag -mapstat?
+  args.reference_database = "nt"
+  args.mode = 'both'
+  args.coverage = 20
+  args.query_identity = 50
+  args.depth = 0.2
+  args.pvalue = 0.05
+  args.depth_unit = 'kma'
+  tts.txspecies = 99
+  tts.txgenus = 98
+  tts.txfamily = 95
+  tts.txorder = 80
+  tts.txclass = 0
+  tts.txphylum = 0
+
 
 ##### Checks:
-
 # Run implicitly ete3.NCBITaxa.__init__() to check for valid taxonomy database
 NCBITaxa()
 
 # Warning if RefDatabase is unknown
-if ref_database not in ("UNITE", "RefSeq","nt"):
+if args.reference_database not in ("UNITE", "RefSeq", "nt"):
     sys.exit("""Reference database (-r) must be either UNITE, RefSeq or nt.
                 the input is case sensitive and the default is nt. Try again.""")
 
 ##### Read input files and output a pandas dataframe
-print ("\"\nReading file {} \n\"".format(args.res_fp))
+print("\"\nReading file {} \n\"".format(args.res_fp))
 df = pd.read_csv(args.res_fp, sep='\t', index_col=0, encoding='latin1')
 
 # Rename headers:
@@ -209,14 +193,12 @@ df.index.name = "Closest_match"
 
 #if du == 'nc':
 if args.depth_unit == 'nc':
+    print("Calculating depth as number of nucleotides, ignoring template length.")
+    print("""Remember to adjust minimum depth value (ex: -d 200) to filter low abundance hits.""")
     df['Depth'] = df.Depth * df.Template_length
-    print ("Calculating depth as number of nucleotides, ignoring template length.")
-    print ("""Remember to adjust minimum depth value (ex: -d 200) to filter low abundance hits.""")
-
-# RPM:
 elif args.depth_unit == 'rpm':
-    print ("Calculating RPM...")
-    print ("""
+    print("""
+           Calculating RPM...
            Note 1: to calculate RPM, you need to generate the mapstat file when
            running KMA (flag -ef), and use it as input in CCMetagen (flag --mapstat).
 
@@ -224,13 +206,13 @@ elif args.depth_unit == 'rpm':
            The default minimum depth is 0.2.
            """)
     with open(args.mapstat) as mapfile:
-        fragments_line=mapfile.readlines()[3]
+        fragments_line = mapfile.readlines()[3]
     total_frags = re.split(r'(\t|\n)',fragments_line)[2]
     df_stats = pd.read_csv(args.mapstat, sep='\t', index_col=0, header=6, encoding='latin1')
     df['Depth'] = 1000000 * df_stats['fragmentCount'] / int(total_frags)
 else:
   if args.depth_unit != 'kma':
-    print ("""Warning: the depth unit you specified makes no sense.
+    print("""Warning: the depth unit you specified makes no sense.
            --depth_unit option must be nc, rpm, or kma. Using 'kma'.""")
 
 ##### Quality control + taxonomic assignments
@@ -243,16 +225,14 @@ df = fParseKMA.res_filter(df, args.reference_database, args.coverage,
 df = fParseKMA.populate_w_tax(df, args.reference_database, tts)
 
 ##### Output a file with tax info
-if mode in ('text', 'both'):
+if args.mode in ('text', 'both'):
     # save to file
     out = args.output_fp + ".csv"
     pd.DataFrame.to_csv(df, out)
-
-    print ("csv file saved as {}".format(out))
-    print ("")
+    print("csv file saved as {}".format(out))
 
 ##### Output a Krona file
-if mode in ('visual', 'both'):
+if args.mode in ('visual', 'both'):
     krona_info = df[['Depth', 'Superkingdom', 'Kingdom', 'Phylum', 'Class',
                      'Order', 'Family', 'Genus', 'Species']]
 
@@ -265,6 +245,5 @@ if mode in ('visual', 'both'):
 
     # save krona file
     out2 = args.output_fp + ".html"
-    subprocess.run(["ktImportText", out1, "-o " , out2], shell=True)
-    print ("krona file saved as {}".format(out2))
-    print ("")
+    subprocess.run(["ktImportText", out1, "-o ", out2], shell=True)
+    print("krona file saved as {}".format(out2))
