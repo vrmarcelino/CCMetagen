@@ -7,20 +7,18 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.1.4'
 
-# imports
 import sys
-import pandas as pd
-from argparse import ArgumentParser
 import subprocess
-from ete3 import NCBITaxa
 import re
+import argparse
 
-# local imports
+
+import pandas as pd
+from ete3 import NCBITaxa
+
+
 from ccmetagen import fParseKMA
-from ccmetagen import cTaxInfo # needed in fParseKMA
-from ccmetagen import fNCBItax # needed in fParseKMA
 from ccmetagen import version
 
 class TaxThresholdsSettings:
@@ -43,34 +41,22 @@ class TaxThresholdsSettings:
         self.txphylum = args.phylum_threshold
 
 
-# help
 if len(sys.argv) == 1:
-    print ("")
-    print ("CCMetagen - Identify species in metagenome datasets")
-    print (version_numb)
-    print ("To be used with KMA")
-    print ("")
-    print ("Usage: CCMetagen.py <options> ")
-    print ("Ex: CCMetagen.py -i KMA_out/2_mtg.res -o 2_mtg_result")
-    print ("")
-    print ("")
-    print ("""When running CCMetagen on multiple files in a folder:
-input_dir=KMA_out
-output_dir=CCMetagen_results
-mkdir $output_dir
-for f in $input_dir/*.res; do
-    out=$output_dir/${f/$input_dir\/}
-    CCMetagen.py -i $f -o $out
-done""")
-    print ("")
-    print ("For help and options, type: CCMetagen.py -h")
-    print ("")
-    print ("")
-    sys.exit()
+    sys.exit("CCMetagen - Identify species in metagenome datasets \nv{0}\n \
+             \rTo be used with KMA\n\nUsage: CCMetagen.py <options>\n\n\
+             Ex: CCMetagen.py -i KMA_out/2_mtg.res -o 2_mtg_result \n\n\
+            For more help and options type: CCMetagen.py -h \n\
+            When running CCMetagen on multiple files in a folder:\n\n\
+             input_dir=KMA_out \n\
+             output_dir=CCMetagen_results\n\
+             mkdir $output_dir \n\
+             for f in $input_dir/\*.res; do \n\
+               out={1}\n\
+               CCMetagen.py -i $f -o $out\n\
+             done\n".format(version.get_version(), "$output_dir/${f/$input_dir/}"))
 
 
-parser = ArgumentParser()
-
+parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mode',
                     default='both',
                     required=False,
@@ -87,7 +73,7 @@ parser.add_argument('-o', '--output_fp',
                     required=False,
                     help='Path to the output file. Default = CCMetagen_out')
 parser.add_argument('-r', '--reference_database',
-                    default = 'nt',
+                    default='nt',
                     required=False,
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt')
 
@@ -125,7 +111,7 @@ parser.add_argument('-q', '--query_identity',
                     help='Minimum query identity (Phylum level). Default = 50')
 parser.add_argument('-p', '--pvalue',
                     type=float,
-                    default = 0.05,
+                    default=0.05,
                     required=False,
                     help='Minimum p-value. Default = 0.05.')
 
@@ -161,13 +147,12 @@ parser.add_argument('-pt', '--phylum_threshold',
                     required=False,
                     help='Phylum-level similarity threshold. Default = 0 - not applied')
 parser.add_argument('-off', '--turn_off_sim_thresholds',
-                    default='n',
-                    action='store_true'
+                    action='store_true',
                     default=False,
                     required=False,
                     help='Turns simularity-based filtering off. Options = y or n. Default = n')
 
-parser.add_argument('--version', action='version', version=version_numb)
+parser.add_argument('--version', action='version', version=version.get_version())
 
 args = parser.parse_args()
 
@@ -258,7 +243,7 @@ df = fParseKMA.res_filter(df, args.reference_database, args.coverage,
 df = fParseKMA.populate_w_tax(df, args.reference_database, tts)
 
 ##### Output a file with tax info
-if (mode == 'text') or (mode == 'both'):
+if mode in ('text', 'both'):
     # save to file
     out = args.output_fp + ".csv"
     pd.DataFrame.to_csv(df, out)
@@ -267,8 +252,9 @@ if (mode == 'text') or (mode == 'both'):
     print ("")
 
 ##### Output a Krona file
-if (mode == 'visual') or (mode == 'both'):
-    krona_info = df[['Depth','Superkingdom','Kingdom','Phylum','Class','Order','Family','Genus','Species']]
+if mode in ('visual', 'both'):
+    krona_info = df[['Depth', 'Superkingdom', 'Kingdom', 'Phylum', 'Class',
+                     'Order', 'Family', 'Genus', 'Species']]
 
     # remove the unk_xx for better krona representation
     krona_info = krona_info.replace('unk_.*$', value='',regex=True)
