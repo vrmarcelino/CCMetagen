@@ -25,12 +25,13 @@ class TaxThresholdsSettings:
     """Struct like approach to keep threshold settings sane. The tx prefix
        is required since attributes may clash with Python keywords."""
     def __init__(self, args):
-      self.txspecies = 0.0 if args.turn_off_sim_thresholdsoff else args.species_threshold
-      self.txgenus = 0.0 if args.turn_off_sim_thresholdsoff else args.genus_threshold
-      self.txfamily = 0.0 if args.turn_off_sim_thresholdsoff else args.family_threshold
-      self.txorder = 0.0 if args.turn_off_sim_thresholdsoff else args.order_threshold
-      self.txclass = 0.0 if args.turn_off_sim_thresholdsoff else args.class_threshold
-      self.txphylum = 0.0 if args.turn_off_sim_thresholdsoff else args.phylum_threshold
+      print(args)
+      self.txspecies = 0.0 if args.turn_off_sim_thresholds else args.species_threshold
+      self.txgenus = 0.0 if args.turn_off_sim_thresholds else args.genus_threshold
+      self.txfamily = 0.0 if args.turn_off_sim_thresholds else args.family_threshold
+      self.txorder = 0.0 if args.turn_off_sim_thresholds else args.order_threshold
+      self.txclass = 0.0 if args.turn_off_sim_thresholds else args.class_threshold
+      self.txphylum = 0.0 if args.turn_off_sim_thresholds else args.phylum_threshold
 
 if len(sys.argv) == 1:
     sys.exit("CCMetagen - Identify species in metagenome datasets \nv{0}\n \
