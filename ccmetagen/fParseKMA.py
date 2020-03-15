@@ -87,7 +87,7 @@ def populate_w_tax(in_df, ref_database,species_threshold,genus_threshold,
         elif ref_database == "nt":
             split_match = re.split (r'(\|| )', index)
             qiden = row['Query_Identity']
-            match_info.Lineage = split_match[4] + " " + split_match[6]
+            match_info.Lineage = split_match[2]
             
             #get taxid from accession number
             taxid = split_match[0]
