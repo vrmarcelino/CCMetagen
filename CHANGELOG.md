@@ -27,4 +27,11 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
   - Added option to calculate abundance in Reads Per Million (RPM).
 
+## [v1.1.5](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.4...v1.1.5) - 20.03.2020
+
+### Changed
+
+ - Changed CCMetagen_merge.py code to be compatible with latest version of Pandas, it now allows merging at Closest_match without raising an ambiguity error.
+
+
   
