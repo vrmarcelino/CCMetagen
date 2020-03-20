@@ -116,7 +116,7 @@ for file in os.listdir(in_folder):
         
         if tax_level == 'Closest_match':
             df['Closest_match'] = df.index
-        df.index.name = None # This is needed in modern versions of Pandas (1.0.1)
+            df.index.name = None # This is needed in modern versions of Pandas (1.0.1)
 
         depth_by_tax = df.groupby(by=wanted_taxa).agg(f4agg)
         depth_by_tax.rename(columns={'Depth':sample_name}, inplace=True)
