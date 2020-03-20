@@ -53,10 +53,10 @@ kr = args.keep_or_remove
 
 
 # debugging:
-#in_folder = "CCMetagen_new"
+#in_folder = "CCM_res_nt"
 #tax_level = "Species"
-#output = "merged_samples_depth"
-#kr = "n" # k for keep, r for remove, and n for none
+#output = "merged_samples_depth_species_no_ecoli"
+#kr = "r" # k for keep, r for remove, and n for none
 #level = "Species"
 #taxa = ["Escherichia coli"]
 
@@ -113,10 +113,11 @@ for file in os.listdir(in_folder):
             sys.exit("Try again.")
  
         # if tax_level = closest_match, we need an extra column:
-        # Note that this will raise an ambiguity error in a future version of Pandas.
+        
         if tax_level == 'Closest_match':
             df['Closest_match'] = df.index
-        
+        df.index.name = None # This is needed in modern versions of Pandas (1.0.1)
+
         depth_by_tax = df.groupby(by=wanted_taxa).agg(f4agg)
         depth_by_tax.rename(columns={'Depth':sample_name}, inplace=True)
 
