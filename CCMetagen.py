@@ -8,7 +8,7 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.1.4'
+version_numb = 'v1.1.5'
 
 # imports
 import sys
