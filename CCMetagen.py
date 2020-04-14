@@ -80,7 +80,7 @@ parser.add_argument('-d', '--depth', default = 0.2,
                     is similar to -d 0.2 when using the default '--depth_unit kma' option.""",type=float, required=False)
 
 parser.add_argument('-c', '--coverage', default = 20,
-                    help='Minimum coverage. Default = 20',type=float, required=False)
+                    help="""Minimum coverage. Default = 20 (i.e. 20%% of the reference sequence)""",type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50,
                     help='Minimum query identity (Phylum level). Default = 50', type=float, required=False)
 parser.add_argument('-p', '--pvalue', default = 0.05,
