@@ -263,7 +263,8 @@ optional arguments:
                         using the default '--depth_unit kma' option.
 
   -c COVERAGE, --coverage COVERAGE
-                        Minimum coverage. Default = 20
+                        Minimum coverage. Default = 20 (i.e. 20% of the
+                        reference sequence)
   -q QUERY_IDENTITY, --query_identity QUERY_IDENTITY
                         Minimum query identity (Phylum level). Default = 50
   -p PVALUE, --pvalue PVALUE
