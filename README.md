@@ -2,9 +2,9 @@
 
 CCMetagen processes sequence alignments produced with [KMA](https://bitbucket.org/genomicepidemiology/kma), which implements the ConClave sorting scheme to achieve highly accurate read mappings. The pipeline is fast enough to use the whole NCBI nt collection as reference, facilitating the inclusion of understudied organisms, such as microbial eukaryotes, in metagenome surveys. CCMetagen produces ranked taxonomic results in user-friendly formats that are ready for publication or downstream statistical analyses.
 
-If you this tool, please cite the CCMetagen preprint and the original KMA paper:
+If you this tool, please cite CCMetagen and KMA:
 
-  * [CCMetagen, please cite: Marcelino VR, Clausen PT, Buchman J, Wille M, Iredell JR, Meyer W, Lund O, Sorrell T, Holmes EC. 2019. CCMetagen: comprehensive and accurate identification of eukaryotes and prokaryotes in metagenomic data. Genome Biology. 2020 Dec;21(1):1-5.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02014-2)
+  * [Marcelino VR, Clausen PT, Buchman J, Wille M, Iredell JR, Meyer W, Lund O, Sorrell T, Holmes EC. 2019. CCMetagen: comprehensive and accurate identification of eukaryotes and prokaryotes in metagenomic data. Genome Biology. 2020 Dec;21(1):1-5.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02014-2)
 
   * [Clausen PT, Aarestrup FM, Lund O. 2018. Rapid and precise alignment of raw reads against redundant databases with KMA. BMC bioinformatics. 2018 Dec;19(1):307.](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2336-6)
 
