@@ -4,7 +4,7 @@ CCMetagen processes sequence alignments produced with [KMA](https://bitbucket.or
 
 If you this tool, please cite the CCMetagen preprint and the original KMA paper:
 
-  * [CCMetagen, please cite: Marcelino VR, Clausen PT, Buchman J, Wille M, Iredell JR, Meyer W, Lund O, Sorrell T, Holmes EC. 2019. CCMetagen: comprehensive and accurate identification of eukaryotes and prokaryotes in metagenomic data. bioRxiv. doi: https://doi.org/10.1101/641332.](https://doi.org/10.1101/641332)
+  * [CCMetagen, please cite: Marcelino VR, Clausen PT, Buchman J, Wille M, Iredell JR, Meyer W, Lund O, Sorrell T, Holmes EC. 2019. CCMetagen: comprehensive and accurate identification of eukaryotes and prokaryotes in metagenomic data. Genome Biology. 2020 Dec;21(1):1-5.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02014-2)
 
   * [Clausen PT, Aarestrup FM, Lund O. 2018. Rapid and precise alignment of raw reads against redundant databases with KMA. BMC bioinformatics. 2018 Dec;19(1):307.](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2336-6)
 
