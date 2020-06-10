@@ -8,7 +8,7 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.1.5'
+version_numb = 'v1.2.0'
 
 # imports
 import sys
@@ -63,6 +63,11 @@ parser.add_argument('-o', '--output_fp', default = 'CCMetagen_out',
                     help='Path to the output file. Default = CCMetagen_out', required=False)
 parser.add_argument('-r', '--reference_database', default = 'nt',
                     help='Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt', required=False)
+parser.add_argument('-ef', '--extended_output_file', default = 'n',
+                    help="""Produce an extended output file that includes the percentage of classified reads.
+                    Options: y or n. To use this featire, you need to generate the mapstat file when
+                    required unning KMA (use flag -ef), and use it as input in CCMetagen (flag --mapstat). 
+                    Default = n""", required=False)
 
 parser.add_argument('-du', '--depth_unit', default = 'kma',
                     help="""Desired unit for Depth(abundance) measurements.
@@ -73,12 +78,11 @@ parser.add_argument('-du', '--depth_unit', default = 'kma',
                     If you use the 'nc' or 'rpm' options, remember to change the default --depth parameter accordingly.
                     Valid options are nc, rpm and kma""", required=False)
 parser.add_argument('-map', '--mapstat', help="""Path to the mapstat file produced with KMA when using the -ef flag (.mapstat).
-                    Required when calculating abundances in RPM.""", required = False)
+                    Required when calculating abundances in RPM or when producing the extended_output_file""", required = False)
 parser.add_argument('-d', '--depth', default = 0.2,
                     help="""minimum sequencing depth. Default = 0.2.
                     If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides) 
                     is similar to -d 0.2 when using the default '--depth_unit kma' option.""",type=float, required=False)
-
 parser.add_argument('-c', '--coverage', default = 20,
                     help="""Minimum coverage. Default = 20 (i.e. 20%% of the reference sequence)""",type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50,
@@ -115,6 +119,7 @@ du = args.depth_unit
 d = args.depth
 p = args.pvalue
 mapstat = args.mapstat
+ef = args.extended_output_file
 
 # taxononomic thresholds:
 off = args.turn_off_sim_thresholds
@@ -141,10 +146,10 @@ else:
 
 # developing and debugging:
 #args.output_fp = "CCMetagen_nt_results"
-#f = "KMA_res/1_mtt_nt.res"
-#mapstat="KMA_res/1_mtt_nt.mapstat" # make a way of finding this automatically?? Flag -mapstat?
+#f = "sim_metagen.res"
+#mapstat="sim_metagen.mapstat" # make a way of finding this automatically?? Flag -mapstat?
 #ref_database = "nt"
-#mode = 'both'
+#mode = 'text'
 #c = 20
 #q = 50
 #d = 0.2
@@ -156,6 +161,7 @@ else:
 #ct = 0
 #pt = 0
 #du = 'kma'
+#ef = 'y' # extended format - add a flag, default = 'n'
 
 
 ##### Checks:
@@ -167,6 +173,12 @@ NCBITaxa()
 if ref_database not in ("UNITE", "RefSeq","nt"):
     print (""" Reference database (-r) must be either UNITE, RefSeq or nt.
            the input is case sensitive and the default is nt.""")
+    sys.exit("Try again.")
+
+
+# check if ef flag is correct
+if ef not in ("y", "n"):
+    print ("Unrecognized argument %s. Use either '-ef n' (default) or '-ef y'" %(ef))
     sys.exit("Try again.")
 
 
@@ -252,3 +264,32 @@ if (mode == 'visual') or (mode == 'both'):
 
     print ("krona file saved as %s" %(out2))
     print ("")
+    
+
+##### Extended format - calculate read mapping stats
+if ef == 'y':
+    print ("calculating read mapping stats...")
+           
+    with open(mapstat) as mapfile:
+        fragments_line=mapfile.readlines()[3]
+    total_frags = re.split(r'(\t|\n)',fragments_line)[2]
+    df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
+    
+    # delete species in df_stats that are not in the CCM result dataframe:
+    df_stats_filt = df_stats[df_stats.index.isin(df.index)].copy() # the copy handles the pandas warning
+    df_stats_filt['perc_map'] = df_stats_filt['fragmentCount'] / int(total_frags) * 100
+    total_mapped = sum(df_stats_filt['perc_map'])
+    
+    stats_out = args.output_fp + "_stats.csv"
+    pd.DataFrame.to_csv(df_stats_filt, stats_out )
+    
+    print ("\nStats file saved as %s" %(stats_out))
+    print ("""\nProportion of reads mapped to the database: %f%%\n""" %(total_mapped))
+    
+
+
+
+
+
+
+    
