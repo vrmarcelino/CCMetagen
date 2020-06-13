@@ -34,4 +34,10 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
  - Changed CCMetagen_merge.py code to be compatible with latest version of Pandas, it now allows merging at Closest_match without raising an ambiguity error.
 
 
-  
+## [v1.2.0](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.5...v1.2.0) - 13.06.2020
+
+### Changed
+
+ - Added CCMetagen_extract_seqs.py and a feature to calculate the proportion of mapped reads.
+
+
