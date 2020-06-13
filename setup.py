@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="CCMetagen",
-    version="0.1",
+    version="1.2",
     url="https://github.com/vrmarcelino/CCMetagen",
     description="Microbiome classification pipeline",
     license="GPL-3.0",

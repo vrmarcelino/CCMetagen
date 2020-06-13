@@ -49,7 +49,7 @@ If you have git:
 git clone https://github.com/vrmarcelino/CCMetagen
 ```
 This will download CCMetagen and the tutorial files.
-You can also just download the python files from this folder (CCMetagen.py, CCMetagen_merge.py) and the ones in the ccmetagen folder if you rather avoid downloading all other files.
+You can also just download the python files from this github directory (CCMetagen.py, CCMetagen_merge.py) and the ones in the ccmetagen folder if you rather avoid downloading all other files.
 
 Then add the CCMetagen python scripts to the path, temporarily or permanently. For example:
 `PATH=$PATH<your_folder>/CCMetagen`
@@ -88,7 +88,7 @@ For single-end files:
 kma -i $SAMPLE -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and
 ```
 
-If you intend to calculate abundance in reads per million (RPM), add the flag -ef (extended features:
+If you want to calculate abundance in reads per million (RPM) or to calculate the proportion of mapped reads, add the flag -ef (extended features):
 ```
 kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and -apm f -ef
 ```
@@ -116,16 +116,23 @@ An example of the CCMetagen output can be found [here (.csv file)](https://githu
 
 <img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
-In the .csv file, you will find the depth (abundance) of each match. Depth can be estimated in three ways: by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm). If you want RPM values, you will need to suply the .mapstats file generated with KMA.
+In the .csv file, you will find the depth (abundance) of each match. **Depth can be estimated in three ways:** by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm). If you want RPM values, you will need to suply the .mapstats file generated with KMA.
 
-You can adjust the stringency of the taxonomic assignments by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity). Coverage is the percentage of bases in the reference sequence that is covered by the consensus sequence (your query), it can be over 100% when the consensus sequence is larger than the reference (due to insertions for example).
+You can **adjust the stringency of the taxonomic assignments** by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity). Coverage is the percentage of bases in the reference sequence that is covered by the consensus sequence (your query), it can be over 100% when the consensus sequence is larger than the reference (due to insertions for example).
 
 If you change the default depth unit, we recommend adjusting the minimum abundance (--depth) to remove taxa found in low abundance accordingly. For example, you can use -d 200 (200 nucleotides) when using --depth_unit nc, which is similar to -d 0.2 when using the default '--depth_unit kma' option. If you choose to calculate abundances in RPM, you may want to adjust the minimum abundance according to your sequence depth.
 For example, to calculate abundances in RPM, and filter out all matches with less than one read per million:
 
 ```
-CCMetagen.py -i $sample_out_kma.res -o results --depth_unit rpm --mapstat $sample_out_kma.mapstat --depth 1
+CCMetagen.py -i $sample_out_kma.res -o results -map $sample_out_kma.mapstat --depth_unit rpm --depth 1
 ```
+
+If you would like to know the **proportion of reads mapped** to each template, run kma with the '-ef' flag. This will generate a file with the '.mapstat' extension. Then provide this file to CCMetagen (-map $sample_out_kma.mapstat) and add the flag '-ef y':
+
+```
+CCMetagen.py -i $sample_out_kma.res -o results -map $sample_out_kma.mapstat -ef y
+```
+This will filter the .mapstat file, removing the templates that did not pass CCMetagen's quality control, will add the percentage of mapped reads for each template and will output a file with extension 'stats_csv'. It will also output the overall proportion of reads mapped to these templates in the terminal. For more details about the additional columns of this file, please check [KMA's manual](https://bitbucket.org/genomicepidemiology/kma/src/master/KMAspecification.pdf).
 
 
 **Understanding the ranked taxonomic output of CCMetagen:** The taxonomic classifications reflect the sequence similarity between query and reference sequences, according to default or user-defined similarity thresholds. For example, if a match is 97% similar to the reference sequence, the match will not get a species-level classification. If the match is 85% similar to the reference sequence, then the species, genus and family-level classifications will be 'none'.
@@ -137,7 +144,7 @@ For a list of options to customize your analyze, type:
 CCMetagen.py -h
 ```
 
-  * To get the abundance of each taxon, and/or summarize results for multiple samples, use **CCMetagen_merge**:
+  * **To get the abundance of each taxon, and/or summarize results for multiple samples, use CCMetagen_merge**:
 ```
 CCMetagen_merge.py -i $CCMetagen_out
 ```
@@ -176,7 +183,27 @@ CCMetagen_merge.py -h
 ```
 This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Bird_family_table_filtered.csv).
 
+
+* **To extract sequences of a given taxon, use CCMetagen_extract_seqs**:
+
+This script will produce a fasta file containing all reads assigned to a taxon of interest. 
+Ex: Generate a fasta file containing all sequences that mapped to the genus Eschericha:
+```
+CCMetagen_extract_seqs.py -iccm $CCMetagen_out -ifrag $sample_out_kma.frag -l Genus -t Eschericha
+```
+
+Where $CCMetagen_out is the .csv file generated with CCMetagen and $sample_out_kma.frag is the .frag file generated with KMA. 
+
+
+For species-level filtering (where there is a space in taxon names), use quotation marks.
+Ex: Generate a fasta file containing all sequences that mapped to _E. coli_:
+```
+CCMetagen_extract_seqs.py -iccm $CCMetagen_out -ifrag $sample_out_kma.frag -l Species -t "Escherichia coli"
+```
+
+
 **Check out our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.**
+
 
 
 ## FAQs
@@ -214,16 +241,16 @@ pip install pandas --upgrade --user
 CCMetagen:
 ```
 usage: CCMetagen.py [-h] [-m MODE] -i RES_FP [-o OUTPUT_FP]
-                    [-r REFERENCE_DATABASE] [-du DEPTH_UNIT] [-map MAPSTAT]
-                    [-d DEPTH] [-c COVERAGE] [-q QUERY_IDENTITY] [-p PVALUE]
-                    [-st SPECIES_THRESHOLD] [-gt GENUS_THRESHOLD]
-                    [-ft FAMILY_THRESHOLD] [-ot ORDER_THRESHOLD]
-                    [-ct CLASS_THRESHOLD] [-pt PHYLUM_THRESHOLD]
-                    [-off TURN_OFF_SIM_THRESHOLDS] [--version]
+                    [-r REFERENCE_DATABASE] [-ef EXTENDED_OUTPUT_FILE]
+                    [-du DEPTH_UNIT] [-map MAPSTAT] [-d DEPTH] [-c COVERAGE]
+                    [-q QUERY_IDENTITY] [-p PVALUE] [-st SPECIES_THRESHOLD]
+                    [-gt GENUS_THRESHOLD] [-ft FAMILY_THRESHOLD]
+                    [-ot ORDER_THRESHOLD] [-ct CLASS_THRESHOLD]
+                    [-pt PHYLUM_THRESHOLD] [-off TURN_OFF_SIM_THRESHOLDS]
+                    [--version]
 
 optional arguments:
   -h, --help            show this help message and exit
-  
   -m MODE, --mode MODE  what do you want CCMetagen to do? Valid options are
                         'visual', 'text' or 'both': text: parses kma, filters
                         based on quality and output a text file with taxonomic
@@ -232,7 +259,6 @@ optional arguments:
                         simplified text file and a krona html file for
                         visualization both: outputs both text and visual file
                         formats. Default = both
-
   -i RES_FP, --res_fp RES_FP
                         Path to the KMA result (.res file)
   -o OUTPUT_FP, --output_fp OUTPUT_FP
@@ -240,7 +266,12 @@ optional arguments:
   -r REFERENCE_DATABASE, --reference_database REFERENCE_DATABASE
                         Which reference database was used. Options: UNITE,
                         RefSeq or nt. Default = nt
-
+  -ef EXTENDED_OUTPUT_FILE, --extended_output_file EXTENDED_OUTPUT_FILE
+                        Produce an extended output file that includes the
+                        percentage of classified reads. Options: y or n. To
+                        use this featire, you need to generate the mapstat
+                        file when required unning KMA (use flag -ef), and use
+                        it as input in CCMetagen (flag --mapstat). Default = n
   -du DEPTH_UNIT, --depth_unit DEPTH_UNIT
                         Desired unit for Depth(abundance) measurements.
                         Default = kma (KMA default depth, which is the number
@@ -255,13 +286,13 @@ optional arguments:
   -map MAPSTAT, --mapstat MAPSTAT
                         Path to the mapstat file produced with KMA when using
                         the -ef flag (.mapstat). Required when calculating
-                        abundances in RPM.
+                        abundances in RPM or when producing the
+                        extended_output_file
   -d DEPTH, --depth DEPTH
                         minimum sequencing depth. Default = 0.2. If you use
                         --depth_unit nc, change this accordingly. For example,
                         -d 200 (200 nucleotides) is similar to -d 0.2 when
                         using the default '--depth_unit kma' option.
-
   -c COVERAGE, --coverage COVERAGE
                         Minimum coverage. Default = 20 (i.e. 20% of the
                         reference sequence)
@@ -285,37 +316,7 @@ optional arguments:
   -off TURN_OFF_SIM_THRESHOLDS, --turn_off_sim_thresholds TURN_OFF_SIM_THRESHOLDS
                         Turns simularity-based filtering off. Options = y or
                         n. Default = n
-
   --version             show program's version number and exit
- ```
-
-CCMetagen_merge:
- ```
-usage: CCMetagen_merge.py [-h] -i INPUT_FP [-t TAX_LEVEL] [-o OUTPUT_FP]
-                          [-kr KEEP_OR_REMOVE] [-l FILTERING_TAX_LEVEL]
-                          [-tlist TAXA_LIST]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i INPUT_FP, --input_fp INPUT_FP
-                        Path to the folder containing CCMetagen text results.
-                        Note that files must end with ".csv" and the folder
-                        should not contain other .csv files
-  -t TAX_LEVEL, --tax_level TAX_LEVEL
-                        Taxonomic level to merge the results. Options:
-                        Closest_match (includes different genes for the same
-                        species), Species (Default), Genus, Family, Order,
-                        Class, Phylum, Kingdom and Superkingdom
-  -o OUTPUT_FP, --output_fp OUTPUT_FP
-                        Path to the output file. Default = merged_samples
-  -kr KEEP_OR_REMOVE, --keep_or_remove KEEP_OR_REMOVE
-                        keep or remove taxa. Options = k (keep), r (remove)
-                        and n (none, default)
-  -l FILTERING_TAX_LEVEL, --filtering_tax_level FILTERING_TAX_LEVEL
-                        level to perform taxonomic filtering, default = none
-  -tlist TAXA_LIST, --taxa_list TAXA_LIST
-                        list taxon names (comma-separated) that you want to
-                        keep or exclude
  ```
 
 
