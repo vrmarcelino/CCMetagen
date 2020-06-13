@@ -192,8 +192,7 @@ Ex: Generate a fasta file containing all sequences that mapped to the genus Esch
 CCMetagen_extract_seqs.py -iccm $CCMetagen_out -ifrag $sample_out_kma.frag -l Genus -t Eschericha
 ```
 
-Where $CCMetagen_out is the .csv file generated with CCMetagen and $sample_out_kma.frag is the .frag file generated with KMA. 
-
+Where $CCMetagen_out is the .csv file generated with CCMetagen and $sample_out_kma.frag is the .frag file generated with KMA. The frag file needs to be decompressed: `gunzip *.frag.gz`
 
 For species-level filtering (where there is a space in taxon names), use quotation marks.
 Ex: Generate a fasta file containing all sequences that mapped to _E. coli_:
