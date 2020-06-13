@@ -20,20 +20,18 @@ from argparse import ArgumentParser
 # help
 if len(sys.argv) == 1:
     print ("")
-    print ("USAGE: CCMetagen_extract_seqs.py -ifrag <file.frag> -iccm <ccmetagen_result.csv> -l <tax_level> -t <taxon> -o <output_fp> ")   
-    print ("""Outputs a fasta file containing the sequences assigned to a given taxon""")   
+    print ("""Produces a fasta file containing the sequences assigned to a given taxon""")   
     print ("For help and options, type: CCMetagen_extract_seqs.py -h")
     print ("")
 
 
-
-
 parser = ArgumentParser()
-parser.add_argument('-ifrag', '--input_frags', help='The path to the file containing frags', required=True)
+parser.add_argument('-ifrag', '--input_frags', help='The path to the file containing frags (decompressed)', required=True)
 parser.add_argument('-iccm', '--input_ccmetagen', help='The path to the ccmetagen result csv file', required=True)
 parser.add_argument('-l', '--taxonomic_level', help="""Taxonomic level to merge the results. Options:
                     Species, Genus, Family, Order, Class, Phylum, Kingdom and Superkingdom""", required=True)
-parser.add_argument('-t', '--taxon', help='Taxon for which you want to extract sequences', required=True)
+parser.add_argument('-t', '--taxon', help="""Taxon for which you want to extract sequences. 
+                    Use quotation marks to specify species (e.g. -t 'Escherichia coli')""", required=True)
 parser.add_argument('-o', '--output_fp', default = 'wanted_taxon_seqs', 
                     help='Path to the output file. Default = wanted_taxon_seqs', required=False)
 
