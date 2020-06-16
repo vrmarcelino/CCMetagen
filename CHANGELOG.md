@@ -3,9 +3,9 @@
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 (or tries as best as it can)
 
-## [Unreleased](https://github.com/vrmarcelino/CCMetagen/compare/v1.2.1...master)
+## [Unreleased](https://github.com/vrmarcelino/CCMetagen/compare/v1.2.2...master)
 
-## [v1.2.1](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.2...v1.2.1) - 16.06.2020
+## [v1.2.2](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.2...v1.2.2) - 16.06.2020
 
 ### Fixed
 
