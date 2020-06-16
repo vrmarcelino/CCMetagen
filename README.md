@@ -21,7 +21,8 @@ Make sure you have the dependencies below installed and accessible in your $PATH
 The guidelines below are for Unix systems.
 
   * If you do not have it already, download and install [Python 3.6](https://www.python.org/downloads/)
-CCMetagen requires Python modules [pandas (>0.23)](https://pandas.pydata.org/) and [ETE3](http://etetoolkit.org/). The easiest way to install these modules is via conda or pip:
+CCMetagen requires the Python modules [pandas (>0.23)](https://pandas.pydata.org/) and [ETE3](http://etetoolkit.org/).
+The easiest way to install these modules is via conda or pip:
 
 `conda install pandas`
 
@@ -43,8 +44,8 @@ cd  KronaTools-2.7
 ./install.pl --prefix . 
 ```
 
-  * Then download CCMetagen and add it to your path.
-If you have git:
+  * Then download CCMetagen and add it to your path. You have two options:
+**install it via git:**
 ```
 git clone https://github.com/vrmarcelino/CCMetagen
 ```
@@ -55,6 +56,11 @@ Then add the CCMetagen python scripts to the path, temporarily or permanently. F
 `PATH=$PATH<your_folder>/CCMetagen`
 
 To update CCMetagen, go to the CCMetagen folder and type: `git pull`
+
+**install it via pip:**
+`pip install CCMetagen`
+This will automatically install the necessary python packages (pandas and ete3), so you can skip that step if you use pip.
+
 
 
 ## Databases
