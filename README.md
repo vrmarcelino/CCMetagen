@@ -45,7 +45,8 @@ cd  KronaTools-2.7
 ```
 
   * Then download CCMetagen and add it to your path. You have two options:
-**install it via git:**
+
+** Install CCMetagen via git:**
 ```
 git clone https://github.com/vrmarcelino/CCMetagen
 ```
@@ -57,8 +58,10 @@ Then add the CCMetagen python scripts to the path, temporarily or permanently. F
 
 To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
-**install it via pip:**
-`pip install CCMetagen`
+** Or install CCMetagen via pip:**
+```
+pip install CCMetagen
+```
 This will automatically install the necessary python packages (pandas and ete3), so you can skip that step if you use pip.
 
 
