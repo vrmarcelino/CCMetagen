@@ -35,6 +35,8 @@ The easiest way to install these modules is via conda or pip:
 git clone https://bitbucket.org/genomicepidemiology/kma.git
 cd kma && make
 ```
+**Note - a new version of KMA - v1.3.0 – has been released, featuring higher speed and precision. We recommend that you update KMA to v.1.3.0**
+
 
   * [Krona](https://github.com/marbl/Krona) is required for graphs. To install Krona it in the local folder:
 ```
