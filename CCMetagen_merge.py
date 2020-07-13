@@ -4,8 +4,9 @@
 CCMetagen_merge.py
 
 Merge the abundance results of CCMetagen for several samples into a single table.
-The results must be in .csv format (default CCMetagen or ---mode text)
-And no other csv file should be present in the folder
+The results must be in .csv format (default CCMetagen or ---mode text).
+The files must end in ".res.csv".
+
 
 USAGE example 1: Merge table at family level:
 CCMetagen_merge.py -i CCMetagen_folder -t Family
@@ -84,9 +85,9 @@ all_samples = pd.DataFrame()
 
 # read input files and merge results
 for file in os.listdir(in_folder):
-    if file.endswith(".csv"):
+    if file.endswith("res.csv"):
         
-        sample_name = file.split(".csv")[0]
+        sample_name = file.split(".res.csv")[0]
         result_fp = os.path.join(in_folder, file)
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
