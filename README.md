@@ -161,7 +161,7 @@ CCMetagen_merge.py -i $CCMetagen_out
 ```
 
 Where $CCMetagen_out is the folder containing the CCMetagen taxonomic classifications.
-The results must be in .csv format (default or '--mode text' output of CCMetagen), and no other csv file should be present in the folder.
+The results must be in .csv format (default or '--mode text' output of CCMetagen), and these files must end in ".res.csv".
 
 The flag '-t' define the taxonomic level to merge the results. The default is species-level.
 
