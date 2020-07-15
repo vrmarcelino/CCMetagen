@@ -38,12 +38,16 @@ Upload to test.pypi and install
 
 ```
 $: twine upload --repository-url https://test.pypi.org/legacy/ dist/*
-$: python -m pip install --index-url https://test.pypi.org/simple/ ccmetagen --user
+$: python -m pip install --index-url https://test.pypi.org/simple/ --user -U ccmetagen
 ```
 
 ## Upload to PyPi for release and install
 
-Upload to upload.pypi.org and install.
+Upload to upload.pypi.org.
+
+```
+$: twine upload dist/*
+```
 
 ### Note:
 
