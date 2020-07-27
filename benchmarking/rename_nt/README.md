@@ -14,6 +14,7 @@ cut -f 2-3 nucl_gb.accession2taxid > accession_taxid_nucl.map
 ```
 
 Convert the genbank fasta file to sequencial fasta:
-`awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);} END {printf("\n");}' < nt.fa > nt_sequential.fa`
+```awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);} END {printf("\n");}' < nt.fa > nt_sequential.fa```
 
+Then use the rename_nt.py to add the taxids in sequence headers. You might need to change the name of the input files in the rename_nt.py script.
 
