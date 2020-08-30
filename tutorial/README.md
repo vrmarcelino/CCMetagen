@@ -94,7 +94,7 @@ Let's produce a family-level table to process in PhyloSeq, filtering Metazoa and
 ```
 CCMetagen_merge.py -i $output_dir -t Family -kr r -l Kingdom -tlist Metazoa,Viridiplantae -o Bird_family_table_filtered
 ```
-This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/Bird_family_table_filtered.csv).
+This file should look like [this](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Bird_family_table_filtered.csv).
 
 Switch to R to proceed with microbiome analyses using PhyloSeq.
 
