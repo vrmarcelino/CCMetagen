@@ -8,7 +8,7 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.2.3'
+version_numb = 'v1.2.5'
 
 # imports
 import sys
@@ -73,16 +73,16 @@ parser.add_argument('-du', '--depth_unit', default = 'kma',
                     help="""Desired unit for Depth(abundance) measurements.
                     Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
                     divided by the lengh of the template).
-                    Alternatively, you can have abundance calculated in Reads Per Million (RPM, option 'rpm'), or 
-                    simply count the number of nucleotides overlaping the template (option 'nc').
-                    If you use the 'nc' or 'rpm' options, remember to change the default --depth parameter accordingly.
-                    Valid options are nc, rpm and kma""", required=False)
+                    Alternatively, you can have abundance calculated in Reads Per Million (RPM, option 'rpm'), 
+                    in number of nucleotides overlaping the template (option 'nc') or in number of fragments (i.e. PE reads, option 'fr').
+                    If you use the 'nc', 'rpm' or 'fr' options, remember to change the default --depth parameter accordingly.
+                    Valid options are nc, rpm, fr and kma""", required=False)
 parser.add_argument('-map', '--mapstat', help="""Path to the mapstat file produced with KMA when using the -ef flag (.mapstat).
-                    Required when calculating abundances in RPM or when producing the extended_output_file""", required = False)
+                    Required when calculating abundances in RPM or in number of fragments, or when producing the extended_output_file""", required = False)
 parser.add_argument('-d', '--depth', default = 0.2,
-                    help="""minimum sequencing depth. Default = 0.2.
-                    If you use --depth_unit nc, change this accordingly. For example, -d 200 (200 nucleotides) 
-                    is similar to -d 0.2 when using the default '--depth_unit kma' option.""",type=float, required=False)
+                    help="""minimum sequencing depth. Default = 0.2. The unit corresponds to the one used with --depth_unit
+                    If you use --depth_unit different from the default, change this accordingly.
+                    """,type=float, required=False)
 parser.add_argument('-c', '--coverage', default = 20,
                     help="""Minimum coverage. Default = 20 (i.e. 20%% of the reference sequence)""",type=float, required=False)
 parser.add_argument('-q', '--query_identity', default = 50,
@@ -147,7 +147,7 @@ else:
 # developing and debugging:
 #args.output_fp = "CCMetagen_nt_results"
 #f = "sim_metagen.res"
-#mapstat="sim_metagen.mapstat" # make a way of finding this automatically?? Flag -mapstat?
+#mapstat="sim_metagen.mapstat"
 #ref_database = "nt"
 #mode = 'text'
 #c = 20
@@ -218,12 +218,30 @@ elif du == 'rpm':
     df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
     df['Depth'] = 1000000 * df_stats['fragmentCount'] / int(total_frags)
 
+
+# number of PE reads (frags):   
+elif du == 'fr':
+    print ("Calculating number of PE reads (fragments)")
+    print ("""
+           Note 1: to calculate number of fragments, you need to generate the mapstat file when
+           running KMA (flag -ef), and use it as input in CCMetagen (flag --mapstat).
+           
+           Note 2: you might want to adjust the minimum depth (-d) value accordingly.
+           Ex: Use -d 2 to only consider matches with 2 fragments or more.
+           """)
+
+    with open(mapstat) as mapfile:
+        fragments_line=mapfile.readlines()[3]
+    total_frags = re.split(r'(\t|\n)',fragments_line)[2]
+    df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
+    df['Depth'] = df_stats['fragmentCount']
+
 elif du == 'kma':
     print ("")
 
 else:
     print ("""Warning: the depth unit you specified makes no sense.
-           --depth_unit option must be nc, rpm, or kma. Using 'kma'.""")
+           --depth_unit option must be nc, rpm, fr or kma. Using 'kma'.""")
     print ("")
 
 ##### Quality control + taxonomic assignments
@@ -239,7 +257,7 @@ df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)
 if (mode == 'text') or (mode == 'both'):
 
     # save to file
-    out = args.output_fp + ".csv"
+    out = args.output_fp + ".ccm.csv"
     pd.DataFrame.to_csv(df, out)
 
     print ("csv file saved as %s" %(out))
