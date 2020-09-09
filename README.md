@@ -100,7 +100,7 @@ For single-end files:
 kma -i $SAMPLE -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and
 ```
 
-If you want to calculate abundance in reads per million (RPM) or to calculate the proportion of mapped reads, add the flag -ef (extended features):
+If you want to calculate abundance in reads per million (RPM) or in number of reads (fragments), or if you want to calculate the proportion of mapped reads, add the flag -ef (extended features):
 ```
 kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and -apm f -ef
 ```
@@ -128,9 +128,16 @@ An example of the CCMetagen output can be found [here (.csv file)](https://githu
 
 <img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
-In the .csv file, you will find the depth (abundance) of each match. **Depth can be estimated in three ways:** by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc, by applying an additional correction for template length (default in KMA and CCMetagen), or by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm). If you want RPM values, you will need to suply the .mapstats file generated with KMA.
+In the .csv file, you will find the depth (abundance) of each match.
 
-You can **adjust the stringency of the taxonomic assignments** by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity). Coverage is the percentage of bases in the reference sequence that is covered by the consensus sequence (your query), it can be over 100% when the consensus sequence is larger than the reference (due to insertions for example).
+## Abundance units
+
+**Depth can be estimated in four ways:** by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc), by applying an additional correction for template length (default in KMA and CCMetagen), by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm), or by counting the number of fragments (i.e. number of PE reads matching to teh reference sequence, use flag --depth_unit fr). If you want RPM or fragment units, you will need to suply the .mapstats file generated with KMA.
+
+
+## Balancing sensitivity and specificity
+
+You can **adjust the stringency of the taxonomic assignments** by adjusting the minimum coverage (--coverage), the minimum abundance (--depth), and the minimum level of sequence similarity (--query_identity). Coverage is the percentage of bases in the reference sequence that is covered by the consensus sequence (your query), it can be over 100% when the consensus sequence is larger than the reference (due to insertions for example). You can also adjust the KMA settings to facilitate the identification of more distant-related taxa (see below)
 
 If you change the default depth unit, we recommend adjusting the minimum abundance (--depth) to remove taxa found in low abundance accordingly. For example, you can use -d 200 (200 nucleotides) when using --depth_unit nc, which is similar to -d 0.2 when using the default '--depth_unit kma' option. If you choose to calculate abundances in RPM, you may want to adjust the minimum abundance according to your sequence depth.
 For example, to calculate abundances in RPM, and filter out all matches with less than one read per million:
@@ -146,8 +153,10 @@ CCMetagen.py -i $sample_out_kma.res -o results -map $sample_out_kma.mapstat -ef 
 ```
 This will filter the .mapstat file, removing the templates that did not pass CCMetagen's quality control, will add the percentage of mapped reads for each template and will output a file with extension 'stats_csv'. It will also output the overall proportion of reads mapped to these templates in the terminal. For more details about the additional columns of this file, please check [KMA's manual](https://bitbucket.org/genomicepidemiology/kma/src/master/KMAspecification.pdf).
 
+When working with highly complex environemnts for which reference databases are scarce (e.g. many soil and marine metagenomes), it is common to obtain a low proportion of classified reads, especially if the sequencing depth is low. Besides relaxing the CCMetatgen settings, you can adjust the KMA aligner settings, by for example: removing the `-and` and the `-apm f` flags, so that you can get a match even when the reference sequences are not significantly overrepresented or when only one of the PE reads maps to the template. For more info, please check the [KMA's manual](https://bitbucket.org/genomicepidemiology/kma/src/master/KMAspecification.pdf). It can also be useful to build a customized reference database with additional genomes of organisms that are closely related to what you expect to find in your samples.
 
-**Understanding the ranked taxonomic output of CCMetagen:** The taxonomic classifications reflect the sequence similarity between query and reference sequences, according to default or user-defined similarity thresholds. For example, if a match is 97% similar to the reference sequence, the match will not get a species-level classification. If the match is 85% similar to the reference sequence, then the species, genus and family-level classifications will be 'none'.
+## Understanding the ranked taxonomic output of CCMetagen:
+The taxonomic classifications reflect the sequence similarity between query and reference sequences, according to default or user-defined similarity thresholds. For example, if a match is 97% similar to the reference sequence, the match will not get a species-level classification. If the match is 85% similar to the reference sequence, then the species, genus and family-level classifications will be 'none'.
 Note that this is different from identifications tagged as unk_x (unknown taxa). These unknowns indicate taxa where higher-rank classifications have not been defined (according to the NCBI taxonomy database), and it is unrelated to sequence similarity.
 
 
@@ -289,21 +298,22 @@ optional arguments:
                         of nucleotides overlapping each template, divided by
                         the lengh of the template). Alternatively, you can
                         have abundance calculated in Reads Per Million (RPM,
-                        option 'rpm'), or simply count the number of
-                        nucleotides overlaping the template (option 'nc'). If
-                        you use the 'nc' or 'rpm' options, remember to change
-                        the default --depth parameter accordingly. Valid
-                        options are nc, rpm and kma
+                        option 'rpm'), in number of nucleotides overlaping the
+                        template (option 'nc') or in number of fragments (i.e.
+                        PE reads, option 'fr'). If you use the 'nc', 'rpm' or
+                        'fr' options, remember to change the default --depth
+                        parameter accordingly. Valid options are nc, rpm, fr
+                        and kma
   -map MAPSTAT, --mapstat MAPSTAT
                         Path to the mapstat file produced with KMA when using
                         the -ef flag (.mapstat). Required when calculating
-                        abundances in RPM or when producing the
-                        extended_output_file
+                        abundances in RPM or in number of fragments, or when
+                        producing the extended_output_file
   -d DEPTH, --depth DEPTH
-                        minimum sequencing depth. Default = 0.2. If you use
-                        --depth_unit nc, change this accordingly. For example,
-                        -d 200 (200 nucleotides) is similar to -d 0.2 when
-                        using the default '--depth_unit kma' option.
+                        minimum sequencing depth. Default = 0.2. The unit
+                        corresponds to the one used with --depth_unit If you
+                        use --depth_unit different from the default, change
+                        this accordingly.
   -c COVERAGE, --coverage COVERAGE
                         Minimum coverage. Default = 20 (i.e. 20% of the
                         reference sequence)
