@@ -132,7 +132,7 @@ In the .csv file, you will find the depth (abundance) of each match.
 
 ## Abundance units
 
-**Depth can be estimated in four ways:** by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc), by applying an additional correction for template length (default in KMA and CCMetagen), by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm), or by counting the number of fragments (i.e. number of PE reads matching to teh reference sequence, use flag --depth_unit fr). If you want RPM or fragment units, you will need to suply the .mapstats file generated with KMA.
+**Depth can be estimated in four ways:** by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc), by applying an additional correction for template length (default in KMA and CCMetagen), by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm), or by counting the number of fragments (i.e. number of PE reads matching to teh reference sequence, use flag --depth_unit fr). If you want RPM or fragment units, you will need to suply the .mapstats file generated with KMA (which you get when running kma with the flag '-ef').
 
 
 ## Balancing sensitivity and specificity
