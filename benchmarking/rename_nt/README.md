@@ -18,3 +18,5 @@ Convert the genbank fasta file to sequencial fasta:
 
 Then use the rename_nt.py to add the taxids in sequence headers. You might need to change the name of the input files in the rename_nt.py script.
 
+Sequence headers should look like `>1234|sequence_description`, where 1234 is the taxid.
+

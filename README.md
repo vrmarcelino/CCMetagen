@@ -79,8 +79,8 @@ This database contains the whole in NCBI nucleotide collection (of of Jan 2018),
 
 **Option 3:** Build your own reference database.
 Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidemiology/kma) to index the database.
-It is important that taxids are incorporated in sequence headers for processing with CCMetagen. Sequence headers should look like:
-`>1234|sequence_description`, where 1234 is the taxid - followed by a '|'.
+It is important that taxids are incorporated in sequence headers for processing with CCMetagen. Sequence headers should look like 
+`>1234|sequence_description`, where 1234 is the taxid. 
 We provide scripts to rename sequences in the nt database [here](https://github.com/vrmarcelino/CCMetagen/tree/master/benchmarking/rename_nt).
 
 If you want to use the RefSeq database, the format is similar to the one required for Kraken. The [Opiniomics blog](http://www.opiniomics.org/building-a-kraken-database-with-new-ftp-structure-and-no-gi-numbers/) describes how to download sequences in an adequate format. Note that you still need to build the index with KMA: `kma_index -i refseq.fna -o refseq_indexed -NI -Sparse -` or `kma_index -i refseq.fna -o refseq_indexed -NI -Sparse TG` for faster analysis.
