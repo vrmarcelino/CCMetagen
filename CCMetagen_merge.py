@@ -54,7 +54,7 @@ kr = args.keep_or_remove
 
 
 # debugging:
-#in_folder = "CCM_res_nt"
+#in_folder = "/Users/vmar0011/Documents/Programs_dev/03_CCM_nt"
 #tax_level = "Species"
 #output = "merged_samples_depth_species_no_ecoli"
 #kr = "r" # k for keep, r for remove, and n for none
@@ -87,11 +87,11 @@ all_samples = pd.DataFrame()
 for file in os.listdir(in_folder):
     if file.endswith(".ccm.csv"):
         
-        sample_name = file.split(".res.csv")[0]
+        sample_name = file.split(".res.ccm.csv")[0]
         result_fp = os.path.join(in_folder, file)
 
         df = pd.read_csv(result_fp, sep=',', index_col=0)
-        
+
         # this is needed because groupby excludes rows with NAs 
         df = df.fillna("NA")
         
