@@ -70,14 +70,15 @@ This will automatically install the necessary python packages (pandas and ete3),
 
 ## Databases
 
-**Option 1** Download the indexed (ready-to-go) nt database either [here](http://dx.doi.org/10.25910/5cc7cd40fca8e) or [here](http://www.cbs.dtu.dk/public/CGE/databases/CCMetagen/).
-Download the ncbi_nt_kma.zip file (96GB zipped file, 165GB uncompressed).
-Unzip the database: `unzip ncbi_nt_kma`.
-This database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
+**Option 1** Download the indexed (ready-to-go) nt or RefSeq database either [here](http://dx.doi.org/10.25910/5cc7cd40fca8e) or [here](http://www.cbs.dtu.dk/public/CGE/databases/CCMetagen/).
+Download the ncbi_nt_kma.zip file (96GB zipped file, 165GB uncompressed) or the RefSeq_bf.zip (90GB zipped file)
+Unzip the database, e.g.: `unzip ncbi_nt_kma`.
+The nt database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
+The RefSeq_bf database contains complete reference bacterial and fungal genomes, suitable for better known habitats such as the human gut or when trying to detect well known species.
 
 **Option 2** We have indexed a more recent version of the ncbi nucleotide collection (June 2019) that does not contain environemntal or artificial sequences. The file ncbi_nt_no_env_11jun2019.zip can be found [here](http://dx.doi.org/10.25910/5cc7cd40fca8e) and contains all ncbi nt entries excluding the descendants of environmental eukaryotes (taxid 61964), environmental prokaryotes (48479), unclassified sequences (12908) and artificial sequences (28384).
 
-**Option 3:** Build your own reference database.
+**Option 3:** Build your own reference database (recommended!)
 Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidemiology/kma) to index the database.
 It is important that taxids are incorporated in sequence headers for processing with CCMetagen. Sequence headers should look like 
 `>1234|sequence_description`, where 1234 is the taxid. 
