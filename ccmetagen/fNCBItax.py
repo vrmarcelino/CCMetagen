@@ -15,9 +15,12 @@ from ete3 import NCBITaxa
 from ccmetagen import cTaxInfo  # where we define classes used here
 
 
-def lineage_extractor(query_taxid, TaxInfo_object):
+def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
     list_of_taxa_ranks = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family','genus', 'species']
-    ncbi = NCBITaxa()
+    if taxfile is not None:
+        ncbi = NCBITaxa(taxfile)
+    else:
+        ncbi = NCBITaxa()
     lineage = ncbi.get_lineage(query_taxid)
     ranks = ncbi.get_rank(lineage)
     names = ncbi.get_taxid_translator(lineage)
