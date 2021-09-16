@@ -8,7 +8,7 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.3.0'
+version_numb = 'v1.4.0'
 
 # imports
 import sys
@@ -271,7 +271,7 @@ else:
 df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
 
 # add tax info
-df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt, taxfile)
+df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)
 
 
 ##### Output a file with tax info
@@ -356,11 +356,12 @@ if ef == 'y':
     with open(mapstat) as mapfile:
         fragments_line=mapfile.readlines()[3]
     total_frags = re.split(r'(\t|\n)',fragments_line)[2]
+    total_reads = 2 * int(total_frags)
     df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
     
     # delete species in df_stats that are not in the CCM result dataframe:
     df_stats_filt = df_stats[df_stats.index.isin(df.index)].copy() # the copy handles the pandas warning
-    df_stats_filt['perc_map'] = df_stats_filt['fragmentCount'] / int(total_frags) * 100
+    df_stats_filt['perc_map'] = df_stats_filt['readCount'] / total_reads * 100
     total_mapped = sum(df_stats_filt['perc_map'])
     
     stats_out = args.output_fp + "_stats.csv"
