@@ -70,7 +70,7 @@ This will automatically install the necessary python packages (pandas and ete3),
 
 ## Databases
 
-**Option 1** Download the indexed (ready-to-go) nt or RefSeq database either [here](http://dx.doi.org/10.25910/5cc7cd40fca8e) or [here](http://www.cbs.dtu.dk/public/CGE/databases/CCMetagen/).
+**Option 1** Download the indexed (ready-to-go) nt or RefSeq database [here](http://dx.doi.org/10.25910/5cc7cd40fca8e).
 Download the ncbi_nt_kma.zip file (96GB zipped file, 165GB uncompressed) or the RefSeq_bf.zip (90GB zipped file)
 Unzip the database, e.g.: `unzip ncbi_nt_kma`.
 The nt database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
