@@ -8,7 +8,7 @@ Created on Wed Jul 25 17:13:10 2018
 
 """
 
-version_numb = 'v1.4.0'
+version_numb = 'v1.4.1'
 
 # imports
 import sys
@@ -136,7 +136,7 @@ if taxfile is not None and not os.path.isfile(taxfile):
     raise ValueError("If used, the argument taxfile has to point to a taxdump file")
 
 
-# taxononomic thresholds:
+# taxonomic thresholds:
 off = args.turn_off_sim_thresholds
 
 if off == 'y':
@@ -351,12 +351,31 @@ if (mode == 'visual') or (mode == 'both'):
 
 ##### Extended format - calculate read mapping stats
 if ef == 'y':
-    print ("calculating read mapping stats...")
+    print ("Calculating read mapping stats...")
            
     with open(mapstat) as mapfile:
         fragments_line=mapfile.readlines()[3]
     total_frags = re.split(r'(\t|\n)',fragments_line)[2]
-    total_reads = 2 * int(total_frags)
+
+    ### check if the input was single-end or paired end ###
+    with open(mapstat) as mapfile:
+        kma_command_line = mapfile.readlines()[5]
+    input_file_command = re.split(r'(\t|\n| )',kma_command_line)[6]
+
+    if input_file_command == "-i":
+        print ("""Parsing results based on single-end sequences.""")
+        total_reads = int(total_frags)
+    elif input_file_command == "-ipe":
+        print ("""Parsing results based on paired-end sequences.
+        Your data should have the same number of reads in the fwd and rev files.""")
+
+        total_reads = 2 * int(total_frags)
+    else:
+        print ("""Could not identify whether your input files were single- or paired-end. 
+                Treating as paired-end.""")
+        total_reads = 2 * int(total_frags)
+    ###
+
     df_stats = pd.read_csv(mapstat, sep='\t', index_col=0, header = 6, encoding='latin1')
     
     # delete species in df_stats that are not in the CCM result dataframe:
