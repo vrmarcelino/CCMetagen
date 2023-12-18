@@ -43,7 +43,7 @@ if __name__ == "__main__":
     output_dir=CCMetagen_results
     mkdir $output_dir
     for f in $input_dir/*.res; do
-        out=$output_dir/${f/$input_dir\/}
+        out=$output_dir/${f/$input_dir\\/}
         CCMetagen.py -i $f -o $out
     done""")
         print ("")
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     parser.add_argument('-off', '--turn_off_sim_thresholds', default = 'n',
                         help='Turns simularity-based filtering off. Options = y or n. Default = n', required=False)
 
-    parser.add_argument('--version', action='version', version=version_numb)
+    parser.add_argument('-v', '--version', action='version', version=version_numb)
 
     args = parser.parse_args()
 
