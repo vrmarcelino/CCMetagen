@@ -3,7 +3,12 @@
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 (or tries as best as it can)
 
-## [Unreleased](https://github.com/vrmarcelino/CCMetagen/compare/v1.2.2...master)
+## [v1.4.2](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.4.2)
+
+- After a development hiatus, we've resumed CCMetagen development. `v1.4.2` is mostly a documental update,
+preparing the software for updates to follow.
+
+# Archive
 
 ## [v1.2.2](https://github.com/vrmarcelino/CCMetagen/compare/v1.1.2...v1.2.2) - 16.06.2020
 
