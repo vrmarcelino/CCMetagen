@@ -10,7 +10,7 @@ If you this tool, please cite CCMetagen and KMA:
 
   * [Clausen PT, Aarestrup FM, Lund O. 2018. Rapid and precise alignment of raw reads against redundant databases with KMA. BMC bioinformatics. 2018 Dec;19(1):307.](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2336-6)
 
-Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/docs/tutorial).
+Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial).
 
 The guidelines below will guide you in using the command-line version of the CCMetagen pipeline.
 
