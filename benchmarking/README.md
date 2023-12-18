@@ -1,5 +1,8 @@
 # Benchmarking
 
+**Notice:** Code in this package was used for the benchmarking of CCMetagen prior to publication. It has now been
+deprecated.
+
 ## Containers
 
 ### Repository layout
