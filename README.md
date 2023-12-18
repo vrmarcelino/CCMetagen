@@ -8,7 +8,7 @@ If you this tool, please cite CCMetagen and KMA:
 
   * [Clausen PT, Aarestrup FM, Lund O. 2018. Rapid and precise alignment of raw reads against redundant databases with KMA. BMC bioinformatics. 2018 Dec;19(1):307.](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2336-6)
 
-Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial).
+Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/docs/tutorial).
 
 The guidelines below will guide you in using the command-line version of the CCMetagen pipeline.
 
@@ -125,9 +125,9 @@ Note that if you are running CCMetagen from the local folder (instead of adding 
 
 Done! This will make an additional quality filter and output a text file with ranked taxonomic classifications and a krona graph file for interactive visualization.
 
-An example of the CCMetagen output can be found [here (.csv file)](https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.csv) and [here (.html file)](https://htmlpreview.github.io/?https://github.com/vrmarcelino/CCMetagen/blob/master/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.html).
+An example of the CCMetagen output can be found [here (.csv file)](https://github.com/vrmarcelino/CCMetagen/blob/master/docs/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.csv) and [here (.html file)](https://htmlpreview.github.io/?https://github.com/vrmarcelino/CCMetagen/blob/master/docs/tutorial/figs_tutorial/Turnstone_Temperate_Flu_Ng.res.html).
 
-<img src=tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
+<img src=docs/tutorial/figs_tutorial/krona_photo.png width="500" height="419.64">
 
 In the .csv file, you will find the depth (abundance) of each match.
 
