@@ -14,8 +14,6 @@ import re
 from ccmetagen import cTaxInfo
 from ccmetagen import fNCBItax
 
-
-
 # function to filter a res file in pandas df format:
 def res_filter(df, ref_database, cov, Iden, Depth, p):
     df = df.drop(df[df.Template_Coverage < cov].index)
@@ -45,13 +43,7 @@ def populate_w_tax(
     phylum_threshold,
     taxfile=None,
 ):
-    # defaults:
-    # species_threshold = 98.41 # Yeast - Vu et al 2016
-    # genus_threshold = 96.31 # Yeast - Vu et al 2016
-    # family_threshold = 88.51 # Filamentous fungi - Vu et al 2019
-    # order_threshold = 81.21 # Filamentous fungi - Vu et al 2019
-    # class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
-    # phylum, kingdom and superkingdom = 0  # no data, no filtering
+    # For default thresholds, see ccmetagen/__init__.py
 
     # Make sure all taxa columns are strings (doesn't automatically happen if the first one is None)
     in_df = in_df.assign(
