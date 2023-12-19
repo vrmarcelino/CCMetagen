@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Script to extract sequence reads (or contigs) assigned to a given taxon
 
-Created on Wed Jun 10 19:37:36 2020
+"""
+Script to extract sequence reads (or contigs) assigned to a given taxon.
+
+Created on Wed Jun 10 19:37:36 2020.
 
 @author: V.R.Marcelino
 """

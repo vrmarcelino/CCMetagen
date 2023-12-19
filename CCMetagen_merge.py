@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 CCMetagen_merge.py
 
@@ -15,7 +16,7 @@ USAGE example 2: Merge table by species (default) and keep only Cryptococcus and
 CCMetagen_merge.py -i CCMetagen_folder -kr k -l Genus -tlist Candida,Cryptococcus
 
 @ V.R.Marcelino
-Created on Tue Dec 18 10:00:48 2018
+Created on Tue Dec 18 10:00:48 2018.
 """
 
 import sys

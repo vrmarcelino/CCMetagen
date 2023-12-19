@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 CCMetagen main script
 
 @ V.R.Marcelino
-Created on Wed Jul 25 17:13:10 2018
-
+Created on Wed Jul 25 17:13:10 2018.
 """
 
 # imports

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 Classes that store taxonomic info from matches and NCBI lineage
 
 @ V.R.Marcelino
-Created on 12 Jul 2018
-Last update on 27 March 2019
-
+Created on 12 Jul 2018.
 """
 
 

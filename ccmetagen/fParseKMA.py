@@ -1,20 +1,20 @@
 #!/usr/bin/env ipython
 # -*- coding: utf-8 -*-
+
 """
 Functions to parse KMA results
 
 @ V.R.Marcelino
-Created on 1 Aug 2018
-
-
+Created on 1 Aug 2018.
 """
+
 import re
+import subprocess
 
 # local imports
 from ccmetagen import cTaxInfo
 from ccmetagen import fNCBItax
 
-import subprocess
 
 
 # function to filter a res file in pandas df format:

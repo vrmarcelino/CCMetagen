@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 Function that takes a taxid as input and returns a class containing the taxonomic info and taxids
 for multiple taxonomic ranks.
@@ -7,8 +8,7 @@ for multiple taxonomic ranks.
 Required to parse the results of KMA and store them in the SQLite3 'bench.db'
 
 @ V.R.Marcelino
-Created on 12 Jul 2018
-
+Created on 12 Jul 2018.
 """
 
 from ete3 import NCBITaxa
