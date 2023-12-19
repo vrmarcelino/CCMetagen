@@ -16,7 +16,16 @@ from ccmetagen import cTaxInfo  # where we define classes used here
 
 
 def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
-    list_of_taxa_ranks = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family','genus', 'species']
+    list_of_taxa_ranks = [
+        "superkingdom",
+        "kingdom",
+        "phylum",
+        "class",
+        "order",
+        "family",
+        "genus",
+        "species",
+    ]
     if taxfile is not None:
         ncbi = NCBITaxa(taxfile)
     else:
@@ -25,10 +34,9 @@ def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
     ranks = ncbi.get_rank(lineage)
     names = ncbi.get_taxid_translator(lineage)
 
-# get known data
+    # get known data
 
     for key, val in ranks.items():
-
         if val == list_of_taxa_ranks[0]:
             TaxInfo_object.Superkingdom = names[key]
             TaxInfo_object.Superkingdom_TaxId = key
@@ -61,7 +69,7 @@ def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
             TaxInfo_object.Species = names[key]
             TaxInfo_object.Species_TaxId = key
 
-# fill in the blanks
+    # fill in the blanks
     if TaxInfo_object.Superkingdom is None:
         TaxInfo_object.Superkingdom = "unk_sk"
 
@@ -85,6 +93,5 @@ def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
 
     if TaxInfo_object.Species is None:
         TaxInfo_object.Species = "unk_s"
-
 
     return TaxInfo_object
