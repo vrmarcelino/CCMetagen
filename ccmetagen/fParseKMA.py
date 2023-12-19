@@ -9,7 +9,6 @@ Created on 1 Aug 2018.
 """
 
 import re
-import subprocess
 
 # local imports
 from ccmetagen import cTaxInfo

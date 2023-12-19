@@ -12,7 +12,6 @@ Created on 12 Jul 2018.
 """
 
 from ete3 import NCBITaxa
-from ccmetagen import cTaxInfo  # where we define classes used here
 
 
 def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
