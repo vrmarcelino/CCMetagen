@@ -1,5 +1,7 @@
 # CCMetagen
 
+**Disclaimer:** this is CCMetagen's old repository README file. It has been deprecated as of `v1.4.3`. Although it can be accessed through the Git history, it has been preserved here to facilitate look-up for users.
+
 CCMetagen processes sequence alignments produced with [KMA](https://bitbucket.org/genomicepidemiology/kma), which implements the ConClave sorting scheme to achieve highly accurate read mappings. The pipeline is fast enough to use the whole NCBI nt collection as reference, facilitating the inclusion of understudied organisms, such as microbial eukaryotes, in metagenome surveys. CCMetagen produces ranked taxonomic results in user-friendly formats that are ready for publication or downstream statistical analyses.
 
 If you this tool, please cite CCMetagen and KMA:
@@ -8,54 +10,81 @@ If you this tool, please cite CCMetagen and KMA:
 
   * [Clausen PT, Aarestrup FM, Lund O. 2018. Rapid and precise alignment of raw reads against redundant databases with KMA. BMC bioinformatics. 2018 Dec;19(1):307.](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2336-6)
 
-Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/docs/tutorial).
+Besides the guidelines below, we also provide a tutorial to reproduce our metagenome clasisfication analyses of the microbiome of wild birds [here](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial).
 
 The guidelines below will guide you in using the command-line version of the CCMetagen pipeline.
 
 CCMetagen is also available as a web service at https://cge.food.dtu.dk/services/CCMetagen/.
 Note that we recommend using this command-line version to analyze data exceeding 1.5Gb.
 
+## Requirements and Installation
 
-## Installation
+Make sure you have the dependencies below installed and accessible in your $PATH.
+The guidelines below are for Unix systems.
 
-We recommend installing CCMetagen through [conda](https://docs.conda.io/en/latest/). This will install CCMetagen along with all of its required dependencies.
+  * If you do not have it already, download and install [Python 3.6](https://www.python.org/downloads/)
+CCMetagen requires the Python modules [pandas (>0.23)](https://pandas.pydata.org/) and [ETE3](http://etetoolkit.org/).
+The easiest way to install these modules is via conda or pip:
 
-After installing conda, you can create a new environment with CCMetagen through the following command:
+`conda install pandas`
 
+  * You need a C-compiler and zlib development files to install KMA:
+
+`sudo apt-get install libz-dev`
+
+  * Download and install [KMA](https://bitbucket.org/genomicepidemiology/kma):
 ```
-conda create -n ccmetagen ccmetagen -c bioconda -c conda-forge
+git clone https://bitbucket.org/genomicepidemiology/kma.git
+cd kma && make
+```
+**Note - a new version of KMA - v1.3.0 – has been released, featuring higher speed and precision. We recommend that you update KMA to v.1.3.0**
+
+
+  * [Krona](https://github.com/marbl/Krona) is required for graphs. To install Krona it in the local folder:
+```
+wget https://github.com/marbl/Krona/releases/download/v2.7/KronaTools-2.7.tar
+tar xvf KronaTools-2.7.tar 
+cd  KronaTools-2.7
+./install.pl --prefix . 
 ```
 
-You can then activate your environment with:
+  * Then download CCMetagen and add it to your path. You have two options:
 
+**Install CCMetagen via git:**
 ```
-conda activate ccmetagen
+git clone https://github.com/vrmarcelino/CCMetagen
 ```
+This will download CCMetagen and the tutorial files.
+You can also just download the python files from this github directory (CCMetagen.py, CCMetagen_merge.py) and the ones in the ccmetagen folder if you rather avoid downloading all other files.
 
-The `-n ccmetagen` flag will name the environment as `ccmetagen`, but you can choose any different name that you'd like. The `ccmetagen` after that specifies that you'd like the CCMetagen package installed into that environment.
-Finally, the `-c bioconda -c conda-forge` specifies that you'd like to use the Bioconda and Conda-Forge channels, which host CCMetagen and its dependencies.
+Then add the CCMetagen python scripts to the path, temporarily or permanently. For example:
+`PATH=$PATH<your_folder>/CCMetagen`
 
-You can also install CCMetagen from source, or using pip, the Python package manager. For that, follow the installation instructions in the deprecated README file in the [docs](https://github.com/vrmarcelino/CCMetagen/tree/master/docs/old_repository_README.md).
+To update CCMetagen, go to the CCMetagen folder and type: `git pull`
 
-Check your CCMetagen installation by running `CCMetagen.py --version` on your command-line.
+**Or install CCMetagen via pip:**
+```
+pip install CCMetagen
+```
+This will automatically install the necessary python packages (pandas and ete3), so you can skip that step if you use pip.
+
 
 
 ## Databases
 
-After installing CCMetagen, you will need a reference database to perform taxonomic classification. There are two ways to obtain this:
-
-**Option 1** Download the indexed (ready-to-go) nt from [here](FIXME).
-Download the ncbi_nt_Dec_2023.zip file (XXGB zipped file, XXXGB uncompressed) or the RefSeq_bf_2024.zip (90GB zipped file)
+**Option 1** Download the indexed (ready-to-go) nt or RefSeq database [here](http://dx.doi.org/10.25910/5cc7cd40fca8e).
+Download the ncbi_nt_kma.zip file (96GB zipped file, 165GB uncompressed) or the RefSeq_bf.zip (90GB zipped file)
 Unzip the database, e.g.: `unzip ncbi_nt_kma`.
-The nt database contains the whole in NCBI nucleotide collection (as of Aug 2023), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
+The nt database contains the whole in NCBI nucleotide collection (of of Jan 2018), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
+The RefSeq_bf database contains complete reference bacterial and fungal genomes, suitable for better known habitats such as the human gut or when trying to detect well known species.
 
-There are two versions of the nt database, the one previously mentioned, and another one that does not contain environemntal or artificial sequences. The file ncbi_nt_no_env_Dec2023.zip contains all ncbi nt entries excluding the descendants of environmental eukaryotes (taxid 61964), environmental prokaryotes (48479), unclassified sequences (12908) and artificial sequences (28384).
+**Option 2** We have indexed a more recent version of the ncbi nucleotide collection (June 2019) that does not contain environemntal or artificial sequences. The file ncbi_nt_no_env_11jun2019.zip can be found [here](http://dx.doi.org/10.25910/5cc7cd40fca8e) and contains all ncbi nt entries excluding the descendants of environmental eukaryotes (taxid 61964), environmental prokaryotes (48479), unclassified sequences (12908) and artificial sequences (28384).
 
-**Option 2:** Build your own reference database (recommended!)
+**Option 3:** Build your own reference database (recommended!)
 Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidemiology/kma) to index the database.
 It is important that taxids are incorporated in sequence headers for processing with CCMetagen. Sequence headers should look like 
 `>1234|sequence_description`, where 1234 is the taxid. 
-We provide scripts to rename sequences in the nt database [here](https://github.com/vrmarcelino/CCMetagen/tree/master/docs/benchmarking/rename_nt).
+We provide scripts to rename sequences in the nt database [here](https://github.com/vrmarcelino/CCMetagen/tree/master/benchmarking/rename_nt).
 
 If you want to use the RefSeq database, the format is similar to the one required for Kraken. The [Opiniomics blog](http://www.opiniomics.org/building-a-kraken-database-with-new-ftp-structure-and-no-gi-numbers/) describes how to download sequences in an adequate format. Note that you still need to build the index with KMA: `kma_index -i refseq.fna -o refseq_indexed -NI -Sparse -` or `kma_index -i refseq.fna -o refseq_indexed -NI -Sparse TG` for faster analysis.
 
@@ -65,7 +94,6 @@ If you want to use the RefSeq database, the format is similar to the one require
   * First map sequence reads (or contigs) to the database with **KMA**.
 
 For paired-end files:
-
 ```
 kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode -and -apm f
 ```
@@ -82,18 +110,17 @@ kma -ipe $SAMPLE_R1 $SAMPLE_R2 -o sample_out_kma -t_db $db -t $th -1t1 -mem_mode
 
 Where:
 
-- `$db` is the path to the reference database
-- `$th` is the number of threads
-- `$SAMPLE_R1` is the path to the mate1 of a paired-end metagenome/metatranscriptome sample (fastq or fasta)
-- `$SAMPLE_R2` is the path to the mate2 of a paired-end metagenome/metatranscriptome sample (fastq or fasta)
-- `$SAMPLE` is the path to a single-end metagenome/metatranscriptome file (reads or contigs)
+$db is the path to the reference database
+$th is the number of threads
+$SAMPLE_R1 is the path to the mate1 of a paired-end metagenome/metatranscriptome sample (fastq or fasta)
+$SAMPLE_R2 is the path to the mate2 of a paired-end metagenome/metatranscriptome sample (fastq or fasta)
+$SAMPLE is the path to a single-end metagenome/metatranscriptome file (reads or contigs)
 
-Then run `CCMetagen.py`:
 
+  * Then run **CCMetagen**:
 ```
 CCMetagen.py -i $sample_out_kma.res -o results
 ```
-
 Where $sample_out_kma.res is alignment results produced by KMA.
 
 Note that if you are running CCMetagen from the local folder (instead of adding it to your path), you may need to add 'python' before CCMetagen: `python CCMetagen.py -i $sample_out_kma.res -o results`
@@ -108,12 +135,7 @@ In the .csv file, you will find the depth (abundance) of each match.
 
 ## Abundance units
 
-**Depth can be estimated in four ways:** 
-
-1. By applying an additional correction for template length (default in KMA and CCMetagen);
-2. By counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc);
-3. By calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm); or
-4. By counting the number of fragments (i.e. number of PE reads matching to teh reference sequence, use flag --depth_unit fr). If you want RPM or fragment units, you will need to suply the .mapstats file generated with KMA (which you get when running kma with the flag '-ef').
+**Depth can be estimated in four ways:** by counting the number of nucleotides matching the reference sequence (use flag --depth_unit nc), by applying an additional correction for template length (default in KMA and CCMetagen), by calculating depth in Reads Per Million (RPM, use flag --depth_unit rpm), or by counting the number of fragments (i.e. number of PE reads matching to teh reference sequence, use flag --depth_unit fr). If you want RPM or fragment units, you will need to suply the .mapstats file generated with KMA (which you get when running kma with the flag '-ef').
 
 
 ## Balancing sensitivity and specificity
@@ -151,7 +173,7 @@ CCMetagen.py -h
 CCMetagen_merge.py -i $CCMetagen_out
 ```
 
-Where `$CCMetagen_out` is the folder containing the CCMetagen taxonomic classifications.
+Where $CCMetagen_out is the folder containing the CCMetagen taxonomic classifications.
 The results must be in .csv format (default or '--mode text' output of CCMetagen), and these files **must end in ".ccm.csv"**.
 
 The flag '-t' define the taxonomic level to merge the results. The default is species-level.
@@ -194,7 +216,7 @@ Ex: Generate a fasta file containing all sequences that mapped to the genus Esch
 CCMetagen_extract_seqs.py -iccm $CCMetagen_out -ifrag $sample_out_kma.frag -l Genus -t Eschericha
 ```
 
-Where `$CCMetagen_out` is the .csv file generated with CCMetagen and `$sample_out_kma.frag` is the .frag file generated with KMA. The frag file needs to be decompressed: `gunzip *.frag.gz`
+Where $CCMetagen_out is the .csv file generated with CCMetagen and $sample_out_kma.frag is the .frag file generated with KMA. The frag file needs to be decompressed: `gunzip *.frag.gz`
 
 For species-level filtering (where there is a space in taxon names), use quotation marks.
 Ex: Generate a fasta file containing all sequences that mapped to _E. coli_:
@@ -203,7 +225,7 @@ CCMetagen_extract_seqs.py -iccm $CCMetagen_out -ifrag $sample_out_kma.frag -l Sp
 ```
 
 
-**Check out our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/docs/tutorial) for an applied example of the CCMetagen pipeline.**
+**Check out our [tutorial](https://github.com/vrmarcelino/CCMetagen/tree/master/tutorial) for an applied example of the CCMetagen pipeline.**
 
 
 
