@@ -7,6 +7,7 @@ class TestCCMetagen(unittest.TestCase):
     def test_import_ccmetagen_module(self):
         try:
             import ccmetagen
+            _ = f"CCMetagen version {ccmetagen.__version__}." # noqa
         except ImportError:
             self.fail("Failed to import ccmetagen module")
 
