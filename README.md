@@ -44,12 +44,12 @@ Check your CCMetagen installation by running `CCMetagen.py --version` on your co
 
 After installing CCMetagen, you will need a reference database to perform taxonomic classification. There are two ways to obtain this:
 
-**Option 1** Download the indexed (ready-to-go) nt from [here](FIXME).
-Download the ncbi_nt_Dec_2023.zip file (XXGB zipped file, XXXGB uncompressed) or the RefSeq_bf_2024.zip (90GB zipped file)
+**Option 1** Download the indexed (ready-to-go) nt from [here](https://melbourne.figshare.com/projects/CCMetagen_databases/195755).
+Download the ncbi_nt_kma file (103GB zipped file) or the RefSeq_bf.zip (90GB zipped file)
 Unzip the database, e.g.: `unzip ncbi_nt_kma`.
-The nt database contains the whole in NCBI nucleotide collection (as of Aug 2023), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
+The nt database contains the whole in NCBI nucleotide collection (from 2019, updated database to be released soon!), and therefore is suitable to identify a range of microorganisms, including prokaryotes and eukaryotes.
 
-There are two versions of the nt database, the one previously mentioned, and another one that does not contain environemntal or artificial sequences. The file ncbi_nt_no_env_Dec2023.zip contains all ncbi nt entries excluding the descendants of environmental eukaryotes (taxid 61964), environmental prokaryotes (48479), unclassified sequences (12908) and artificial sequences (28384).
+There are two versions of the nt database, the one previously mentioned, and another one that does not contain environemntal or artificial sequences. The file ncbi_nt_no_env_11jun2019.zip contains all ncbi nt entries excluding the descendants of environmental eukaryotes (taxid 61964), environmental prokaryotes (48479), unclassified sequences (12908) and artificial sequences (28384).
 
 **Option 2:** Build your own reference database (recommended!)
 Follow the instructions in the [KMA website](https://bitbucket.org/genomicepidemiology/kma) to index the database.
