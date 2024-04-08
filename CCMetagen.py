@@ -389,7 +389,7 @@ if __name__ == "__main__":
     ##### Quality control + taxonomic assignments
 
     # quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
+    df = fParseKMA.res_filter(df, c, q, d, p)
 
     # add tax info
     df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)

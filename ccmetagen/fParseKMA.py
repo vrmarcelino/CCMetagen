@@ -11,10 +11,10 @@ Created on 1 Aug 2018.
 import re
 
 # local imports
-from ccmetagen import cTaxInfo, fNCBItax, _RANK_THRESHOLDS
+from ccmetagen import cTaxInfo, fNCBItax
 
 # function to filter a res file in pandas df format:
-def res_filter(df, ref_database, cov, Iden, Depth, p):
+def res_filter(df, cov, Iden, Depth, p):
     df = df.drop(df[df.Template_Coverage < cov].index)
 
     # filter based on identity
@@ -121,7 +121,6 @@ def populate_w_tax(
                 )
 
         # Populate the df with lineage info and the LCA taxid:
-
         in_df.at[index, "Superkingdom"] = match_info.Superkingdom
         in_df.at[index, "Kingdom"] = match_info.Kingdom
 
@@ -153,4 +152,4 @@ def populate_w_tax(
                 if getattr(match_info, tax_info_attr) is not None:
                     in_df.at[index, "LCA_TaxId"] = getattr(match_info, tax_info_attr)
 
-        return in_df
+    return in_df
