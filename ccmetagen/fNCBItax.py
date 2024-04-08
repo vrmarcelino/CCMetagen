@@ -36,7 +36,7 @@ def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
     # get known data
     for key, val in ranks.items():
         for rank in list_of_taxa_ranks:
-            if val == rank:
+            if val.lower() == rank.lower():
                 setattr(TaxInfo_object, rank, names[key])
                 setattr(TaxInfo_object, rank + "_TaxId", key)
 
