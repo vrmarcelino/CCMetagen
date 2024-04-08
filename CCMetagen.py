@@ -11,17 +11,14 @@ Created on Wed Jul 25 17:13:10 2018.
 # imports
 import sys
 import pandas as pd
-from argparse import ArgumentParser
+import argparse
 import subprocess
 import os
 from ete3 import NCBITaxa
 import re
 
 # local imports
-from ccmetagen import __version__
-from ccmetagen import fParseKMA
-from ccmetagen import cTaxInfo  # needed in fParseKMA
-from ccmetagen import fNCBItax  # needed in fParseKMA
+from ccmetagen import __version__, _ARGPARSE_DEFAULTS, fParseKMA
 
 # version formatting
 version_numb = "v" + __version__
@@ -54,17 +51,21 @@ if __name__ == "__main__":
         print("")
         sys.exit()
 
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
 
     parser.add_argument(
         "-m",
         "--mode",
-        default="both",
-        help="""what do you want CCMetagen to do?
-                        Valid options are 'visual', 'text' or 'both':
-                            text: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information
-                            visual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualization
-                            both: outputs both text and visual file formats. Default = both""",
+        default=_ARGPARSE_DEFAULTS.get("mode"),
+        help="""
+        What would you like CCMetagen to do?\n
+        Valid options are 'visual', 'text' or 'both':\n
+            \ttext: parses kma, filters based on quality and output a text file with taxonomic information and detailed mapping information.\n
+            \tvisual: parses kma, filters based on quality and output a simplified text file and a krona html file for visualization.\n
+            \tboth: outputs both text and visual file formats.
+            """,
         required=False,
     )
 
@@ -74,54 +75,55 @@ if __name__ == "__main__":
     parser.add_argument(
         "-o",
         "--output_fp",
-        default="CCMetagen_out",
-        help="Path to the output file. Default = CCMetagen_out",
+        default=_ARGPARSE_DEFAULTS.get("output_fp"),
+        help="Path to the output file.",
         required=False,
     )
     parser.add_argument(
         "-r",
         "--reference_database",
-        default="nt",
-        help="Which reference database was used. Options: UNITE, RefSeq or nt. Default = nt",
+        default=_ARGPARSE_DEFAULTS.get("reference_database"),
+        help="Which reference database was used. Options: UNITE, RefSeq or nt.",
         required=False,
     )
     parser.add_argument(
         "-ef",
         "--extended_output_file",
-        default="n",
+        default=_ARGPARSE_DEFAULTS.get("extended_output_file"),
         help="""Produce an extended output file that includes the percentage of classified reads.
                         Options: y or n. To use this featire, you need to generate the mapstat file when
                         required unning KMA (use flag -ef), and use it as input in CCMetagen (flag --mapstat). 
-                        Default = n""",
+                        """,
         required=False,
     )
 
     parser.add_argument(
         "-du",
         "--depth_unit",
-        default="kma",
+        default=_ARGPARSE_DEFAULTS.get("depth_unit"),
         help="""Desired unit for Depth(abundance) measurements.
                         Default = kma (KMA default depth, which is the number of nucleotides overlapping each template,
                         divided by the lengh of the template).
                         Alternatively, you can have abundance calculated in Reads Per Million (RPM, option 'rpm'), 
                         in number of nucleotides overlaping the template (option 'nc') or in number of fragments (i.e. PE reads, option 'fr').
                         If you use the 'nc', 'rpm' or 'fr' options, remember to change the default --depth parameter accordingly.
-                        Valid options are nc, rpm, fr and kma""",
+                        Valid options are 'nc', 'rpm', 'fr' and 'kma'.""",
         required=False,
     )
     parser.add_argument(
         "-map",
         "--mapstat",
+        default=_ARGPARSE_DEFAULTS.get("mapstat"),
         help="""Path to the mapstat file produced with KMA when using the -ef flag (.mapstat).
                         Required when calculating abundances in RPM or in number of fragments, visualing the abundances in readCounts or readContAln
-                        for the krona graph or when producing the extended_output_file""",
+                        for the krona graph or when producing the extended_output_file.""",
         required=False,
     )
     parser.add_argument(
         "-d",
         "--depth",
-        default=0.2,
-        help="""Minimum sequencing depth. Default = 0.2. The unit corresponds to the one used with --depth_unit
+        default=_ARGPARSE_DEFAULTS.get("depth"),
+        help="""Minimum sequencing depth. The unit corresponds to the one used with --depth_unit
                         If you use --depth_unit different from the default, change this accordingly.
                         """,
         type=float,
@@ -130,33 +132,33 @@ if __name__ == "__main__":
     parser.add_argument(
         "-c",
         "--coverage",
-        default=20,
-        help="""Minimum coverage. Default = 20 (i.e. 20%% of the reference sequence)""",
+        default=_ARGPARSE_DEFAULTS.get("coverage"),
+        help="""Percetange of minimum coverage, e.g. 20 means 20%% of the reference sequence.""",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-q",
         "--query_identity",
-        default=50,
-        help="Minimum query identity (Phylum level). Default = 50",
+        default=_ARGPARSE_DEFAULTS.get("query_identity"),
+        help="Minimum query identity (Phylum level).",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-p",
         "--pvalue",
-        default=0.05,
-        help="Minimum p-value. Default = 0.05.",
+        default=_ARGPARSE_DEFAULTS.get("pvalue"),
+        help="Minimum p-value.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-k",
         "--krona_mode",
-        default="Depth",
-        help="""Abundance measure for the Krona graph. Default = Depth. 
-                        Alternatively, you can choose readCount ('rc') or readCountAln ('rca').
+        default=_ARGPARSE_DEFAULTS.get("krona_mode"),
+        help="""Abundance measure for the Krona graph. 
+                        You can choose depth ('Depth'), readCount ('rc') or readCountAln ('rca').
                         'rc' and 'rca' require a specified --mapstat file.
                         """,
         required=False,
@@ -164,8 +166,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "-tax",
         "--local_taxfile",
-        default=None,
-        help="Use if a local taxdump file wants to be used. Default = None",
+        default=_ARGPARSE_DEFAULTS.get("local_taxfile"),
+        help="Use if a local taxdump file wants to be used.",
         required=False,
     )
 
@@ -173,56 +175,56 @@ if __name__ == "__main__":
     parser.add_argument(
         "-st",
         "--species_threshold",
-        default=98.41,
-        help="Species-level similarity threshold. Default = 98.41",
+        default=_ARGPARSE_DEFAULTS.get("species_threshold"),
+        help="Species-level similarity threshold.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-gt",
         "--genus_threshold",
-        default=96.31,
-        help="Genus-level similarity threshold. Default = 96.31",
+        default=_ARGPARSE_DEFAULTS.get("genus_threshold"),
+        help="Genus-level similarity threshold.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-ft",
         "--family_threshold",
-        default=88.51,
-        help="Family-level similarity threshold. Default = 88.51",
+        default=_ARGPARSE_DEFAULTS.get("family_threshold"),
+        help="Family-level similarity threshold.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-ot",
         "--order_threshold",
-        default=81.21,
-        help="Order-level similarity threshold. Default = 81.21",
+        default=_ARGPARSE_DEFAULTS.get("order_threshold"),
+        help="Order-level similarity threshold.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-ct",
         "--class_threshold",
-        default=80.91,
-        help="Class-level similarity threshold. Default = 80.91",
+        default=_ARGPARSE_DEFAULTS.get("class_threshold"),
+        help="Class-level similarity threshold.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-pt",
         "--phylum_threshold",
-        default=0,
-        help="Phylum-level similarity threshold. Default = 0 - not applied",
+        default=_ARGPARSE_DEFAULTS.get("phylum_threshold"),
+        help="Phylum-level similarity threshold. 0 means not applied.",
         type=float,
         required=False,
     )
     parser.add_argument(
         "-off",
         "--turn_off_sim_thresholds",
-        default="n",
-        help="Turns simularity-based filtering off. Options = y or n. Default = n",
+        default=_ARGPARSE_DEFAULTS.get("turn_off_sim_thresholds"),
+        help="Turns simularity-based filtering off. Options = 'y' or 'n'.",
         required=False,
     )
 
@@ -387,7 +389,7 @@ if __name__ == "__main__":
     ##### Quality control + taxonomic assignments
 
     # quality filter (coverage, query identity, Depth and p-value)
-    df = fParseKMA.res_filter(df, ref_database, c, q, d, p)
+    df = fParseKMA.res_filter(df, c, q, d, p)
 
     # add tax info
     df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)

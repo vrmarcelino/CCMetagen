@@ -11,13 +11,10 @@ Created on 1 Aug 2018.
 import re
 
 # local imports
-from ccmetagen import cTaxInfo
-from ccmetagen import fNCBItax
-
-
+from ccmetagen import cTaxInfo, fNCBItax
 
 # function to filter a res file in pandas df format:
-def res_filter(df, ref_database, cov, Iden, Depth, p):
+def res_filter(df, cov, Iden, Depth, p):
     df = df.drop(df[df.Template_Coverage < cov].index)
 
     # filter based on identity
@@ -45,13 +42,7 @@ def populate_w_tax(
     phylum_threshold,
     taxfile=None,
 ):
-    # defaults:
-    # species_threshold = 98.41 # Yeast - Vu et al 2016
-    # genus_threshold = 96.31 # Yeast - Vu et al 2016
-    # family_threshold = 88.51 # Filamentous fungi - Vu et al 2019
-    # order_threshold = 81.21 # Filamentous fungi - Vu et al 2019
-    # class_threshold = 80.91 # Filamentous fungi - Vu et al 2019
-    # phylum, kingdom and superkingdom = 0  # no data, no filtering
+    # For default thresholds, see ccmetagen/__init__.py
 
     # Make sure all taxa columns are strings (doesn't automatically happen if the first one is None)
     in_df = in_df.assign(
@@ -130,7 +121,6 @@ def populate_w_tax(
                 )
 
         # Populate the df with lineage info and the LCA taxid:
-
         in_df.at[index, "Superkingdom"] = match_info.Superkingdom
         in_df.at[index, "Kingdom"] = match_info.Kingdom
 
@@ -144,35 +134,22 @@ def populate_w_tax(
         if match_info.Kingdom == "Fungi":
             in_df.at[index, "LCA_TaxId"] = 4751
 
-        # fill in the rest of the table according to similarity threshold:
-        if qiden >= phylum_threshold:
-            in_df.at[index, "Phylum"] = match_info.Phylum
-            if match_info.Phylum_TaxId != None:
-                in_df.at[index, "LCA_TaxId"] = match_info.Phylum_TaxId
+        thresholds = {
+            "Phylum": phylum_threshold,
+            "Class": class_threshold,
+            "Order": order_threshold,
+            "Family": family_threshold,
+            "Genus": genus_threshold,
+            "Species": species_threshold
+        }
 
-        if qiden >= class_threshold:
-            in_df.at[index, "Class"] = match_info.Class
-            if match_info.Class_TaxId != None:
-                in_df.at[index, "LCA_TaxId"] = match_info.Class_TaxId
+        for rank, threshold in thresholds.items():
+            if qiden >= threshold:
+                tax_info_attr = f"{rank}_TaxId"
 
-        if qiden >= order_threshold:
-            in_df.at[index, "Order"] = match_info.Order
-            if match_info.Order_TaxId != None:
-                in_df.at[index, "LCA_TaxId"] = match_info.Order_TaxId
+                in_df.at[index, rank] = getattr(match_info, rank)
 
-        if qiden >= family_threshold:
-            in_df.at[index, "Family"] = match_info.Family
-            if match_info.Family_TaxId != None:
-                in_df.at[index, "LCA_TaxId"] = match_info.Family_TaxId
-
-        if qiden >= genus_threshold:
-            in_df.at[index, "Genus"] = match_info.Genus
-            if match_info.Genus_TaxId != None:
-                in_df.at[index, "LCA_TaxId"] = match_info.Genus_TaxId
-
-        if qiden >= species_threshold:
-            in_df.at[index, "Species"] = match_info.Species
-            if match_info.Species_TaxId != None:
-                in_df.at[index, "LCA_TaxId"] = match_info.Species_TaxId
+                if getattr(match_info, tax_info_attr) is not None:
+                    in_df.at[index, "LCA_TaxId"] = getattr(match_info, tax_info_attr)
 
     return in_df

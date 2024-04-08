@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+UPDATE v1.4.3 - This script has been deprecated. See ccmetagen/fNCBItax.py for the latest version.
+
 Function that takes a taxid as input and returns a class containing the taxonomic info and taxids 
 for multiple taxonomic ranks. 
 

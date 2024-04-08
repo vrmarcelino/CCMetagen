@@ -55,8 +55,8 @@ class TaxInfo:
         self.Class_TaxId = Class_TaxId
         self.Order = Order
         self.Order_TaxId = Order_TaxId
-        self.Family = Order
-        self.Family_TaxId = Order_TaxId
+        self.Family = Family
+        self.Family_TaxId = Family_TaxId
         self.Genus = Genus
         self.Genus_TaxId = Genus_TaxId
         self.Species = Species
