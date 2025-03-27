@@ -29,4 +29,4 @@ Given a `$destination_folder` for the downloads (recommend you choose a new, emp
 ```
 rename_refseq.sh  $destination_folder  $nthreads
 ```
-The script took 
+The script took about 4 hours with an institutional connection and 20 cores.  
