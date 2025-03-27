@@ -20,3 +20,13 @@ Then use the rename_nt.py to add the taxids in sequence headers. You might need 
 
 Sequence headers should look like `>1234|sequence_description`, where 1234 is the taxid.
 
+
+## Steps to rename the RefSeq database
+
+A less modular script than `rename_nt.py` (which operates on individual fasta files), this will download all the NCBI `"reference genome"` level accessions (currently 20,858 fna, 31GB), and add the `taxid` to the header ( i.e. `>accession_abc` to `>1234|accession_abc`).
+
+Given a `$destination_folder` for the downloads (recommend you choose a new, empty folder!) and a number of `$nthreads`, should be able to call:
+```
+rename_refseq.sh  $destination_folder  $nthreads
+```
+The script took 
