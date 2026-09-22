@@ -166,8 +166,12 @@ for file in os.listdir(in_folder):
         all_samples = pd.concat([all_samples, depth_by_tax], sort=True, axis=1)
 
 
-# Group taxon ranks
-all_samples = all_samples.groupby(by=all_samples.columns, axis=1).first()
+# Group taxon ranks (collapse the duplicate same-named taxonomic-rank columns
+# that concatenating each sample's frame above produced, keeping the first
+# non-null value per column name). pandas removed groupby(axis=1) in 3.0; the
+# transpose-groupby-transpose-back pattern below is pandas' own recommended
+# replacement and is what axis=1 groupby did internally anyway.
+all_samples = all_samples.T.groupby(level=0).first().T
 
 # add taxon info at the end of the table:
 tax_cols_l = list(f4agg.keys())

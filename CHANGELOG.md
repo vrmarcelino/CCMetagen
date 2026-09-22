@@ -9,6 +9,7 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
   - Fixed a crash (`pandas.errors.ParserError`) parsing `.mapstat` files from newer KMA versions (>=1.6.x), which write an extra `## command` metadata line that CCMetagen's fixed `header=6` offset didn't account for. Mapstat metadata is now parsed by key name (`fParseKMA.parse_mapstat_header`) instead of assuming a fixed number of header lines, so this is robust to future KMA format changes too. Affects `-du rpm`, `-du fr`, `-ef y`, and `-k rc`/`-k rca`.
   - Fixed a crash (`TypeError: Invalid value ... for dtype 'str'`) in `populate_w_tax` under pandas >=3.0, which infers a strict string dtype for the taxa columns (`LCA_TaxId`, `Superkingdom`, ...) from their initial `""` values, then rejects the int NCBI taxids assigned into them afterward. These columns are now explicitly forced to `object` dtype.
+  - Fixed a crash (`TypeError: DataFrame.groupby() got an unexpected keyword argument 'axis'`) in `CCMetagen_merge.py` under pandas >=3.0, which removed the `axis` parameter from `groupby()`. Replaced with the transpose/groupby/transpose-back pattern, pandas' own recommended migration for this exact case.
 
 ### Changed
 
