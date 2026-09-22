@@ -15,7 +15,6 @@ import argparse
 import subprocess
 import os
 from ete3 import NCBITaxa
-import re
 
 # local imports
 from ccmetagen import __version__, _ARGPARSE_DEFAULTS, fParseKMA
@@ -324,6 +323,13 @@ if __name__ == "__main__":
     # Rename headers:
     df.index.name = "Closest_match"
 
+    ##### Parse the mapstat file's metadata once, if provided. See
+    ##### fParseKMA.parse_mapstat_header for why this isn't a fixed line number.
+    mapstat_metadata = None
+    mapstat_header_row = None
+    if mapstat is not None:
+        mapstat_metadata, mapstat_header_row = fParseKMA.parse_mapstat_header(mapstat)
+
     ##### Adjust depth to reflect number of bases or RPM if needed:
 
     # number of nucleotides:
@@ -347,11 +353,9 @@ if __name__ == "__main__":
             """
         )
 
-        with open(mapstat) as mapfile:
-            fragments_line = mapfile.readlines()[3]
-        total_frags = re.split(r"(\t|\n)", fragments_line)[2]
+        total_frags = mapstat_metadata["fragmentCount"]
         df_stats = pd.read_csv(
-            mapstat, sep="\t", index_col=0, header=6, encoding="latin1"
+            mapstat, sep="\t", index_col=0, header=mapstat_header_row, encoding="latin1"
         )
         df["Depth"] = 1000000 * df_stats["fragmentCount"] / int(total_frags)
 
@@ -368,11 +372,9 @@ if __name__ == "__main__":
             """
         )
 
-        with open(mapstat) as mapfile:
-            fragments_line = mapfile.readlines()[3]
-        total_frags = re.split(r"(\t|\n)", fragments_line)[2]
+        total_frags = mapstat_metadata["fragmentCount"]
         df_stats = pd.read_csv(
-            mapstat, sep="\t", index_col=0, header=6, encoding="latin1"
+            mapstat, sep="\t", index_col=0, header=mapstat_header_row, encoding="latin1"
         )
         df["Depth"] = df_stats["fragmentCount"]
 
@@ -413,7 +415,7 @@ if __name__ == "__main__":
                 if du == "kma" or du == "nc":
                     print(mapstat)
                     df_stats = pd.read_csv(
-                        mapstat, sep="\t", index_col=0, header=6, encoding="latin1"
+                        mapstat, sep="\t", index_col=0, header=mapstat_header_row, encoding="latin1"
                     )
 
                 df["readCount"] = df_stats["readCount"]
@@ -446,7 +448,7 @@ if __name__ == "__main__":
                 # load mapstat file if needed
                 if du == "kma" or du == "nc":
                     df_stats = pd.read_csv(
-                        mapstat, sep="\t", index_col=0, header=6, encoding="latin1"
+                        mapstat, sep="\t", index_col=0, header=mapstat_header_row, encoding="latin1"
                     )
 
                 df["readCountAln"] = df_stats["readCountAln"]
@@ -515,14 +517,18 @@ if __name__ == "__main__":
     if ef == "y":
         print("Calculating read mapping stats...")
 
-        with open(mapstat) as mapfile:
-            fragments_line = mapfile.readlines()[3]
-        total_frags = re.split(r"(\t|\n)", fragments_line)[2]
+        total_frags = mapstat_metadata["fragmentCount"]
 
         ### check if the input was single-end or paired end ###
-        with open(mapstat) as mapfile:
-            kma_command_line = mapfile.readlines()[5]
-        input_file_command = re.split(r"(\t|\n| )", kma_command_line)[6]
+        # Only KMA versions that write a '## command' line let us tell reliably;
+        # older mapstat files fall through to the "could not identify" branch below.
+        kma_command_tokens = mapstat_metadata.get("command", "").split()
+        if "-ipe" in kma_command_tokens:
+            input_file_command = "-ipe"
+        elif "-i" in kma_command_tokens:
+            input_file_command = "-i"
+        else:
+            input_file_command = None
 
         if input_file_command == "-i":
             print("""Parsing results based on single-end sequences.""")
@@ -543,7 +549,7 @@ if __name__ == "__main__":
         ###
 
         df_stats = pd.read_csv(
-            mapstat, sep="\t", index_col=0, header=6, encoding="latin1"
+            mapstat, sep="\t", index_col=0, header=mapstat_header_row, encoding="latin1"
         )
 
         # delete species in df_stats that are not in the CCM result dataframe:

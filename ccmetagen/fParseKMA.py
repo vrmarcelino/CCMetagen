@@ -13,6 +13,34 @@ import re
 # local imports
 from ccmetagen import cTaxInfo, fNCBItax
 
+
+def parse_mapstat_header(mapstat_fp):
+    """Parse the '## key\\tvalue' metadata lines at the top of a KMA .mapstat file.
+
+    Returns a (metadata, header_row) tuple: metadata is a dict of the '##'-tagged
+    key/value pairs (e.g. metadata["fragmentCount"], metadata["command"]), and
+    header_row is the 0-indexed line number of the '#refSequence  readCount  ...'
+    column header line, for use as pandas.read_csv(mapstat_fp, header=header_row).
+
+    KMA has changed how many '##' metadata lines it writes between versions --
+    for example, newer versions add a '## command' line recording the kma
+    invocation, which pushes the column header line down by one. Parsing by key
+    name instead of assuming a fixed line number keeps this working regardless of
+    how many '##' lines a given KMA version writes.
+    """
+    metadata = {}
+    with open(mapstat_fp, encoding="latin1") as mapfile:
+        for i, line in enumerate(mapfile):
+            if line.startswith("##"):
+                key, _, value = line[2:].strip().partition("\t")
+                metadata[key.strip()] = value.strip()
+            elif line.startswith("#"):
+                return metadata, i
+    raise ValueError(
+        f"Could not find the column header line (starting with '#') in {mapstat_fp}"
+    )
+
+
 # function to filter a res file in pandas df format:
 def res_filter(df, cov, Iden, Depth, p):
     df = df.drop(df[df.Template_Coverage < cov].index)
@@ -56,6 +84,23 @@ def populate_w_tax(
         Genus="",
         Species="",
     )
+    # Force plain object dtype rather than pandas' newer strict StringDtype.
+    # These columns hold a mix of types across rows (e.g. LCA_TaxId is usually
+    # set to an int NCBI taxid below, but can also be the string 'unk_taxid').
+    # pandas >=3.0 infers a strict string dtype from the "" values above, which
+    # then raises TypeError the first time an int is assigned into it.
+    tax_columns = [
+        "LCA_TaxId",
+        "Superkingdom",
+        "Kingdom",
+        "Phylum",
+        "Class",
+        "Order",
+        "Family",
+        "Genus",
+        "Species",
+    ]
+    in_df = in_df.astype({col: object for col in tax_columns})
 
     # index == the #template (fungal match)
     for index, row in in_df.iterrows():

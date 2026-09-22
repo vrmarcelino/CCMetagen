@@ -4,5 +4,5 @@ channels:
 dependencies:
   - ete3
   - pandas
-  - kma
+  - kma >=1.6.15  # mapstat parsing (fParseKMA.parse_mapstat_header) is tested against this and later; older KMA also works but is untested here
   - krona

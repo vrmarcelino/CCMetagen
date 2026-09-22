@@ -3,6 +3,17 @@
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 (or tries as best as it can)
 
+## [Unreleased]
+
+### Fixed
+
+  - Fixed a crash (`pandas.errors.ParserError`) parsing `.mapstat` files from newer KMA versions (>=1.6.x), which write an extra `## command` metadata line that CCMetagen's fixed `header=6` offset didn't account for. Mapstat metadata is now parsed by key name (`fParseKMA.parse_mapstat_header`) instead of assuming a fixed number of header lines, so this is robust to future KMA format changes too. Affects `-du rpm`, `-du fr`, `-ef y`, and `-k rc`/`-k rca`.
+  - Fixed a crash (`TypeError: Invalid value ... for dtype 'str'`) in `populate_w_tax` under pandas >=3.0, which infers a strict string dtype for the taxa columns (`LCA_TaxId`, `Superkingdom`, ...) from their initial `""` values, then rejects the int NCBI taxids assigned into them afterward. These columns are now explicitly forced to `object` dtype.
+
+### Changed
+
+  - Pinned `kma >=1.6.15` in `environment.yaml`, the version this fix was tested against.
+
 ## [v1.4.2](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.4.2)
 
 - We've recently resumed CCMetagen development. `v1.4.2` is mostly a documental update,
