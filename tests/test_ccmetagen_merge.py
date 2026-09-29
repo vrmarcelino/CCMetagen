@@ -39,7 +39,7 @@ SAMPLE_A_ROWS = [
     [
         "573|Klebsiella pneumoniae",
         259203, 0, 4052, 100.0, 100.0, 100.0, 100.0, 886, 28707.86, 1e-26, 573,
-        "unk_sk", "Pseudomonadati", "Pseudomonadota", "Gammaproteobacteria",
+        "Bacteria", "Pseudomonadati", "Pseudomonadota", "Gammaproteobacteria",
         "Enterobacterales", "Enterobacteriaceae", "Klebsiella", "Klebsiella pneumoniae",
     ],
 ]
@@ -47,13 +47,13 @@ SAMPLE_B_ROWS = [
     [
         "562|Escherichia coli",
         20167, 0, 2883, 31.77, 31.77, 100.0, 314.74, 70, 2237.9, 1e-26, 562,
-        "unk_sk", "Pseudomonadati", "Pseudomonadota", "Gammaproteobacteria",
+        "Bacteria", "Pseudomonadati", "Pseudomonadota", "Gammaproteobacteria",
         "Enterobacterales", "Enterobacteriaceae", "Escherichia", "Escherichia coli",
     ],
     [
         "573|Klebsiella pneumoniae",
         67488, 0, 4709, 84.71, 85.43, 99.15, 117.05, 240, 6647.84, 1e-26, 573,
-        "unk_sk", "Pseudomonadati", "Pseudomonadota", "Gammaproteobacteria",
+        "Bacteria", "Pseudomonadati", "Pseudomonadota", "Gammaproteobacteria",
         "Enterobacterales", "Enterobacteriaceae", "Klebsiella", "Klebsiella pneumoniae",
     ],
 ]

@@ -219,6 +219,9 @@ ncbi.update_taxonomy_database()
 quit()
 ```
 
+* Superkingdom is 'unk_sk' for all matches.
+  NCBI renamed the 'superkingdom' rank to 'domain' in 2025. CCMetagen versions from after this change map the NCBI 'domain' (Bacteria, Archaea, Eukaryota) to the Superkingdom column, and use 'Viruses' for viruses. Please update CCMetagen and re-run it on your KMA results (there is no need to re-run KMA).
+
 * TypeError: concat() got an unexpected keyword argument 'sort'.
   If you get this error, please update the python module pandas:
 ```

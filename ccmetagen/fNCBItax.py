@@ -13,18 +13,31 @@ Created on 12 Jul 2018.
 
 from ete3 import NCBITaxa
 
+list_of_taxa_ranks = [
+    "Superkingdom",
+    "Kingdom",
+    "Phylum",
+    "Class",
+    "Order",
+    "Family",
+    "Genus",
+    "Species",
+]
+
+# NCBI rank names -> CCMetagen output column.
+# In 2025 NCBI renamed the 'superkingdom' rank to 'domain' (Bacteria, Archaea,
+# Eukaryota), so both are mapped to the Superkingdom column to support old and
+# new ete3 taxonomy databases.
+rank_to_column = {rank.lower(): rank for rank in list_of_taxa_ranks}
+rank_to_column["domain"] = "Superkingdom"
+
+# Viruses no longer have a superkingdom/domain rank in the new NCBI taxonomy
+# (the 'Viruses' node was moved to a root-level rank), so they are identified
+# by taxid instead, keeping 'Viruses' in the Superkingdom column as before.
+VIRUSES_TAXID = 10239
+
 
 def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
-    list_of_taxa_ranks = [
-        "Superkingdom",
-        "Kingdom",
-        "Phylum",
-        "Class",
-        "Order",
-        "Family",
-        "Genus",
-        "Species",
-    ]
     if taxfile is not None:
         ncbi = NCBITaxa(taxfile)
     else:
@@ -35,10 +48,14 @@ def lineage_extractor(query_taxid, TaxInfo_object, taxfile=None):
 
     # get known data
     for key, val in ranks.items():
-        for rank in list_of_taxa_ranks:
-            if val.lower() == rank.lower():
-                setattr(TaxInfo_object, rank, names[key])
-                setattr(TaxInfo_object, rank + "_TaxId", key)
+        rank = rank_to_column.get(val.lower())
+        if rank is not None:
+            setattr(TaxInfo_object, rank, names[key])
+            setattr(TaxInfo_object, rank + "_TaxId", key)
+
+    if TaxInfo_object.Superkingdom is None and VIRUSES_TAXID in lineage:
+        TaxInfo_object.Superkingdom = names[VIRUSES_TAXID]
+        TaxInfo_object.Superkingdom_TaxId = VIRUSES_TAXID
 
     # fill in the blanks
     for attr in list_of_taxa_ranks:
