@@ -15,6 +15,7 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Changed
 
   - Pinned `kma >=1.6.15` in `environment.yaml`, the version this fix was tested against.
+  - Capped Python at `<3.13` (`setup.cfg` and `environment.yaml`). ete3 imports the `cgi` module, which was removed in Python 3.13, so CCMetagen fails at import (`ModuleNotFoundError: No module named 'cgi'`) on 3.13 and later.
 
 ## [v1.4.2](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.4.2)
 
