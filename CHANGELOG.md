@@ -3,7 +3,7 @@
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 (or tries as best as it can)
 
-## [Unreleased]
+## [v1.5.1](https://github.com/vrmarcelino/CCMetagen/compare/v1.5.0...v1.5.1) - 12.11.2026
 
 ### Fixed
 
@@ -15,7 +15,13 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 ### Changed
 
   - Pinned `kma >=1.6.15` in `environment.yaml`, the version this fix was tested against.
-  - Capped Python at `<3.13` (`setup.cfg` and `environment.yaml`). ete3 imports the `cgi` module, which was removed in Python 3.13, so CCMetagen fails at import (`ModuleNotFoundError: No module named 'cgi'`) on 3.13 and later.
+  - Added `legacy-cgi` as a dependency on Python >=3.13. ete3 imports the `cgi` module, which was removed from the standard library in Python 3.13, so without it CCMetagen fails at import (`ModuleNotFoundError: No module named 'cgi'`) on 3.13 and later. `legacy-cgi` is a drop-in replacement, and CCMetagen has been tested with it on Python 3.14.
+  - Added `six` as a dependency. `ete3.ncbi_taxonomy` imports it, but ete3's PyPI package doesn't declare it, so a pip-only install failed at import (`ModuleNotFoundError: No module named 'six'`). Conda installs were unaffected.
+
+## [v1.5.0](https://github.com/vrmarcelino/CCMetagen/compare/v1.4.2...v1.5.0) - 08.04.2024
+
+  - Updated database to most recent version of NCBI nt
+  - Minor code improvements
 
 ## [v1.4.2](https://github.com/vrmarcelino/CCMetagen/releases/tag/v1.4.2)
 
