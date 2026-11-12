@@ -166,7 +166,7 @@ if __name__ == "__main__":
         "-tax",
         "--local_taxfile",
         default=_ARGPARSE_DEFAULTS.get("local_taxfile"),
-        help="Use if a local taxdump file wants to be used.",
+        help="Path to a local ete3 NCBI taxonomy database (taxa.sqlite) to use instead of the default ~/.etetoolkit/taxa.sqlite. Note: this is the sqlite database built by ete3, not an NCBI taxdump.tar.gz.",
         required=False,
     )
 
@@ -244,7 +244,9 @@ if __name__ == "__main__":
     k = args.krona_mode
     taxfile = args.local_taxfile
     if taxfile is not None and not os.path.isfile(taxfile):
-        raise ValueError("If used, the argument taxfile has to point to a taxdump file")
+        raise ValueError(
+            "If used, -tax/--local_taxfile has to point to an existing ete3 taxonomy database (taxa.sqlite)"
+        )
 
     # taxonomic thresholds:
     off = args.turn_off_sim_thresholds
@@ -394,7 +396,9 @@ if __name__ == "__main__":
     df = fParseKMA.res_filter(df, c, q, d, p)
 
     # add tax info
-    df = fParseKMA.populate_w_tax(df, ref_database, st, gt, ft, ot, ct, pt)
+    df = fParseKMA.populate_w_tax(
+        df, ref_database, st, gt, ft, ot, ct, pt, taxfile=taxfile
+    )
 
     ##### Output a file with tax info
     if (mode == "text") or (mode == "both"):
